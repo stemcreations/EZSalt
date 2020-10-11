@@ -7,7 +7,7 @@ class CustomTextField extends StatelessWidget {
 
   final String text;
   final Icon icon;
-  final Color borderAndTextColor = Colors.white;
+  final Color borderAndTextColor = Colors.blue;
   final Color focusedBorderColor = Colors.lightBlueAccent;
 
   @override
@@ -58,7 +58,7 @@ class ReusableOutlineButton extends StatelessWidget {
       child: FlatButton(
         //borderSide: BorderSide(color: Colors.white),
         color: Colors.grey.withAlpha(125),
-        textColor: Colors.white,
+        textColor: Colors.blue,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
