@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
+import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
+
+//TODO Need firebase authentication integration for login/register/forgot password/facebook and google
 
 class _LoginPageState extends State<LoginPage> {
   @override
@@ -22,35 +25,34 @@ class _LoginPageState extends State<LoginPage> {
                 'EZSalt',
                 style: TextStyle(
                   fontFamily: 'EZSalt',
-                  color: Colors.blue,
+                  color: Colors.indigo,
                   fontSize: 30.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Flexible(
-                child: SizedBox(
-                  height: 30,
-                ),
+              SizedBox(
+                height: 30,
               ),
               CustomTextField(
                 text: 'Username',
-                icon: Icon(Icons.person, color: Colors.blue,),
+                icon: Icon(Icons.person, color: Colors.indigo,),
               ),
               SizedBox(
                   height: 10
               ),
               CustomTextField(
                 text: 'Password',
-                icon: Icon(Icons.security, color: Colors.blue,),
+                icon: Icon(Icons.security, color: Colors.indigo,),
               ),
               Row(
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 30),
                     child: MaterialButton(
+                      onPressed: () {  },  //TODO need to add function to forgot password
                       child: Text(
                         'Forgot Password?',
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: Colors.indigo),
                       ),
                     ),
                   ),
@@ -85,11 +87,34 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
               ),
-              Divider(
-                indent: 70,
-                endIndent: 70,
-                thickness: 2,
-                color: Colors.blue,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    child: Container(
+                      child: Divider(
+                        indent: 70,
+                        endIndent: 5,
+                        thickness: 2,
+                        color: Colors.indigo,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'OR',
+                    style: TextStyle(color: Colors.indigo),
+                  ),
+                  Expanded(
+                    child: Container(
+                      child: Divider(
+                        indent: 5,
+                        endIndent: 70,
+                        thickness: 2,
+                        color: Colors.indigo,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               ReusableOutlineButton(
                 size: 230,
@@ -103,12 +128,12 @@ class _LoginPageState extends State<LoginPage> {
                 label: Text('   Continue with Facebook'),
                 onPressed: (){},
               ),
-              ReusableOutlineButton(
-                size: 230,
-                icon: Icon(FontAwesomeIcons.apple),
-                label: Text('   Continue with Apple'),
-                onPressed: (){},
-              ),
+              // ReusableOutlineButton(
+              //   size: 230,
+              //   icon: Icon(FontAwesomeIcons.apple),
+              //   label: Text('   Continue with Apple'),
+              //   onPressed: (){},
+              // ),
             ],
           ),
         ),
