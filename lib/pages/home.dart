@@ -8,9 +8,10 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
+//TODO choose between animated box and the circle graph
 
 class _HomeState extends State<Home> {
-  var progress = 75;
+  var progress = 75; //TODO create a function that pulls the salt tank level from the server and displays it in the app
 
   @override
   Widget build(BuildContext context) {
@@ -20,39 +21,39 @@ class _HomeState extends State<Home> {
         centerTitle: true,
         title: Text('EZSalt', style: TextStyle(fontFamily: 'EZSalt', fontWeight: FontWeight.w900),), //App Bar Text and Text style
       ),
-      body: SizedBox(
-        height: 300,
+      body: Padding(
+        padding: const EdgeInsets.all(30.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              child: Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 30.0),
-                  child: CircularStepProgressIndicator(
-                    totalSteps: 100,
-                    currentStep: progress,
-                    stepSize: 10,
-                    selectedColor: Colors.indigoAccent,
-                    unselectedColor: Colors.grey[300],
-                    padding: 0,
-                    width: 300,
-                    height: 300,
-                    selectedStepSize: 25,
-                    roundedCap: (_, __) => true,
-                    child: Center(
-                      child: Text(
-                        '$progress%',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 50,
-                          color: Colors.indigo
-                        ),
+            Flexible(
+              //Sized box is to make it to where when screen size changes the box will change and keep the graph a circle
+              child: SizedBox(
+                width: 300,
+                height: 300,
+                child: CircularStepProgressIndicator(
+                  totalSteps: 100,
+                  currentStep: progress,
+                  stepSize: 10,
+                  selectedColor: Colors.indigoAccent,
+                  unselectedColor: Colors.grey[300],
+                  padding: 0,
+                  width: 300,
+                  height: 300,
+                  selectedStepSize: 25,
+                  roundedCap: (_, __) => true,
+                  child: Center(
+                    child: Text(
+                      '$progress%',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 50,
+                        color: Colors.indigo
                       ),
                     ),
                   ),
                 ),
-              ),//WaveProgress(250.0, Colors.blue, Colors.blueAccent, progress-7),
+              ),
             ),
           ],
         ),

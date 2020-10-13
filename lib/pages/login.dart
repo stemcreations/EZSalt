@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
                   fontFamily: 'EZSalt',
                   color: Colors.indigo,
                   fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
               SizedBox(
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                       label: Text('    Register', style: TextStyle(fontWeight: FontWeight.bold),),
                       icon: Icon(Icons.arrow_forward, size: 0,),
                       onPressed: (){
-                        //Navigator.pushNamed(context, '/register');
+                        Navigator.pushNamed(context, '/register');
                       },
                     ),
                   ],
