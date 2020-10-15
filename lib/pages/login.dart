@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ez_salt/constants.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -25,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
                 'EZSalt',
                 style: TextStyle(
                   fontFamily: 'EZSalt',
-                  color: Colors.indigo,
+                  color: borderAndTextColor,
                   fontSize: 30.0,
                   fontWeight: FontWeight.w900,
                 ),
@@ -35,14 +36,11 @@ class _LoginPageState extends State<LoginPage> {
               ),
               CustomTextField(
                 text: 'Username',
-                icon: Icon(Icons.person, color: Colors.indigo,),
-              ),
-              SizedBox(
-                  height: 10
+                icon: Icon(Icons.person, color: borderAndTextColor,),
               ),
               CustomTextField(
                 text: 'Password',
-                icon: Icon(Icons.security, color: Colors.indigo,),
+                icon: Icon(Icons.security, color: borderAndTextColor,),
               ),
               Row(
                 children: [
@@ -52,17 +50,12 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {  },  //TODO need to add function to forgot password
                       child: Text(
                         'Forgot Password?',
-                        style: TextStyle(color: Colors.indigo),
+                        style: TextStyle(color: borderAndTextColor),
                       ),
                     ),
                   ),
                 ],
               ),
-              // Flexible(
-              //   child: SizedBox(
-              //     height: 40,
-              //   ),
-              // ),
               SizedBox(
                 width: 230,
                 child: Row(
@@ -96,13 +89,13 @@ class _LoginPageState extends State<LoginPage> {
                         indent: 70,
                         endIndent: 5,
                         thickness: 2,
-                        color: Colors.indigo,
+                        color: borderAndTextColor,
                       ),
                     ),
                   ),
                   Text(
                     'OR',
-                    style: TextStyle(color: Colors.indigo),
+                    style: TextStyle(color: borderAndTextColor),
                   ),
                   Expanded(
                     child: Container(
@@ -110,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                         indent: 5,
                         endIndent: 70,
                         thickness: 2,
-                        color: Colors.indigo,
+                        color: borderAndTextColor,
                       ),
                     ),
                   ),
@@ -122,11 +115,14 @@ class _LoginPageState extends State<LoginPage> {
                 label: Text('   Continue with Google'),
                 onPressed: (){},
               ),
-              ReusableOutlineButton(
-                size: 230,
-                icon: Icon(FontAwesomeIcons.facebook),
-                label: Text('   Continue with Facebook'),
-                onPressed: (){},
+              Padding(
+                padding: const EdgeInsets.only(bottom: 3),
+                child: ReusableOutlineButton(
+                  size: 230,
+                  icon: Icon(FontAwesomeIcons.facebook),
+                  label: Text('   Continue with Facebook'),
+                  onPressed: (){},
+                ),
               ),
               // ReusableOutlineButton(
               //   size: 230,
