@@ -5,6 +5,7 @@ import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ez_salt/constants.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -16,6 +17,12 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String email;
   String password;
+
+  @override
+  void initState() {
+    Firebase.initializeApp();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
