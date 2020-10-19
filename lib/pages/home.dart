@@ -1,7 +1,6 @@
 import 'package:ez_salt/constants.dart';
+import 'package:ez_salt/networking/authentication.dart';
 import 'package:flutter/material.dart';
-import 'package:wave_progress_widget/wave_progress_widget.dart';
-import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'dart:math' as math;
 
@@ -10,11 +9,25 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-//TODO choose between animated box and the circle graph
-
 class _HomeState extends State<Home> {
-  var progress = 75; //TODO create a function that pulls the salt tank level from the server and displays it in the app
+  int tankLevel = 0;
   double monthlySubscriptionPrice = 3;
+
+  //This function pulls the current tank level readings from firebase and refreshes the state
+  Future getTankLevel() async {
+    var doubleTankLevel = await AuthService().getTankLevel();
+    String stringTankLevel = doubleTankLevel.toString();
+    setState(() {
+      tankLevel = double.parse(stringTankLevel).toInt();
+    });
+  }
+
+  @override
+  void initState() {
+    getTankLevel();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +54,7 @@ class _HomeState extends State<Home> {
                         startingAngle: math.pi * 5 / 4,
                         arcSize: math.pi * 3 / 2,
                         totalSteps: 100,
-                        currentStep: progress,
+                        currentStep: tankLevel,
                         stepSize: 25,
                         selectedColor: Colors.blue,
                         unselectedColor: Colors.grey[300],
@@ -52,7 +65,7 @@ class _HomeState extends State<Home> {
                         roundedCap: (_, __) => true,
                         child: Center(
                           child: Text(
-                            '$progress%',
+                            '$tankLevel%',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 50,

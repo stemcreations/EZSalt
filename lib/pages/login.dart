@@ -1,3 +1,4 @@
+import 'package:ez_salt/networking/authentication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
@@ -13,9 +14,13 @@ class LoginPage extends StatefulWidget {
 //TODO Need firebase authentication integration for login/register/forgot password/facebook and google
 
 class _LoginPageState extends State<LoginPage> {
+  String email;
+  String password;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -35,10 +40,21 @@ class _LoginPageState extends State<LoginPage> {
                 height: 30,
               ),
               CustomTextField(
+                onChanged: (text){
+                  setState(() {
+                    email = text.trim();
+                  });
+                },
                 text: 'Username',
                 icon: Icon(Icons.person, color: borderAndTextColor,),
               ),
               CustomTextField(
+                onChanged: (text){
+                  setState(() {
+                    password = text.trim();
+                  });
+                },
+                obscureText: true,
                 text: 'Password',
                 icon: Icon(Icons.security, color: borderAndTextColor,),
               ),
@@ -64,8 +80,13 @@ class _LoginPageState extends State<LoginPage> {
                     ReusableOutlineButton(
                       size: 110,
                       label: Text('      Login', style: TextStyle(fontWeight: FontWeight.bold),),
-                      icon: Icon(Icons.arrow_forward, size: 0,),
-                      onPressed: (){
+                      icon: Icon(Icons.arrow_forward, size: 0, ),
+                      onPressed: () async {
+                        await AuthService().signInWithEmailAndPassword(email, password);
+                        var depth = await AuthService().getTankLevel();
+                        print(depth);
+                        Map data = await AuthService().getProfile();
+                        print(data);
                         Navigator.pushNamed(context, '/home');
                       },
                     ),
@@ -115,20 +136,15 @@ class _LoginPageState extends State<LoginPage> {
                 label: Text('   Continue with Google'),
                 onPressed: (){},
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 3),
-                child: ReusableOutlineButton(
-                  size: 230,
-                  icon: Icon(FontAwesomeIcons.facebook),
-                  label: Text('   Continue with Facebook'),
-                  onPressed: (){},
-                ),
-              ),
-              // ReusableOutlineButton(
-              //   size: 230,
-              //   icon: Icon(FontAwesomeIcons.apple),
-              //   label: Text('   Continue with Apple'),
-              //   onPressed: (){},
+              //TODO add facebook login integration with firebase and facebook to allow signin with Facebook
+              // Padding(
+              //   padding: const EdgeInsets.only(bottom: 3),
+              //   child: ReusableOutlineButton(
+              //     size: 230,
+              //     icon: Icon(FontAwesomeIcons.facebook),
+              //     label: Text('   Continue with Facebook'),
+              //     onPressed: (){},
+              //   ),
               // ),
             ],
           ),

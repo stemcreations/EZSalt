@@ -11,6 +11,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: Text('Register'),
         centerTitle: true,
@@ -18,19 +19,31 @@ class _RegisterPageState extends State<RegisterPage> {
       body: Center(
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              CustomTextField(text: 'Username / Email',), //email / username
-              CustomTextField(text: 'Password',), //password
-              CustomTextField(text: 'Re-Enter Password',), //re-enter password
+              Text(
+                'EZSalt',
+                style: TextStyle(
+                  fontFamily: 'EZSalt',
+                  color: borderAndTextColor,
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              CustomTextField(text: 'Email Address',), //email / username
+              CustomTextField(text: 'Password', obscureText: true,), //password
+              CustomTextField(text: 'Confirm Password', obscureText: true,), //re-enter password
               CustomTextField(text: 'Tank Depth', keyboardType: TextInputType.number,),
               CustomTextField(text: 'Device ID',),//tank depth
-              FlatButton(
+              MaterialButton(
                 onPressed: () {  },
                 child: Text('Submit', style: TextStyle(color: borderAndTextColor),),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 color: Colors.grey.shade300,
+                elevation: 3,
               ), //Submit button
             ],
           ),

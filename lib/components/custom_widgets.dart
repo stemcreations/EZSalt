@@ -3,17 +3,21 @@ import 'package:ez_salt/constants.dart';
 // =============== TEXT FIELDS BELOW =============== //
 
 class CustomTextField extends StatelessWidget {
-  CustomTextField({@required this.text, this.icon, this.keyboardType});
+  CustomTextField({@required this.text, this.icon, this.keyboardType, this.obscureText = false, this.onChanged});
 
   final String text;
   final Icon icon;
   final TextInputType keyboardType;
+  final bool obscureText;
+  final Function(String) onChanged;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 5),
       child: TextField(
+        onChanged: onChanged,
+        obscureText: obscureText,
         keyboardType: keyboardType,
         style: TextStyle(
           color: borderAndTextColor
@@ -30,7 +34,7 @@ class CustomTextField extends StatelessWidget {
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide: BorderSide(color: borderAndTextColor)
+            borderSide: BorderSide(color: borderAndTextColor),
           ),
           hintText: text,
           hintStyle: TextStyle(

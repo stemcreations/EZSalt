@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "629048129398",
+    "firebase_url": "https://ezsalt-iot-dev-env.firebaseio.com",
+    "project_id": "ezsalt-iot-dev-env",
+    "storage_bucket": "ezsalt-iot-dev-env.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629048129398:android:d8b822e28962db32dcac57",
+        "android_client_info": {
+          "package_name": "com.devtechhub.ez_salt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "629048129398-1j3k84pn63ebpoqo59ifke6fim5kkjef.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwsz89WAyDRWi26CnEB6MphjvdLNlzZGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "629048129398-1j3k84pn63ebpoqo59ifke6fim5kkjef.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
