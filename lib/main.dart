@@ -1,5 +1,6 @@
 import 'package:ez_salt/pages/local_salt.dart';
 import 'package:ez_salt/pages/login.dart';
+import 'package:ez_salt/pages/profile.dart';
 import 'package:ez_salt/pages/register.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/pages/home.dart';
@@ -22,7 +23,6 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialRoute: '/',
       routes: {
@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => Home(),
         '/localSalt': (context) => LocalSaltPage(),
         '/register': (context) => RegisterPage(),
+        '/profile': (context) => ProfilePage(),
       },
     );
   }

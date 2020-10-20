@@ -1,4 +1,5 @@
 import 'package:ez_salt/components/custom_widgets.dart';
+import 'package:ez_salt/networking/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/constants.dart';
 
@@ -37,9 +38,11 @@ class _RegisterPageState extends State<RegisterPage> {
               CustomTextField(text: 'Password', obscureText: true,), //password
               CustomTextField(text: 'Confirm Password', obscureText: true,), //re-enter password
               CustomTextField(text: 'Tank Depth', keyboardType: TextInputType.number,),
-              CustomTextField(text: 'Device ID',),//tank depth
+              CustomTextField(text: 'Device ID', maxLength: 13,),//tank depth
               MaterialButton(
-                onPressed: () {  },
+                onPressed: () {
+                    //AuthService().createUserWithEmailAndPassword('wesley@email.com', 'test1234');
+                  },
                 child: Text('Submit', style: TextStyle(color: borderAndTextColor),),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 color: Colors.grey.shade300,

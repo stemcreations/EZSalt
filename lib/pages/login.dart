@@ -13,7 +13,7 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-//TODO Need firebase authentication integration for login/register/forgot password/facebook and google
+//TODO Need firebase authentication integration for register/forgot password/facebook and google
 
 class _LoginPageState extends State<LoginPage> {
   String email;
@@ -32,7 +32,6 @@ class _LoginPageState extends State<LoginPage> {
     });
     await AuthService().signInWithEmailAndPassword(email, password);
     if(AuthService().auth.currentUser.uid != null){
-      print(AuthService().auth.currentUser.uid);
       setState(() {
         _isAsyncCall = false;
         Navigator.pushNamed(context, '/home');
@@ -108,8 +107,6 @@ class _LoginPageState extends State<LoginPage> {
                         icon: Icon(Icons.arrow_forward, size: 0, ),
                         onPressed: () async {
                           _submit();
-                          // var depth = await AuthService().getTankLevel();
-                          // print(depth);
                           // Map data = await AuthService().getProfile();
                           // print(data);
                           //

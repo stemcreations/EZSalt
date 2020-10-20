@@ -10,15 +10,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int tankLevel = 0;
+  int tankLevel = 1;
   double monthlySubscriptionPrice = 3;
 
   //This function pulls the current tank level readings from firebase and refreshes the state
   Future getTankLevel() async {
     var doubleTankLevel = await AuthService().getTankLevel();
     String stringTankLevel = doubleTankLevel.toString();
+    tankLevel = double.parse(stringTankLevel).toInt();
+    if(tankLevel <= 0){
+      tankLevel = 1;
+    }
     setState(() {
-      tankLevel = double.parse(stringTankLevel).toInt();
     });
   }
 
@@ -33,6 +36,17 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
+        actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: GestureDetector(
+              onTap: (){
+                Navigator.pushNamed(context, '/profile');
+              },
+                child: Icon(Icons.settings)
+          ),
+            ),
+        ],
         centerTitle: true,
         title: Text('EZSalt', style: TextStyle(fontFamily: 'EZSalt', fontWeight: FontWeight.w900),), //App Bar Text and Text style
       ),
