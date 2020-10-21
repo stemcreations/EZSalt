@@ -17,7 +17,11 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 5),
-      child: TextField(
+      child: TextFormField(
+        textInputAction: TextInputAction.next,
+        onFieldSubmitted: (term){
+          FocusScope.of(context).nextFocus();
+        },
         maxLength: maxLength,
         onChanged: onChanged,
         obscureText: obscureText,
