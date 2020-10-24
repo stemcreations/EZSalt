@@ -7,9 +7,8 @@ class AuthService {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   Future createUserWithEmailAndPassword(
-      String email, String password, String firstName, String lastName, String sensor,
-      String address, String city, String state, int zipCode, String phoneNumber,
-      int depth, String phoneProvider) async {
+      String email, String password, String firstName, String lastName,
+      String phoneNumber, String phoneProvider) async {
 
     UserCredential user = await auth.createUserWithEmailAndPassword(
         email: email,
@@ -19,25 +18,44 @@ class AuthService {
       'first_name': firstName,
       'last_name': lastName,
       'email': email,
-      'sensor': sensor,
-      'depth': 90,
-      'street_address': address,
-      'city': city,
-      'state': state,
-      'zipcode': zipCode,
       'phone': phoneNumber,
       'send_percent':{'high': null, 'low': 15},
       'percent': 88.0,
       'distance': 15,
       'phone_provider': phoneProvider,
+      'sensor': 'Set Device ID',
+      'depth': 20,
+      'street_address': 'null',
+      'city': 'null',
+      'state': 'null',
+      'zipcode': 'null',
     });
   }
 
-  Future signInWithEmailAndPassword(String email, String password) async {
+  Future profileAndDeviceSetup(
+      String deviceID, String address, String city, String state,
+      int zipCode, int tankDepth) async {
+
+    _fireStore.collection('users').doc(auth.currentUser.uid).update({
+      'sensor': deviceID,
+      'depth': tankDepth,
+      'street_address': address,
+      'city': city,
+      'state': state,
+      'zipcode': zipCode,
+    });
+  }
+
+  Future<UserCredential> signInWithEmailAndPassword(String email, String password) async {
       currentUser = await auth.signInWithEmailAndPassword(
           email: email,
           password: password
       );
+      if(currentUser != null) {
+        return currentUser;
+      }else{
+        return null;
+      }
   }
 
   //TODO add functionality to push a refresh on the sensor via API... I don't know if API currently exists to do this.
@@ -62,3 +80,4 @@ class AuthService {
     return null;
   }
 }
+

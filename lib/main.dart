@@ -1,9 +1,10 @@
-import 'package:ez_salt/pages/local_salt.dart';
-import 'package:ez_salt/pages/login.dart';
-import 'package:ez_salt/pages/profile.dart';
-import 'package:ez_salt/pages/register.dart';
+import 'package:ez_salt/screens/local_salt.dart';
+import 'package:ez_salt/screens//login.dart';
+import 'package:ez_salt/screens//profile.dart';
+import 'package:ez_salt/screens//register.dart';
 import 'package:flutter/material.dart';
-import 'package:ez_salt/pages/home.dart';
+import 'package:ez_salt/screens//home.dart';
+import 'package:ez_salt/screens/device_setup.dart';
 import 'package:wifi/wifi.dart';
 import 'package:ping_discover_network/ping_discover_network.dart';
 
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/localSalt': (context) => LocalSaltPage(),
         '/register': (context) => RegisterPage(),
         '/profile': (context) => ProfilePage(),
+        '/deviceSetup': (context) => DeviceSetup(),
       },
     );
   }
@@ -76,7 +78,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
                 },
               child: Text('Discover Network'),
-            )
+            ),
+            RaisedButton(
+              child: Text('device setup'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/deviceSetup');
+              },
+            ),
+            RaisedButton(
+              child: Text('Scan Barcode'),
+              onPressed: () {
+
+              },
+            ),
           ],
         ),
       ),
