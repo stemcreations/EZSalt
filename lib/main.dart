@@ -5,8 +5,10 @@ import 'package:ez_salt/screens//register.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/screens//home.dart';
 import 'package:ez_salt/screens/device_setup.dart';
+import 'package:flutter/services.dart';
 import 'package:wifi/wifi.dart';
 import 'package:ping_discover_network/ping_discover_network.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 void main() {
   runApp(MyApp());
@@ -48,6 +50,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String _scanBarcode = 'Unknown';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,13 +92,27 @@ class _MyHomePageState extends State<MyHomePage> {
             RaisedButton(
               child: Text('Scan Barcode'),
               onPressed: () {
-
+                scanBarcodeNormal();
               },
             ),
+            Text(_scanBarcode),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> scanBarcodeNormal() async {
+    String barcodeScanRes;
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#00FFFFFF', 'Cancel', true, ScanMode.BARCODE);
+    }on PlatformException{
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+    if(!mounted) return;
+    setState(() {
+      _scanBarcode = barcodeScanRes;
+    });
   }
 }
 
