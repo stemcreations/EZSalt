@@ -2,6 +2,8 @@ import 'package:ez_salt/networking/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:ez_salt/constants.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class DeviceSetup extends StatefulWidget {
   @override
@@ -9,6 +11,7 @@ class DeviceSetup extends StatefulWidget {
 }
 
 class _DeviceSetupState extends State<DeviceSetup> {
+  String _scanBarcode = 'EZSalt_123456';
   String deviceID;
   String zipCode;
   String tankDepth;
@@ -17,6 +20,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
   String state;
   final formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final deviceIdTextController = TextEditingController();
 
   void showSnackBar(String message){
     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message),));
@@ -32,6 +36,19 @@ class _DeviceSetupState extends State<DeviceSetup> {
     }
   }
 
+  Future<void> scanBarcodeNormal() async {
+    String barcodeScanRes;
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#00FFFFFF', 'Cancel', true, ScanMode.BARCODE);
+    }on PlatformException{
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+    if(!mounted) return;
+    setState(() {
+      _scanBarcode = barcodeScanRes;
+      deviceIdTextController.text = barcodeScanRes;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +80,19 @@ class _DeviceSetupState extends State<DeviceSetup> {
               CustomTextField(text: 'City', onChanged: (text) => city = text,),
               CustomTextField(text: 'State', onChanged: (text) => state = text,),
               CustomTextField(text: 'Zip Code', keyboardType: TextInputType.number, onChanged: (number) => zipCode = number,),
-              CustomTextField(text: 'Tank Depth In cm.', keyboardType: TextInputType.number, onChanged: (number) => tankDepth = number,),
-              CustomTextField(text: 'Device ID', maxLength: 13, onChanged: (text) => deviceID = text,),//tank depth
+              CustomTextField(text: 'Tank Depth cm.', keyboardType: TextInputType.number, onChanged: (number) => tankDepth = number,),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(child: CustomTextField(horizontalPadding: 5, text: 'Device ID', controller: deviceIdTextController, maxLength: 13, onChanged: (text) => deviceID = text)),
+                  GestureDetector(child: Padding(
+                    padding: const EdgeInsets.only(bottom: 17, right: 35),
+                    child: Icon(Icons.camera_alt_outlined, color: borderAndTextColor, size: 40,),
+                  ), onTap: (){
+                    scanBarcodeNormal();
+                  },)
+                ],
+              ),//tank depth
               Padding(
                 padding: const EdgeInsets.only(top: 15.0, bottom: 20),
                 child: MaterialButton(

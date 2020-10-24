@@ -5,9 +5,11 @@ import 'package:ez_salt/constants.dart';
 class CustomTextField extends StatelessWidget {
   CustomTextField({@required this.text, this.icon, this.keyboardType,
     this.obscureText = false, this.onChanged, this.maxLength, this.labelText,
-  this.controller
+    this.controller, this.initialValue, this.horizontalPadding = 35,
   });
 
+  final double horizontalPadding;
+  final String initialValue;
   final String text;
   final Icon icon;
   final TextInputType keyboardType;
@@ -20,13 +22,11 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 5),
+      padding: EdgeInsets.only(left: 35, right: horizontalPadding, top: 5, bottom: 5),
       child: TextFormField(
+        initialValue: initialValue,
         controller: controller,
         textInputAction: TextInputAction.next,
-        onFieldSubmitted: (term){
-          FocusScope.of(context).nextFocus();
-        },
         maxLength: maxLength,
         onChanged: onChanged,
         obscureText: obscureText,
@@ -38,15 +38,15 @@ class CustomTextField extends StatelessWidget {
         decoration: InputDecoration(
           labelText: labelText,
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: focusedBorderColor),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: borderAndTextColor),
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: borderAndTextColor),
           ),
           hintText: text,
@@ -71,16 +71,15 @@ class ReusableOutlineButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      height: 40,
       width: size,
       child: MaterialButton(
         elevation: 4,
         color: Colors.grey.shade300,
         textColor: borderAndTextColor,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(12.0),
         ),
-        //icon: icon,
-        //label: label,
         child: Row(
           children: [
             icon,
