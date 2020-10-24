@@ -152,34 +152,37 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          child: Divider(
-                            indent: 70,
-                            endIndent: 5,
-                            thickness: 2,
-                            color: borderAndTextColor,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            child: Divider(
+                              indent: 70,
+                              endIndent: 5,
+                              thickness: 2,
+                              color: borderAndTextColor,
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        'OR',
-                        style: TextStyle(color: borderAndTextColor),
-                      ),
-                      Expanded(
-                        child: Container(
-                          child: Divider(
-                            indent: 5,
-                            endIndent: 70,
-                            thickness: 2,
-                            color: borderAndTextColor,
+                        Text(
+                          'OR',
+                          style: TextStyle(color: borderAndTextColor),
+                        ),
+                        Expanded(
+                          child: Container(
+                            child: Divider(
+                              indent: 5,
+                              endIndent: 70,
+                              thickness: 2,
+                              color: borderAndTextColor,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   ReusableOutlineButton(
                     size: 230,

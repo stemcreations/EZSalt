@@ -1,5 +1,6 @@
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:ez_salt/networking/authentication.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/constants.dart';
 
@@ -112,17 +113,31 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   icon: Icon(icon, color: iconColor,),
                 ), //re-enter password
-                DropdownButton(
-                  style: TextStyle(color: borderAndTextColor, fontWeight: FontWeight.bold),
-                  value: selectedPhoneCarrier,
-                  hint: Text('Select Phone Carrier'),
-                  items: dropDownBuilder(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedPhoneCarrier = value;
-                    });
-                  },
-                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 35, left: 35, top: 5, bottom: 5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: borderAndTextColor), borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 5, bottom: 5, right: 30, left: 30),
+                      child: DropdownButton(
+                        style: TextStyle(color: borderAndTextColor, fontWeight: FontWeight.bold),
+                        value: selectedPhoneCarrier,
+                        hint: Text('Select Phone Carrier', style: TextStyle(color: borderAndTextColor),),
+                        icon: Icon(Icons.keyboard_arrow_down),
+                        isExpanded: true,
+                        underline: Container(),
+                        items: dropDownBuilder(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedPhoneCarrier = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ), // Dropdown menu for phone providers.
                 Padding(
                   padding: const EdgeInsets.only(top: 15.0, bottom: 20),
                   child: MaterialButton(
