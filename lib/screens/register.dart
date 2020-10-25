@@ -12,13 +12,9 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   bool _isAsyncCall = false;
-  String selectedPhoneCarrier;
-  String firstName;
-  String lastName;
   String email;
   String password;
   String confirmedPassword;
-  String phoneNumber;
   bool passwordsMatch;
   IconData icon;
   Color iconColor;
@@ -29,24 +25,10 @@ class _RegisterPageState extends State<RegisterPage> {
     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message),));
   }
 
-  List<DropdownMenuItem> dropDownBuilder(){
-    List<DropdownMenuItem<String>> dropDownItemList = [];
 
-    for(final name in phoneCarriers.keys){
-      String phoneCarrier = name;
-      String phoneCarrierValue = phoneCarriers[name];
-      var newDropDownItem = DropdownMenuItem(
-        child: Text(phoneCarrier),
-        value: phoneCarrierValue,
-      );
-      dropDownItemList.add(newDropDownItem);
-    }
-    return dropDownItemList;
-  }
 
   bool assertNoNullFields(){
-    if(selectedPhoneCarrier != null && firstName != null && lastName != null
-        && email != null && passwordsMatch != false && phoneNumber != null
+    if(email != null && passwordsMatch != false
     ){
       return true;
     }else {
@@ -68,12 +50,6 @@ class _RegisterPageState extends State<RegisterPage> {
         passwordsMatch = false;
       });
     }
-  }
-
-  @override
-  void initState() {
-    dropDownBuilder();
-    super.initState();
   }
 
   @override
@@ -106,9 +82,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
-                  CustomTextField(text: 'First Name', onChanged: (text) => firstName = text.trim(),),
-                  CustomTextField(text: 'Last Name', onChanged: (text) => lastName = text.trim(),),
-                  CustomTextField(text: 'Phone Number', onChanged: (text) => phoneNumber = text.trim(), keyboardType: TextInputType.phone,),
                   CustomTextField(text: 'Email Address', onChanged: (text) => email = text.trim(), keyboardType: TextInputType.emailAddress,), //email / username
                   CustomTextField(text: 'Password', obscureText: true, onChanged: (text) => password = text.trim(), icon: Icon(icon, color: iconColor,),), //password
                   CustomTextField(text: 'Confirm Password', obscureText: true, onChanged: (text){
@@ -117,31 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                     icon: Icon(icon, color: iconColor,),
                   ), //re-enter password
-                  Padding(
-                    padding: const EdgeInsets.only(right: 35, left: 35, top: 5, bottom: 5),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: borderAndTextColor), borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 5, bottom: 5, right: 30, left: 30),
-                        child: DropdownButton(
-                          style: TextStyle(color: borderAndTextColor, fontWeight: FontWeight.bold),
-                          value: selectedPhoneCarrier,
-                          hint: Text('Select Phone Carrier', style: TextStyle(color: borderAndTextColor),),
-                          icon: Icon(Icons.keyboard_arrow_down),
-                          isExpanded: true,
-                          underline: Container(),
-                          items: dropDownBuilder(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedPhoneCarrier = value;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                  ), // Dropdown menu for phone providers.
+                  // Dropdown menu for phone providers.
                   Padding(
                     padding: const EdgeInsets.only(top: 15.0, bottom: 20),
                     child: MaterialButton(
@@ -153,10 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           await AuthService().createUserWithEmailAndPassword(
                               email,
                               password,
-                              firstName,
-                              lastName,
-                              phoneNumber,
-                              selectedPhoneCarrier);
+                          );
                           formKey.currentState.reset();
                           setState(() {
                             _isAsyncCall = false;

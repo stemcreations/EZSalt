@@ -25,6 +25,10 @@ class _LoginPageState extends State<LoginPage> {
   final snackBar = SnackBar(content: Text('Username Not Found'),);
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  Future<void> initializeApp() async {
+    await Firebase.initializeApp();
+  }
+
   void showSnackBar(String message){
     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message),));
   }
@@ -241,8 +245,13 @@ class _LoginPageState extends State<LoginPage> {
                     size: 230,
                     icon: Icon(FontAwesomeIcons.google),
                     label: Text('   Continue with Google'),
-                    onPressed: (){
-                      AuthService().signInWithGoogle().whenComplete(() => Navigator.pushNamed(context, '/home'));
+                    onPressed: () async {
+                      String result = await AuthService().signInWithGoogle();
+                      if(result == 'new user created'){
+                        Navigator.pushNamed(context, '/deviceSetup');
+                        }else{
+                        Navigator.pushNamed(context, '/home');
+                        }
                       },
                   ),
                   //TODO add facebook login integration with firebase and facebook to allow signin with Facebook
@@ -266,7 +275,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    Firebase.initializeApp();
+    initializeApp();
     super.initState();
   }
 }

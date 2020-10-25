@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
@@ -11,17 +12,44 @@ class AuthService {
   Future<String> signInWithGoogle() async {
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
+    final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleSignInAuthentication.accessToken,
       idToken: googleSignInAuthentication.idToken,
     );
-    final UserCredential authResult = await auth.signInWithCredential(credential);
-    final FirebaseUser user = authResult.user;
+
+    final UserCredential userCredential = await auth.signInWithCredential(credential);
+    final User user = userCredential.user;
 
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
-    final FirebaseUser currentUser = auth.currentUser;
+    final User currentUser = auth.currentUser;
     assert(user.uid == currentUser.uid);
+
+    DocumentSnapshot snapshot = await _fireStore.collection('users').doc(currentUser.uid).get();
+
+
+    //This Section works but i need to send them to the profile setup page after
+    // selecting google signin if they dont already have an account
+    //
+    if(!snapshot.exists){
+      await _fireStore.collection('users').doc(currentUser.uid).set({
+        'first_name': 'null',
+        'last_name': 'null',
+        'email': currentUser.email,
+        'phone': 'null',
+        'send_percent':{'high': null, 'low': 15},
+        'percent': 88.0,
+        'distance': 15,
+        'phone_provider': '@page.nextell.com',
+        'sensor': 'EZSalt_null12',
+        'depth': 90,
+        'street_address': 'null',
+        'city': 'null',
+        'state': 'null',
+        'zipcode': 10101,
+      });
+      return 'new user created';
+    }
 
     return 'signInWithGoogle succeeded';
   }
@@ -29,30 +57,29 @@ class AuthService {
   void printUid(){
 
     print(auth.currentUser.uid);
-    print(googleSignIn.currentUser);
+
   }
 
   void signOutGoogle() async {
+    await auth.signOut();
     await googleSignIn.signOut();
   }
 
-  Future createUserWithEmailAndPassword(
-      String email, String password, String firstName, String lastName,
-      String phoneNumber, String phoneProvider) async {
+  Future createUserWithEmailAndPassword(String email, String password) async {
 
     UserCredential user = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password
     );
     _fireStore.collection('users').doc(user.user.uid).set({
-      'first_name': firstName,
-      'last_name': lastName,
+      'first_name': 'null',
+      'last_name': 'null',
       'email': email,
-      'phone': phoneNumber,
+      'phone': 'null',
       'send_percent':{'high': null, 'low': 15},
       'percent': 88.0,
       'distance': 15,
-      'phone_provider': phoneProvider,
+      'phone_provider': 'null',
       'sensor': 'Set Device ID',
       'depth': 20,
       'street_address': 'null',
@@ -64,9 +91,13 @@ class AuthService {
 
   Future profileAndDeviceSetup(
       String deviceID, String address, String city, String state,
-      int zipCode, int tankDepth) async {
+      int zipCode, int tankDepth, firstName, lastName, phoneProvider, phoneNumber) async {
 
     _fireStore.collection('users').doc(auth.currentUser.uid).update({
+      'first_name': firstName,
+      'last_name': lastName,
+      'phone_provider': phoneProvider,
+      'phone': phoneNumber,
       'sensor': deviceID,
       'depth': tankDepth,
       'street_address': address,
@@ -89,7 +120,7 @@ class AuthService {
   }
 
   //TODO add functionality to push a refresh on the sensor via API... I don't know if API currently exists to do this.
-  Future<int> getTankLevel() async {
+  Future getTankLevel() async {
     if (auth.currentUser.uid != null){
     final DocumentSnapshot currentUserTankLevel = await _fireStore
         .collection('users').doc(auth.currentUser.uid).get();

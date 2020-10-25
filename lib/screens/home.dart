@@ -15,13 +15,24 @@ class _HomeState extends State<Home> {
 
   //This function pulls the current tank level readings from firebase and refreshes the state
   void getTankLevel() async {
-    int doubleTankLevel = await AuthService().getTankLevel();
-    tankLevel = doubleTankLevel;
+    var doubleTankLevel = await AuthService().getTankLevel();
+    if(doubleTankLevel.runtimeType == double){
+      String stringTankLevel = doubleTankLevel.toString();
+      tankLevel = double.parse(stringTankLevel).floor().toInt();
+    }else {
+      tankLevel = doubleTankLevel;
+    }
     if(tankLevel <= 0){
       tankLevel = 1;
     }
     setState(() {
     });
+  }
+
+  @override
+  void dispose() {
+    AuthService().signOutGoogle();
+    super.dispose();
   }
 
   @override

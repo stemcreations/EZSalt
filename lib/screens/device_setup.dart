@@ -11,6 +11,10 @@ class DeviceSetup extends StatefulWidget {
 }
 
 class _DeviceSetupState extends State<DeviceSetup> {
+  String selectedPhoneCarrier;
+  String firstName;
+  String lastName;
+  String phoneNumber;
   String deviceID;
   String zipCode;
   String tankDepth;
@@ -21,13 +25,35 @@ class _DeviceSetupState extends State<DeviceSetup> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final deviceIdTextController = TextEditingController();
 
+  List<DropdownMenuItem> dropDownBuilder(){
+    List<DropdownMenuItem<String>> dropDownItemList = [];
+
+    for(final name in phoneCarriers.keys){
+      String phoneCarrier = name;
+      String phoneCarrierValue = phoneCarriers[name];
+      var newDropDownItem = DropdownMenuItem(
+        child: Text(phoneCarrier),
+        value: phoneCarrierValue,
+      );
+      dropDownItemList.add(newDropDownItem);
+    }
+    return dropDownItemList;
+  }
+
+  @override
+  void initState() {
+    dropDownBuilder();
+    super.initState();
+  }
+
   void showSnackBar(String message){
     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message),));
   }
 
   bool assertNoNullFields(){
-    if(state != null && city != null && address != null
+    if(state != null && city != null && address != null && firstName != null
         && tankDepth != null && zipCode != null && deviceID != null
+        && lastName != null && phoneNumber != null && selectedPhoneCarrier != null
     ){
       return true;
     }else {
@@ -74,6 +100,9 @@ class _DeviceSetupState extends State<DeviceSetup> {
                   ),
                 ),
               ),
+              CustomTextField(text: 'First Name', onChanged: (text) => firstName = text.trim(),),
+              CustomTextField(text: 'Last Name', onChanged: (text) => lastName = text.trim(),),
+              CustomTextField(text: 'Phone Number', onChanged: (text) => phoneNumber = text.trim(), keyboardType: TextInputType.phone,),
               CustomTextField(text: 'Street Address', onChanged: (text) => address = text.trim(),),
               CustomTextField(text: 'City', onChanged: (text) => city = text,),
               CustomTextField(text: 'State', onChanged: (text) => state = text,),
@@ -90,7 +119,32 @@ class _DeviceSetupState extends State<DeviceSetup> {
                     scanBarcodeNormal();
                   },)
                 ],
-              ),//tank depth
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 35, left: 35, top: 5, bottom: 5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: borderAndTextColor), borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 5, bottom: 5, right: 30, left: 30),
+                    child: DropdownButton(
+                      style: TextStyle(color: borderAndTextColor, fontWeight: FontWeight.bold),
+                      value: selectedPhoneCarrier,
+                      hint: Text('Select Phone Carrier', style: TextStyle(color: borderAndTextColor),),
+                      icon: Icon(Icons.keyboard_arrow_down),
+                      isExpanded: true,
+                      underline: Container(),
+                      items: dropDownBuilder(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedPhoneCarrier = value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ), //tank depth
               Padding(
                 padding: const EdgeInsets.only(top: 15.0, bottom: 20),
                 child: MaterialButton(
@@ -102,7 +156,11 @@ class _DeviceSetupState extends State<DeviceSetup> {
                           city,
                           state,
                           int.parse(zipCode),
-                          int.parse(tankDepth)
+                          int.parse(tankDepth),
+                          firstName,
+                          lastName,
+                          selectedPhoneCarrier,
+                          phoneNumber
                       );
                       //TODO fix form reset;
                       //formKey.currentState.reset();
