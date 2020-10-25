@@ -14,10 +14,9 @@ class _HomeState extends State<Home> {
   double monthlySubscriptionPrice = 3;
 
   //This function pulls the current tank level readings from firebase and refreshes the state
-  Future getTankLevel() async {
-    var doubleTankLevel = await AuthService().getTankLevel();
-    String stringTankLevel = doubleTankLevel.toString();
-    tankLevel = double.parse(stringTankLevel).toInt();
+  void getTankLevel() async {
+    int doubleTankLevel = await AuthService().getTankLevel();
+    tankLevel = doubleTankLevel;
     if(tankLevel <= 0){
       tankLevel = 1;
     }
@@ -95,45 +94,47 @@ class _HomeState extends State<Home> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, bottom: 10),
-              child: Divider(),
+              child: Container(child: Divider(thickness: 2,)),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  '\$' + monthlySubscriptionPrice.toStringAsFixed(2),
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: borderAndTextColor,
-                  ),
-                ),
-                Text(' Monthly', style: TextStyle(color: borderAndTextColor),)
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: Slider(
-                divisions: 18,
-                max: 10,
-                min: 1,
-                value: monthlySubscriptionPrice,
-                onChanged: (double value) {
-                  setState(() {
-                    monthlySubscriptionPrice = value;
-                  });
-                },
-              ),
-            ),
-            // Text(
-            //   '\$' + monthlySubscriptionPrice.toStringAsFixed(2) + ' Monthly',
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   crossAxisAlignment: CrossAxisAlignment.baseline,
+            //   textBaseline: TextBaseline.alphabetic,
+            //   children: [
+            //     Text(
+            //       '\$' + monthlySubscriptionPrice.toStringAsFixed(2),
+            //       style: TextStyle(
+            //         fontSize: 30,
+            //         color: borderAndTextColor,
+            //       ),
+            //     ),
+            //     Text(' Monthly', style: TextStyle(color: borderAndTextColor),)
+            //   ],
             // ),
-            FlatButton(
-              onPressed: () {  },
-              child: Text('Upgrade To Pro', style: TextStyle(color: borderAndTextColor),),
-              color: Colors.grey.shade300,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 50),
+            //   child: Slider(
+            //     divisions: 18,
+            //     max: 10,
+            //     min: 1,
+            //     value: monthlySubscriptionPrice,
+            //     onChanged: (double value) {
+            //       setState(() {
+            //         monthlySubscriptionPrice = value;
+            //       });
+            //     },
+            //   ),
+            // ),
+            Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: MaterialButton(
+                elevation: 3,
+                height: 40,
+                onPressed: () {  },
+                child: Text('Schedule Delivery', style: TextStyle(color: borderAndTextColor),),
+                color: Colors.grey.shade300,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
             ),
           ],
         ),

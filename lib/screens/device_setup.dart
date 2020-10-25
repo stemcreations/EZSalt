@@ -11,7 +11,6 @@ class DeviceSetup extends StatefulWidget {
 }
 
 class _DeviceSetupState extends State<DeviceSetup> {
-  String _scanBarcode = 'EZSalt_123456';
   String deviceID;
   String zipCode;
   String tankDepth;
@@ -45,7 +44,6 @@ class _DeviceSetupState extends State<DeviceSetup> {
     }
     if(!mounted) return;
     setState(() {
-      _scanBarcode = barcodeScanRes;
       deviceIdTextController.text = barcodeScanRes;
     });
   }
@@ -106,7 +104,8 @@ class _DeviceSetupState extends State<DeviceSetup> {
                           int.parse(zipCode),
                           int.parse(tankDepth)
                       );
-                      formKey.currentState.reset();
+                      //TODO fix form reset;
+                      //formKey.currentState.reset();
                       Navigator.pushNamed(context, '/home');
                     }else{
                       showSnackBar('Missing Fields');

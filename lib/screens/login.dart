@@ -1,6 +1,7 @@
 import 'package:ez_salt/networking/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:flutter/rendering.dart';
@@ -64,6 +65,58 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  void resetPasswordDialog(BuildContext context){
+    String resetEmail = '';
+    showDialog(
+      context: context,
+      builder: (BuildContext context){
+        return Center(
+          child: Dialog(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width / 1.3,
+              height: MediaQuery.of(context).size.height / 3,
+              child: Container(
+                decoration: new BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.white),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        Padding(padding: const EdgeInsets.only(top: 20), child: Text('Reset Password', style: TextStyle(fontSize: 20, color: borderAndTextColor),),),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5.0),
+                          child: CustomTextField(text: 'Email Address', autoFocus: true, keyboardType: TextInputType.emailAddress, onChanged: (String value) { setState(() {
+                            resetEmail = value.trim();
+                          });},)
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: MaterialButton(
+                        minWidth: 120,
+                        elevation: 3,
+                        color: Colors.grey.shade300,
+                        textColor: borderAndTextColor,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
+                        onPressed: () async {
+                          String result = await AuthService().resetPassword(resetEmail);
+                          print(result);
+                          Navigator.of(context).pop();
+                          },
+                        child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                       Padding(
                         padding: const EdgeInsets.only(left: 30),
                         child: MaterialButton(
-                          onPressed: () {  },  //TODO need to add function to forgot password
+                          onPressed: () { resetPasswordDialog(context); },  //TODO need to add function to forgot password
                           child: Text(
                             'Forgot Password?',
                             style: TextStyle(color: borderAndTextColor),
@@ -188,7 +241,9 @@ class _LoginPageState extends State<LoginPage> {
                     size: 230,
                     icon: Icon(FontAwesomeIcons.google),
                     label: Text('   Continue with Google'),
-                    onPressed: (){},
+                    onPressed: (){
+                      AuthService().signInWithGoogle().whenComplete(() => Navigator.pushNamed(context, '/home'));
+                      },
                   ),
                   //TODO add facebook login integration with firebase and facebook to allow signin with Facebook
                   // Padding(
@@ -215,5 +270,4 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 }
-
 

@@ -1,10 +1,40 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   UserCredential  currentUser;
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
+  GoogleSignIn googleSignIn = GoogleSignIn();
+
+  Future<String> signInWithGoogle() async {
+    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+    final UserCredential authResult = await auth.signInWithCredential(credential);
+    final FirebaseUser user = authResult.user;
+
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+    final FirebaseUser currentUser = auth.currentUser;
+    assert(user.uid == currentUser.uid);
+
+    return 'signInWithGoogle succeeded';
+  }
+
+  void printUid(){
+
+    print(auth.currentUser.uid);
+    print(googleSignIn.currentUser);
+  }
+
+  void signOutGoogle() async {
+    await googleSignIn.signOut();
+  }
 
   Future createUserWithEmailAndPassword(
       String email, String password, String firstName, String lastName,
@@ -59,7 +89,7 @@ class AuthService {
   }
 
   //TODO add functionality to push a refresh on the sensor via API... I don't know if API currently exists to do this.
-  Future<double> getTankLevel() async {
+  Future<int> getTankLevel() async {
     if (auth.currentUser.uid != null){
     final DocumentSnapshot currentUserTankLevel = await _fireStore
         .collection('users').doc(auth.currentUser.uid).get();
@@ -78,6 +108,16 @@ class AuthService {
       return profileData;
     }
     return null;
+  }
+
+  Future<String> resetPassword(String email) async {
+    try {
+      await auth.sendPasswordResetEmail(email: email);
+      return 'success';
+    } catch (error) {
+      print(error);
+      return error;
+    }
   }
 }
 

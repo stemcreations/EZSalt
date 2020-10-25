@@ -4,8 +4,8 @@ import 'package:ez_salt/constants.dart';
 
 class CustomTextField extends StatelessWidget {
   CustomTextField({@required this.text, this.icon, this.keyboardType,
-    this.obscureText = false, this.onChanged, this.maxLength, this.labelText,
-    this.controller, this.initialValue, this.horizontalPadding = 35,
+    this.obscureText = false, @required this.onChanged, this.maxLength, this.labelText,
+    this.controller, this.initialValue, this.horizontalPadding = 35, this.autoFocus = false,
   });
 
   final double horizontalPadding;
@@ -17,6 +17,7 @@ class CustomTextField extends StatelessWidget {
   final Function(String) onChanged;
   final int maxLength;
   final String labelText;
+  final bool autoFocus;
   final TextEditingController controller;
 
   @override
@@ -24,6 +25,7 @@ class CustomTextField extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(left: 35, right: horizontalPadding, top: 5, bottom: 5),
       child: TextFormField(
+        autofocus: autoFocus,
         initialValue: initialValue,
         controller: controller,
         textInputAction: TextInputAction.next,

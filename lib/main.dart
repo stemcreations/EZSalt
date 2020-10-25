@@ -1,3 +1,4 @@
+import 'package:ez_salt/networking/authentication.dart';
 import 'package:ez_salt/screens/local_salt.dart';
 import 'package:ez_salt/screens//login.dart';
 import 'package:ez_salt/screens//profile.dart';
@@ -50,7 +51,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _scanBarcode = 'Unknown';
 
   @override
   Widget build(BuildContext context) {
@@ -90,29 +90,16 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             RaisedButton(
-              child: Text('Scan Barcode'),
+              child: Text('Sign Out Google'),
               onPressed: () {
-                scanBarcodeNormal();
+                AuthService().signOutGoogle();
+                print('signed out');
               },
             ),
-            Text(_scanBarcode),
           ],
         ),
       ),
     );
-  }
-
-  Future<void> scanBarcodeNormal() async {
-    String barcodeScanRes;
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#00FFFFFF', 'Cancel', true, ScanMode.BARCODE);
-    }on PlatformException{
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-    if(!mounted) return;
-    setState(() {
-      _scanBarcode = barcodeScanRes;
-    });
   }
 }
 
