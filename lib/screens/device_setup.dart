@@ -1,9 +1,11 @@
 import 'package:ez_salt/networking/authentication.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'dart:io';
 
 class DeviceSetup extends StatefulWidget {
   @override
@@ -11,6 +13,7 @@ class DeviceSetup extends StatefulWidget {
 }
 
 class _DeviceSetupState extends State<DeviceSetup> {
+  double containerHeight;
   String selectedPhoneCarrier;
   String firstName;
   String lastName;
@@ -25,7 +28,8 @@ class _DeviceSetupState extends State<DeviceSetup> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final deviceIdTextController = TextEditingController();
 
-  List<DropdownMenuItem> dropDownBuilder(){
+  Widget dropDownBuilder(){
+
     List<DropdownMenuItem<String>> dropDownItemList = [];
 
     for(final name in phoneCarriers.keys){
@@ -37,7 +41,52 @@ class _DeviceSetupState extends State<DeviceSetup> {
       );
       dropDownItemList.add(newDropDownItem);
     }
-    return dropDownItemList;
+    return Padding(
+      padding: const EdgeInsets.only(right: 35, left: 35, top: 5, bottom: 5),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: borderAndTextColor), borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 5, bottom: 5, right: 30, left: 30),
+          child: DropdownButton(
+            style: TextStyle(color: borderAndTextColor, fontWeight: FontWeight.bold),
+            value: selectedPhoneCarrier,
+            hint: Text('Select Phone Carrier', style: TextStyle(color: borderAndTextColor),),
+            icon: Icon(Icons.keyboard_arrow_down),
+            isExpanded: true,
+            underline: Container(),
+            items: dropDownItemList,
+            onChanged: (value) {
+              setState(() {
+                selectedPhoneCarrier = value;
+              });
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget getIosPicker(){
+    setState(() {
+      containerHeight = 150;
+    });
+    List<Widget> pickerList = [];
+    List<String> phoneCarrierList = [];
+
+    for(final name in phoneCarriers.keys){
+      selectedPhoneCarrier = phoneCarriers['AT&T'];
+      String phoneCarrier = name;
+      phoneCarrierList.add(name);
+      var pickerItem = Text(phoneCarrier);
+      pickerList.add(pickerItem);
+    }
+    return CupertinoPicker(
+        onSelectedItemChanged: (int value) { selectedPhoneCarrier = phoneCarriers[phoneCarrierList[value]];},
+    itemExtent: 32.0,
+    children: pickerList);
+
   }
 
   @override
@@ -120,33 +169,14 @@ class _DeviceSetupState extends State<DeviceSetup> {
                   },)
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 35, left: 35, top: 5, bottom: 5),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: borderAndTextColor), borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 5, bottom: 5, right: 30, left: 30),
-                    child: DropdownButton(
-                      style: TextStyle(color: borderAndTextColor, fontWeight: FontWeight.bold),
-                      value: selectedPhoneCarrier,
-                      hint: Text('Select Phone Carrier', style: TextStyle(color: borderAndTextColor),),
-                      icon: Icon(Icons.keyboard_arrow_down),
-                      isExpanded: true,
-                      underline: Container(),
-                      items: dropDownBuilder(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedPhoneCarrier = value;
-                        });
-                      },
-                    ),
-                  ),
+              Container(
+                height: containerHeight,
+                alignment: Alignment.center,
+                child: Platform.isIOS ? getIosPicker() : dropDownBuilder(),
                 ),
-              ), //tank depth
+              //tank depth
               Padding(
-                padding: const EdgeInsets.only(top: 15.0, bottom: 20),
+                padding: const EdgeInsets.only(top: 15.0, bottom: 30),
                 child: MaterialButton(
                   onPressed: () async {
                     if(assertNoNullFields()) {
@@ -182,4 +212,3 @@ class _DeviceSetupState extends State<DeviceSetup> {
     );
   }
 }
-

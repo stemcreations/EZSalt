@@ -29,6 +29,12 @@ class _LoginPageState extends State<LoginPage> {
     await Firebase.initializeApp();
   }
 
+  @override
+  void initState() {
+    initializeApp();
+    super.initState();
+  }
+
   void showSnackBar(String message){
     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message),));
   }
@@ -80,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
               width: MediaQuery.of(context).size.width / 1.3,
               height: MediaQuery.of(context).size.height / 3,
               child: Container(
-                decoration: new BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.white),
+                decoration: new BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -271,12 +277,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),// This trailing comma makes auto-formatting nicer for build methods.
     );
-  }
-
-  @override
-  void initState() {
-    initializeApp();
-    super.initState();
   }
 }
 
