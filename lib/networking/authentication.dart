@@ -9,6 +9,7 @@ class AuthService {
   GoogleSignIn googleSignIn = GoogleSignIn();
 
   Future<String> signInWithGoogle() async {
+    auth.setPersistence(Persistence.LOCAL);
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
@@ -53,15 +54,17 @@ class AuthService {
     return 'signInWithGoogle succeeded';
   }
 
-  void printUid(){
-
-    print(auth.currentUser.uid);
-
-  }
-
   void signOutGoogle() async {
     await auth.signOut();
     await googleSignIn.signOut();
+  }
+
+  Future<String> checkAuthenticationState() async {
+    if(auth.currentUser == null){
+      return 'not logged in';
+    }else{
+      return 'logged in';
+    }
   }
 
   Future createUserWithEmailAndPassword(String email, String password) async {
@@ -107,6 +110,7 @@ class AuthService {
   }
 
   Future<UserCredential> signInWithEmailAndPassword(String email, String password) async {
+    auth.setPersistence(Persistence.LOCAL);
       currentUser = await auth.signInWithEmailAndPassword(
           email: email,
           password: password

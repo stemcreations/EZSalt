@@ -35,7 +35,6 @@ class _ProfilePageState extends State<ProfilePage> {
             child: GestureDetector(
               child: Icon(Icons.edit),
               onTap: (){
-                AuthService().printUid();
               },
             ),
           )

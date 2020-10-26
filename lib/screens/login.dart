@@ -27,6 +27,12 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> initializeApp() async {
     await Firebase.initializeApp();
+    String authState = await AuthService().checkAuthenticationState();
+    if(authState == 'logged in'){
+      Navigator.pushNamed(context, '/home');
+    }else{
+      print(authState);
+    }
   }
 
   @override
@@ -262,12 +268,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   //TODO add facebook login integration with firebase and facebook to allow signin with Facebook
                   // Padding(
-                  //   padding: const EdgeInsets.only(bottom: 3),
+                  //   padding: const EdgeInsets.only(bottom: 3, top: 10),
                   //   child: ReusableOutlineButton(
                   //     size: 230,
                   //     icon: Icon(FontAwesomeIcons.facebook),
                   //     label: Text('   Continue with Facebook'),
-                  //     onPressed: (){},
+                  //     onPressed: () async {print(await AuthService().checkAuthenticationState());},
                   //   ),
                   // ),
                 ],

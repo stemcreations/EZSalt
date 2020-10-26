@@ -28,9 +28,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
+      initialRoute: '/login',
       routes: {
-        '/': (context) => MyHomePage(title: 'EZSalt'),
         '/login': (context) => LoginPage(),
         '/home': (context) => Home(),
         '/localSalt': (context) => LocalSaltPage(),
@@ -41,66 +40,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RaisedButton(
-              child: Text('Login'),
-              onPressed: () {
-                Navigator.pushNamed(context, '/login');
-              },
-            ),
-            RaisedButton(
-              onPressed: () async {
-                final String ip = await Wifi.ip;
-                final String subnet = ip.substring(0, ip.lastIndexOf('.'));
-                final int port = 80;
-                final stream = NetworkAnalyzer.discover2(subnet, port);
-                int found = 0;
-                List list = [];
-                stream.listen((NetworkAddress addr) {
-                  if (addr.exists && addr.ip != '$subnet.1') {
-                    found++;
-                    list.add(addr.ip);
-                  }
-                }).onDone(() {print('Found $found devices: ' + '$list');
-                });
-                },
-              child: Text('Discover Network'),
-            ),
-            RaisedButton(
-              child: Text('device setup'),
-              onPressed: () {
-                Navigator.pushNamed(context, '/deviceSetup');
-              },
-            ),
-            RaisedButton(
-              child: Text('Sign Out Google'),
-              onPressed: () {
-                AuthService().signOutGoogle();
-                print('signed out');
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
