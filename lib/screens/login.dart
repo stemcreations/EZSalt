@@ -1,7 +1,6 @@
 import 'package:ez_salt/networking/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:flutter/rendering.dart';
