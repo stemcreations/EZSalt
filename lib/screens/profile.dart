@@ -8,9 +8,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Map profileData = {'street_address': '', 'city': '', 'last_name': '',
-    'zipcode': 0, 'depth': '', 'phone': '', 'sensor': '', 'state': '',
-    'first_name': '', 'email': ''};
+  Map profileData = {'street_address': 'null', 'distance': 'null', 'city': 'null',
+  'last_name': 'null', 'zipcode': 0, 'phone_provider': '@vtext.com', 'depth': 0,
+  'phone': 'null', 'sensor': 'null', 'state': 'null', 'first_name': 'null', 'email': 'null'};
 
   void getProfileData() async {
     profileData = await AuthService().getProfile();
@@ -57,9 +57,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),),
               ),
               CustomProfileCard(cardData: profileData['first_name'] + ' ' + profileData['last_name'], icon: Icon(Icons.person, color: Colors.grey.shade600,),),
-              AddressCard(address: profileData['street_address'], city: profileData['city'], state: profileData['state'], zipCode: profileData['zipcode'],),
+              TwoLineCustomCard(icon: Icons.location_on, firstLine: profileData['street_address'], secondLine: profileData['city'] + ' ' + profileData['state'] + ', ' + profileData['zipcode'].toString(),),
               CustomProfileCard(cardData: profileData['email'], icon: Icon(Icons.email, color: Colors.grey.shade600,),),
-              CustomProfileCard(cardData: profileData['phone'], icon: Icon(Icons.phone, color: Colors.grey.shade600,),),
+              TwoLineCustomCard(icon: Icons.phone, firstLine: profileData['phone'], secondLine: phoneCarriersReversed[profileData['phone_provider']],),
               CustomProfileCard(cardData: 'Tank Depth: ' + profileData['depth'].toString() + 'cm', icon: Icon(Icons.delete_outline, color: Colors.grey.shade600,),),
               CustomProfileCard(cardData: profileData['sensor'], icon: Icon(Icons.developer_board, color: Colors.grey.shade600,),),
             ],
@@ -70,13 +70,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-class AddressCard extends StatelessWidget {
-  AddressCard({this.address, this.city, this.state, this.zipCode});
+class TwoLineCustomCard extends StatelessWidget {
+  TwoLineCustomCard({this.firstLine, this.secondLine, this.icon});
 
-  final String address;
-  final String city;
-  final String state;
-  final int zipCode;
+  final String firstLine;
+  final String secondLine;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +83,7 @@ class AddressCard extends StatelessWidget {
       Row(children: [
         Padding(
           padding: const EdgeInsets.only(left: 20.0, top: 35, bottom: 35, right: 10),
-          child: Icon(Icons.location_on, color: Colors.grey.shade600,),
+          child: Icon(icon, color: Colors.grey.shade600,),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,7 +96,7 @@ class AddressCard extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(address, style: TextStyle(color: Colors.grey.shade600, fontSize: 16),),
+                  child: Text(firstLine, style: TextStyle(color: Colors.grey.shade600, fontSize: 16),),
                 ),
               ],
             ),
@@ -109,7 +108,7 @@ class AddressCard extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
-                  child: Text('$city $state, $zipCode', style: TextStyle(color: Colors.grey.shade600, fontSize: 16),),
+                  child: Text(secondLine, style: TextStyle(color: Colors.grey.shade600, fontSize: 16),),
                 ),
               ],
             ),

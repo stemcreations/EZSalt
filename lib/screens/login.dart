@@ -14,8 +14,6 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-//TODO Need firebase authentication integration for register/forgot password/facebook and google
-
 class _LoginPageState extends State<LoginPage> {
   String email;
   String password;

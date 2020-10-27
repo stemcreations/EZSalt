@@ -2,6 +2,8 @@ import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'dart:math' as math;
 
 class Home extends StatefulWidget {
@@ -39,6 +41,18 @@ class _HomeState extends State<Home> {
   void initState() {
     getTankLevel();
     super.initState();
+  }
+
+  Future<void> openWebView(String url) async {
+    if(await canLaunch(url)){
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => WebviewScaffold(
+            initialChild: Center(child: CircularProgressIndicator(),),
+            url: url,
+            appBar: AppBar(title: Text('Schedule Delivery'),),
+          ))
+      );
+    }
   }
 
   @override
@@ -107,41 +121,12 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.only(left: 40, right: 40, bottom: 10),
               child: Container(child: Divider(thickness: 2,)),
             ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   crossAxisAlignment: CrossAxisAlignment.baseline,
-            //   textBaseline: TextBaseline.alphabetic,
-            //   children: [
-            //     Text(
-            //       '\$' + monthlySubscriptionPrice.toStringAsFixed(2),
-            //       style: TextStyle(
-            //         fontSize: 30,
-            //         color: borderAndTextColor,
-            //       ),
-            //     ),
-            //     Text(' Monthly', style: TextStyle(color: borderAndTextColor),)
-            //   ],
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 50),
-            //   child: Slider(
-            //     divisions: 18,
-            //     max: 10,
-            //     min: 1,
-            //     value: monthlySubscriptionPrice,
-            //     onChanged: (double value) {
-            //       setState(() {
-            //         monthlySubscriptionPrice = value;
-            //       });
-            //     },
-            //   ),
-            // ),
             Padding(
               padding: const EdgeInsets.only(top: 15.0),
               child: MaterialButton(
                 elevation: 3,
                 height: 40,
-                onPressed: () {  },
+                onPressed: () { openWebView('https://square.site/book/RF2BTQNX9JXWK/ezsalt'); },
                 child: Text('Schedule Delivery', style: TextStyle(color: borderAndTextColor),),
                 color: Colors.grey.shade300,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

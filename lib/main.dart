@@ -5,20 +5,32 @@ import 'package:ez_salt/screens//register.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/screens//home.dart';
 import 'package:ez_salt/screens/device_setup.dart';
+import 'package:flutter/services.dart';
 
 
 void main() {
   runApp(MyApp());
 }
 
-//TODO this page will be where permissions are asked for as well as the on-boarding slider.
+void _portraitModeOnly() {
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+}
 
-class MyApp extends StatelessWidget {
-
-
-  // This widget is the root of your application.
+mixin PortraitModeMixin on StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    _portraitModeOnly();
+    return null;
+  }
+}
+
+class MyApp extends StatelessWidget with PortraitModeMixin {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
