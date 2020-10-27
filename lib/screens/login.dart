@@ -263,7 +263,7 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       },
                   ),
-                  //TODO add facebook login integration with firebase and facebook to allow signin with Facebook
+                  //TODO add apple login integration with firebase and facebook to allow signin with Facebook
                   // Padding(
                   //   padding: const EdgeInsets.only(bottom: 3, top: 10),
                   //   child: ReusableOutlineButton(

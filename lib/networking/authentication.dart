@@ -95,7 +95,7 @@ class AuthService {
       String deviceID, String address, String city, String state,
       int zipCode, int tankDepth, firstName, lastName, phoneProvider, phoneNumber) async {
 
-    _fireStore.collection('users').doc(auth.currentUser.uid).update({
+    await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'first_name': firstName,
       'last_name': lastName,
       'phone_provider': phoneProvider,
@@ -153,5 +153,48 @@ class AuthService {
       return error;
     }
   }
+
+  Future updateName(String firstName, String lastName) async {
+    await _fireStore.collection('users').doc(auth.currentUser.uid).update({
+      'first_name': firstName,
+      'last_name': lastName,
+    });
+    print('finished');
+  }
+
+  Future updateAddress(String address, String city, String state, int zipCode) async {
+    await _fireStore.collection('users').doc(auth.currentUser.uid).update({
+      'street_address': address,
+      'city': city,
+      'state': state,
+      'zipcode': zipCode,
+    });
+  }
+
+  Future updateEmail(String email) async {
+    await _fireStore.collection('users').doc(auth.currentUser.uid).update({
+      'email' : email,
+    });
+  }
+
+  Future updatePhone(String phoneNumber, String phoneProvider) async {
+    await _fireStore.collection('users').doc(auth.currentUser.uid).update({
+      'phone_provider': phoneProvider,
+      'phone': phoneNumber,
+    });
+  }
+
+  Future updateTankDepth(int tankDepth) async {
+    await _fireStore.collection('users').doc(auth.currentUser.uid).update({
+      'depth': tankDepth,
+    });
+  }
+
+  Future updateSensor(String deviceID) async {
+    await _fireStore.collection('users').doc(auth.currentUser.uid).update({
+      'sensor': deviceID,
+    });
+  }
+
 }
 

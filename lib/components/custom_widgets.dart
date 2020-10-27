@@ -93,3 +93,125 @@ class ReusableOutlineButton extends StatelessWidget {
     );
   }
 }
+
+// ============= CUSTOM CARD VIEWS ==============//
+
+class TwoLineCustomCard extends StatelessWidget {
+  TwoLineCustomCard({this.firstLine, this.secondLine, this.icon, this.enterEditMode, this.onTap});
+
+  final String firstLine;
+  final String secondLine;
+  final IconData icon;
+  final bool enterEditMode;
+  final Function onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(child: Column(children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, top: 35, bottom: 35, right: 10),
+                child: Icon(icon, color: Colors.grey.shade600,),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        height: 40,
+                        child: VerticalDivider(color: Colors.black, thickness: .6,),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Text(firstLine, style: TextStyle(color: Colors.grey.shade600, fontSize: 16),),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        height: 40,
+                        child: VerticalDivider(color: Colors.black, thickness: .6,),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Text(secondLine, style: TextStyle(color: Colors.grey.shade600, fontSize: 16),),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Visibility(
+            child: GestureDetector(
+              onTap: onTap,
+              child: Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: Icon(Icons.edit, color: Colors.grey.shade600,),
+            ),),
+            visible: enterEditMode,
+          ),
+        ],
+      ),
+    ],
+    ),
+    );
+  }
+}
+
+class CustomProfileCard extends StatelessWidget {
+  CustomProfileCard({@required this.cardData, this.icon, this.enterEditMode, this.onTap});
+
+  final String cardData;
+  final Icon icon;
+  final bool enterEditMode;
+  final Function onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0, top: 20, bottom: 20, right: 10),
+                    child: icon,
+                  ),
+                  Container(
+                    height: 50,
+                    child: VerticalDivider(color: Colors.black, thickness: .6,),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(cardData, style: TextStyle(color: Colors.grey.shade600, fontSize: 16),),
+                  ),
+                ],
+              ),
+
+            ],
+          ),
+          Visibility(
+            child: GestureDetector(
+              onTap: onTap,
+              child: Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: Icon(Icons.edit, color: Colors.grey.shade600,),
+            ),),
+            visible: enterEditMode,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
