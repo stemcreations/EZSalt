@@ -140,7 +140,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 30),
                 child: Text(
-                  'EZSalt',
+                  'EZsalt',
                   style: TextStyle(
                     fontFamily: 'EZSalt',
                     color: borderAndTextColor,

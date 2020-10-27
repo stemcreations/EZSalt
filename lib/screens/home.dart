@@ -6,7 +6,6 @@ import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'dart:math' as math;
-import 'package:ez_salt/main.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -20,7 +19,6 @@ class _HomeState extends State<Home> {
   String firstName = '';
   String lastName = '';
   String email = '';
-  GlobalKey<DrawerControllerState> _scaffoldKey = GlobalKey<DrawerControllerState>();
 
   //This function pulls the current tank level readings from firebase and refreshes the state
   void getTankLevel() async {
@@ -75,7 +73,7 @@ class _HomeState extends State<Home> {
     var drawerHeader = UserAccountsDrawerHeader(
       accountName: Text(firstName + ' ' + lastName),
       accountEmail: Text(email),
-      currentAccountPicture: Text('EZSalt', style: TextStyle(fontFamily: 'EZSalt', color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),);
+      currentAccountPicture: Text('EZsalt', style: TextStyle(fontFamily: 'EZSalt', color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),);
     final drawerItems = ListView(
       children: <Widget>[
         drawerHeader,
@@ -86,7 +84,7 @@ class _HomeState extends State<Home> {
         ListTile(
           title: Text('About'),
           onTap: (){
-            //Navigator.pushNamed(context, '/profile');
+            Navigator.pushNamed(context, '/about');
             },
         ),
         ListTile(
@@ -115,13 +113,12 @@ class _HomeState extends State<Home> {
     );
     return Scaffold(
       drawer: Drawer(
-        key: _scaffoldKey,
         child: drawerItems,
       ),
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         centerTitle: true,
-        title: Text('EZSalt', style: TextStyle(fontFamily: 'EZSalt', fontWeight: FontWeight.w900),), //App Bar Text and Text style
+        title: Text('EZsalt', style: TextStyle(fontFamily: 'EZSalt', fontWeight: FontWeight.w900),), //App Bar Text and Text style
       ),
       body: SingleChildScrollView(
         child: Column(

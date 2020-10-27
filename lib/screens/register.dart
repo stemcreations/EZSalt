@@ -1,6 +1,5 @@
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:ez_salt/networking/authentication.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -73,7 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 30),
                     child: Text(
-                      'EZSalt',
+                      'EZsalt',
                       style: TextStyle(
                         fontFamily: 'EZSalt',
                         color: borderAndTextColor,

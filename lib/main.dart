@@ -1,3 +1,5 @@
+import 'package:ez_salt/screens/about.dart';
+import 'package:ez_salt/screens/licenses.dart';
 import 'package:ez_salt/screens/local_salt.dart';
 import 'package:ez_salt/screens//login.dart';
 import 'package:ez_salt/screens//profile.dart';
@@ -7,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:ez_salt/screens//home.dart';
 import 'package:ez_salt/screens/device_setup.dart';
 import 'package:flutter/services.dart';
-
 import 'networking/authentication.dart';
 
 
@@ -66,6 +67,8 @@ class MyApp extends StatelessWidget with PortraitModeMixin {
         '/register': (context) => RegisterPage(),
         '/profile': (context) => ProfilePage(),
         '/deviceSetup': (context) => DeviceSetup(),
+        '/licenses': (context) => Licenses(),
+        '/about': (context) => About(),
       },
     );
   }

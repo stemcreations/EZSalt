@@ -6,7 +6,6 @@ import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ez_salt/constants.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class LoginPage extends StatefulWidget {
@@ -136,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'EZSalt',
+                    'EZsalt',
                     style: TextStyle(
                       fontFamily: 'EZSalt',
                       color: borderAndTextColor,

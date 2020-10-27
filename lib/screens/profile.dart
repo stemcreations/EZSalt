@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:ez_salt/networking/authentication.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:flutter/cupertino.dart';
@@ -76,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 40),
-                child: Text('EZSalt', style: TextStyle(
+                child: Text('EZsalt', style: TextStyle(
                   fontFamily: 'EZSalt',
                   color: borderAndTextColor,
                   fontSize: 30,
