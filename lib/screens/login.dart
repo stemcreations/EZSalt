@@ -22,19 +22,9 @@ class _LoginPageState extends State<LoginPage> {
   final snackBar = SnackBar(content: Text('Username Not Found'),);
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  Future<void> initializeApp() async {
-    await Firebase.initializeApp();
-    String authState = await AuthService().checkAuthenticationState();
-    if(authState == 'logged in'){
-      Navigator.pushNamed(context, '/home');
-    }else{
-      print(authState);
-    }
-  }
 
   @override
   void initState() {
-    initializeApp();
     super.initState();
   }
 
@@ -53,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
           setState(() {
             _isAsyncCall = false;
             formKey.currentState.reset();
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushReplacementNamed(context, '/home');
           });
         }
       } on FirebaseAuthException catch (e) {
@@ -182,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                       Padding(
                         padding: const EdgeInsets.only(left: 30),
                         child: MaterialButton(
-                          onPressed: () { resetPasswordDialog(context); },  //TODO need to add function to forgot password
+                          onPressed: () { resetPasswordDialog(context); },
                           child: Text(
                             'Forgot Password?',
                             style: TextStyle(color: borderAndTextColor),
@@ -202,9 +192,6 @@ class _LoginPageState extends State<LoginPage> {
                           icon: Icon(Icons.arrow_forward, size: 0, ),
                           onPressed: () async {
                             _submit();
-                            // Map data = await AuthService().getProfile();
-                            // print(data);
-                            //
                           },
                         ),
                         ReusableOutlineButton(
@@ -257,9 +244,9 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () async {
                       String result = await AuthService().signInWithGoogle();
                       if(result == 'new user created'){
-                        Navigator.pushNamed(context, '/deviceSetup');
+                        Navigator.pushReplacementNamed(context, '/deviceSetup');
                         }else{
-                        Navigator.pushNamed(context, '/home');
+                        Navigator.pushReplacementNamed(context, '/home');
                         }
                       },
                   ),

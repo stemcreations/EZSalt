@@ -107,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           setState(() {
                             _isAsyncCall = false;
                           });
-                          Navigator.pushNamed(context, '/deviceSetup');
+                          Navigator.pushReplacementNamed(context, '/deviceSetup');
                           }else{
                           showSnackBar('Missing Fields');
                           }

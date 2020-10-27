@@ -1,10 +1,12 @@
 import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'dart:math' as math;
+import 'package:ez_salt/main.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -12,12 +14,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Map profileData = {};
   int tankLevel = 1;
   double monthlySubscriptionPrice = 3;
+  String firstName = '';
+  String lastName = '';
+  String email = '';
+  GlobalKey<DrawerControllerState> _scaffoldKey = GlobalKey<DrawerControllerState>();
 
   //This function pulls the current tank level readings from firebase and refreshes the state
   void getTankLevel() async {
     var doubleTankLevel = await AuthService().getTankLevel();
+    profileData = await AuthService().getProfile();
     if(doubleTankLevel.runtimeType == double){
       String stringTankLevel = doubleTankLevel.toString();
       tankLevel = double.parse(stringTankLevel).floor().toInt();
@@ -28,17 +36,22 @@ class _HomeState extends State<Home> {
       tankLevel = 1;
     }
     setState(() {
+      firstName = profileData['first_name'];
+      lastName = profileData['last_name'];
+      email = profileData['email'];
     });
   }
 
-  @override
-  void dispose() {
-    AuthService().signOutGoogle();
-    super.dispose();
+
+  void isLoggedIn() async {
+    if(await AuthService().checkAuthenticationState() != 'logged in'){
+      dispose();
+    }
   }
 
   @override
   void initState() {
+    isLoggedIn();
     getTankLevel();
     super.initState();
   }
@@ -55,22 +68,58 @@ class _HomeState extends State<Home> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+    var drawerHeader = UserAccountsDrawerHeader(
+      accountName: Text(firstName + ' ' + lastName),
+      accountEmail: Text(email),
+      currentAccountPicture: Text('EZSalt', style: TextStyle(fontFamily: 'EZSalt', color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),);
+    final drawerItems = ListView(
+      children: <Widget>[
+        drawerHeader,
+        ListTile(
+          title: Text('Profile'),
+          onTap: (){Navigator.pushNamed(context, '/profile');},
+        ),
+        ListTile(
+          title: Text('About'),
+          onTap: (){
+            //Navigator.pushNamed(context, '/profile');
+            },
+        ),
+        ListTile(
+          title: Text('Sign Out'),
+          onTap: (){
+            showDialog<String>(context: context, builder: (BuildContext context){
+              return AlertDialog(
+                title: Text('Sign Out'),
+                content: Text('Are you sure you want to sign out?'),
+                actions: [
+                  FlatButton(onPressed: (){
+                    Navigator.of(context).pop();
+                  }, child: Text('Cancel'),),
+                  FlatButton(onPressed: () async {
+                    Navigator.of(context).pop();
+                    Navigator.pop(context);
+                    AuthService().signOut();
+                    Navigator.pushReplacementNamed(context, '/login');
+                  }, child: Text('Yes')),
+                ],
+              );
+            });
+            },
+        ),
+      ],
+    );
     return Scaffold(
+      drawer: Drawer(
+        key: _scaffoldKey,
+        child: drawerItems,
+      ),
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10.0),
-              child: GestureDetector(
-              onTap: (){
-                Navigator.pushNamed(context, '/profile');
-              },
-                child: Icon(Icons.settings)
-          ),
-            ),
-        ],
         centerTitle: true,
         title: Text('EZSalt', style: TextStyle(fontFamily: 'EZSalt', fontWeight: FontWeight.w900),), //App Bar Text and Text style
       ),
@@ -126,7 +175,9 @@ class _HomeState extends State<Home> {
               child: MaterialButton(
                 elevation: 3,
                 height: 40,
-                onPressed: () { openWebView('https://square.site/book/RF2BTQNX9JXWK/ezsalt'); },
+                onPressed: () {
+                  openWebView('https://square.site/book/RF2BTQNX9JXWK/ezsalt');
+                  },
                 child: Text('Schedule Delivery', style: TextStyle(color: borderAndTextColor),),
                 color: Colors.grey.shade300,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

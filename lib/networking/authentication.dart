@@ -54,7 +54,7 @@ class AuthService {
     return 'signInWithGoogle succeeded';
   }
 
-  void signOutGoogle() async {
+  void signOut() async {
     await auth.signOut();
     await googleSignIn.signOut();
   }

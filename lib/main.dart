@@ -19,7 +19,6 @@ void main() async {
     initialRoute: isLogged ? '/home' : '/login',
   );
   runApp(myApp);
-
 }
 
 Future<bool> checkLoggedInState () async {

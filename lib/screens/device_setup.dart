@@ -194,7 +194,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                       );
                       //TODO fix form reset;
                       //formKey.currentState.reset();
-                      Navigator.pushNamed(context, '/home');
+                      Navigator.pushReplacementNamed(context, '/home');
                     }else{
                       showSnackBar('Missing Fields');
                     }
