@@ -190,6 +190,12 @@ class AuthService {
     });
   }
 
+  Future updateTankDepthNotification(int tankPercent) async {
+    await _fireStore.collection('users').doc(auth.currentUser.uid).update({
+      'send_percent':{'high': null, 'low': tankPercent},
+    });
+  }
+
   Future updateSensor(String deviceID) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'sensor': deviceID,

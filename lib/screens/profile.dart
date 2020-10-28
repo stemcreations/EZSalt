@@ -17,6 +17,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Map profileData = {'street_address': 'null', 'distance': 'null', 'city': 'null',
   'last_name': 'null', 'zipcode': 0, 'phone_provider': '@vtext.com', 'depth': 0,
   'phone': 'null', 'sensor': 'null', 'state': 'null', 'first_name': 'null', 'email': 'null'};
+  Map sendPercent = {'high': 'null', 'low': 15};
   final deviceIdTextController = TextEditingController();
   double containerHeight;
   String selectedPhoneCarrier;
@@ -25,6 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void getProfileData() async {
     profileData = await AuthService().getProfile();
+    sendPercent = profileData['send_percent'];
     setState(() {});
   }
 
@@ -88,6 +90,7 @@ class _ProfilePageState extends State<ProfilePage> {
               TwoLineCustomCard(onTap: (){changePhoneInformation(context);}, enterEditMode: enterEditMode, icon: Icons.phone, firstLine: profileData['phone'], secondLine: phoneCarriersReversed[profileData['phone_provider']],),
               CustomProfileCard(onTap: (){changeTankDepthDialog(context);}, enterEditMode: enterEditMode, cardData: 'Tank Depth: ' + profileData['depth'].toString() + 'cm', icon: Icon(Icons.delete_outline, color: Colors.grey.shade600,),),
               CustomProfileCard(onTap: (){changeSensorDialog(context);}, enterEditMode: enterEditMode, cardData: profileData['sensor'], icon: Icon(Icons.developer_board, color: Colors.grey.shade600,),),
+              CustomProfileCard(onTap: (){changeTankNotificationDepthDialog(context);}, enterEditMode: enterEditMode, cardData: 'Tank depth notification = ' + sendPercent['low'].toString() + '%', icon: Icon(Icons.delete_outline, color: Colors.grey.shade600,),),
             ],
           ),
         ),
@@ -403,6 +406,61 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void changeTankNotificationDepthDialog(BuildContext context){
+    String tankDepthPercent;
+    showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return Center(
+            child: Dialog(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width / 1,
+                height: MediaQuery.of(context).size.height / 2.5,
+                child: SingleChildScrollView(
+                  child: Container(
+                    decoration: new BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Padding(padding: const EdgeInsets.only(top: 20), child: Text('Update Tank Depth Notification', style: TextStyle(fontSize: 20, color: borderAndTextColor),),),
+                            Padding(
+                                padding: const EdgeInsets.only(top: 10.0, bottom: 40),
+                                child: CustomTextField(text: 'Tank Depth', autoFocus: true, keyboardType: TextInputType.number, onChanged: (String value) { setState(() {
+                                  tankDepthPercent = value.trim();
+                                });},)
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: MaterialButton(
+                            minWidth: 120,
+                            elevation: 3,
+                            color: Colors.grey.shade300,
+                            textColor: borderAndTextColor,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
+                            onPressed: () async {
+                              await AuthService().updateTankDepthNotification(int.parse(tankDepthPercent));
+                              getProfileData();
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+    );
+  }
+
   void changeSensorDialog(BuildContext context){
     String deviceID;
     showDialog(
@@ -463,6 +521,7 @@ class _ProfilePageState extends State<ProfilePage> {
         }
     );
   }
+
 
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
