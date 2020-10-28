@@ -425,10 +425,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         Column(
                           children: [
-                            Padding(padding: const EdgeInsets.only(top: 20), child: Text('Update Tank Depth Notification', style: TextStyle(fontSize: 20, color: borderAndTextColor),),),
+                            Padding(padding: const EdgeInsets.only(top: 20), child: Text('Update Tank Depth Notification', style: TextStyle(fontSize: 18, color: borderAndTextColor),),),
                             Padding(
                                 padding: const EdgeInsets.only(top: 10.0, bottom: 40),
-                                child: CustomTextField(text: 'Tank Depth', autoFocus: true, keyboardType: TextInputType.number, onChanged: (String value) { setState(() {
+                                child: CustomTextField(text: 'Tank Notification Depth', autoFocus: true, keyboardType: TextInputType.number, onChanged: (String value) { setState(() {
                                   tankDepthPercent = value.trim();
                                 });},)
                             ),
