@@ -184,7 +184,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             Padding(
                                 padding: const EdgeInsets.only(top: 5.0),
-                                child: CustomTextField(text: 'Phone Number', autoFocus: true, onChanged: (String value) { setState(() {
+                                child: CustomTextField(text: 'Phone Number', keyboardType: TextInputType.number, autoFocus: true, onChanged: (String value) { setState(() {
                                   phoneNumber = value.trim();
                                 });},)
                             ),
