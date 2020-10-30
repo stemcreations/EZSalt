@@ -200,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         ReusableOutlineButton(
                           size: 110,
-                          label: Text('      Login', style: TextStyle(fontWeight: FontWeight.bold),),
+                          label: Text('Login', style: TextStyle(fontWeight: FontWeight.bold),),
                           icon: Icon(Icons.arrow_forward, size: 0, ),
                           onPressed: () async {
                             _submit();
@@ -208,7 +208,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         ReusableOutlineButton(
                           size: 110,
-                          label: Text('    Register', style: TextStyle(fontWeight: FontWeight.bold),),
+                          label: Text('Register', style: TextStyle(fontWeight: FontWeight.bold),),
                           icon: Icon(Icons.arrow_forward, size: 0,),
                           onPressed: (){
                             Navigator.pushNamed(context, '/register');
@@ -252,7 +252,7 @@ class _LoginPageState extends State<LoginPage> {
                   ReusableOutlineButton(
                     size: 230,
                     icon: Icon(FontAwesomeIcons.google),
-                    label: Text('   Continue with Google'),
+                    label: Text('Continue with Google'),
                     onPressed: () async {
                       String result = await AuthService().signInWithGoogle();
                       if(result == 'new user created'){
@@ -265,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 10, bottom: 3),
                     child: ReusableOutlineButton(
-                      label: Text('            Buy Sensor'),
+                      label: Text('Buy Sensor'),
                       onPressed: (){openWebView('https://www.ezsalt.xyz/');},
                       size: 230,
                       icon: Icon(Icons.developer_board),

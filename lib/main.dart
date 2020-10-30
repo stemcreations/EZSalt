@@ -10,7 +10,7 @@ import 'package:ez_salt/screens/device_setup.dart';
 import 'package:flutter/services.dart';
 import 'networking/authentication.dart';
 
-
+//TODO Set minimum iOS deployment target to 10 and set Swift version to 5.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

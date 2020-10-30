@@ -123,7 +123,6 @@ class AuthService {
       }
   }
 
-  //TODO add functionality to push a refresh on the sensor via API... I don't know if API currently exists to do this.
   Future getTankLevel() async {
     if (auth.currentUser.uid != null){
     final DocumentSnapshot currentUserTankLevel = await _fireStore

@@ -113,7 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                       size: 110,
                       icon: Icon(Icons.arrow_forward, size: 0,),
-                      label: Text('     Submit', style: TextStyle(fontWeight: FontWeight.bold),),
+                      label: Text('Submit', style: TextStyle(fontWeight: FontWeight.bold),),
                     ),
                   ), //Submit button
                 ],

@@ -96,7 +96,15 @@ class ReusableOutlineButton extends StatelessWidget {
           child: Row(
             children: [
               icon,
-              label,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    label,
+                  ],
+                ),
+              ),
             ],
           ),
           onPressed: onPressed,

@@ -169,7 +169,7 @@ class _HomeState extends State<Home> {
             Padding(
               padding: const EdgeInsets.only(top: 15.0),
               child: ReusableOutlineButton(
-                label: Text('            Schedule Delivery'),
+                label: Text('Schedule Delivery'),
                 onPressed: (){openWebView('https://square.site/book/RF2BTQNX9JXWK/ezsalt');},
                 size: 230,
                 icon: Icon(Icons.developer_board, size: 0,),
