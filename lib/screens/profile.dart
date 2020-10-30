@@ -26,6 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void getProfileData() async {
     profileData = await AuthService().getProfile();
+    print(profileData);
     sendPercent = profileData['send_percent'];
     setState(() {});
   }
@@ -87,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
               CustomProfileCard(onTap: (){changeNameDialog(context);},enterEditMode: enterEditMode, cardData: profileData['first_name'] + ' ' + profileData['last_name'], icon: Icon(Icons.person, color: Colors.grey.shade600,),),
               TwoLineCustomCard(onTap: (){changeAddressDialog(context);},enterEditMode: enterEditMode, icon: Icons.location_on, firstLine: profileData['street_address'], secondLine: profileData['city'] + ' ' + profileData['state'] + ', ' + profileData['zipcode'].toString(),),
               CustomProfileCard(onTap: (){changeEmailDialog(context);}, enterEditMode: enterEditMode, cardData: profileData['email'], icon: Icon(Icons.email, color: Colors.grey.shade600,),),
-              TwoLineCustomCard(onTap: (){changePhoneInformation(context);}, enterEditMode: enterEditMode, icon: Icons.phone, firstLine: profileData['phone'], secondLine: phoneCarriersReversed[profileData['phone_provider']],),
+              TwoLineCustomCard(onTap: (){changePhoneInformation(context);}, enterEditMode: enterEditMode, icon: Icons.phone, firstLine: profileData['phone'], secondLine: phoneCarriersReversed[profileData['phone_provider']],),  //phoneCarriersReversed[profileData['phone_provider']]
               CustomProfileCard(onTap: (){changeTankDepthDialog(context);}, enterEditMode: enterEditMode, cardData: 'Tank Depth: ' + profileData['depth'].toString() + 'cm', icon: Icon(Icons.delete_outline, color: Colors.grey.shade600,),),
               CustomProfileCard(onTap: (){changeSensorDialog(context);}, enterEditMode: enterEditMode, cardData: profileData['sensor'], icon: Icon(Icons.developer_board, color: Colors.grey.shade600,),),
               CustomProfileCard(onTap: (){changeTankNotificationDepthDialog(context);}, enterEditMode: enterEditMode, cardData: 'Tank depth notification = ' + sendPercent['low'].toString() + '%', icon: Icon(Icons.delete_outline, color: Colors.grey.shade600,),),

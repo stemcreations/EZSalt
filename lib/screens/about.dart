@@ -23,7 +23,7 @@ class _AboutState extends State<About> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.copyright_outlined, color: Colors.black,),
-                Text('2015 - 2020', style: TextStyle(color: Colors.black, fontSize: 15),),
+                Text('2020', style: TextStyle(color: Colors.black, fontSize: 15),),
               ],
             ),
             MaterialButton(onPressed: (){Navigator.pushNamed(context, '/licenses');},

@@ -1,3 +1,4 @@
+import 'package:ez_salt/constants.dart';
 import 'package:flutter/material.dart';
 
 class Licenses extends StatefulWidget {
@@ -9,6 +10,7 @@ class _LicensesState extends State<Licenses> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       body: SingleChildScrollView(
         child: Center(
           child: Padding(

@@ -7,6 +7,8 @@ import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -21,6 +23,17 @@ class _LoginPageState extends State<LoginPage> {
   final snackBar = SnackBar(content: Text('Username Not Found'),);
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  Future<void> openWebView(String url) async {
+    if(await canLaunch(url)){
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => WebviewScaffold(
+            initialChild: Center(child: CircularProgressIndicator(),),
+            url: url,
+            appBar: AppBar(title: Text('Purchase EZsalt Sensor'),),
+          ))
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -123,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: backgroundColor,
       body: Center(
         child: ModalProgressHUD(
           inAsyncCall: _isAsyncCall,
@@ -248,6 +261,15 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.pushReplacementNamed(context, '/home');
                         }
                       },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 3),
+                    child: ReusableOutlineButton(
+                      label: Text('            Buy Sensor'),
+                      onPressed: (){openWebView('https://www.ezsalt.xyz/');},
+                      size: 230,
+                      icon: Icon(Icons.developer_board),
+                    ),
                   ),
                   //TODO add apple login integration with firebase and facebook to allow signin with Facebook
                   // Padding(

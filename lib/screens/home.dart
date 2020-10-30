@@ -1,3 +1,4 @@
+import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
 import 'package:flutter/cupertino.dart';
@@ -66,8 +67,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     var drawerHeader = UserAccountsDrawerHeader(
@@ -115,7 +114,7 @@ class _HomeState extends State<Home> {
       drawer: Drawer(
         child: drawerItems,
       ),
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         centerTitle: true,
         title: Text('EZsalt', style: TextStyle(fontFamily: 'EZSalt', fontWeight: FontWeight.w900),), //App Bar Text and Text style
@@ -169,15 +168,11 @@ class _HomeState extends State<Home> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 15.0),
-              child: MaterialButton(
-                elevation: 3,
-                height: 40,
-                onPressed: () {
-                  openWebView('https://square.site/book/RF2BTQNX9JXWK/ezsalt');
-                  },
-                child: Text('Schedule Delivery', style: TextStyle(color: borderAndTextColor),),
-                color: Colors.grey.shade300,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: ReusableOutlineButton(
+                label: Text('            Schedule Delivery'),
+                onPressed: (){openWebView('https://square.site/book/RF2BTQNX9JXWK/ezsalt');},
+                size: 230,
+                icon: Icon(Icons.developer_board, size: 0,),
               ),
             ),
           ],
@@ -186,3 +181,5 @@ class _HomeState extends State<Home> {
     );
   }
 }
+
+

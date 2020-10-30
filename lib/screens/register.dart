@@ -55,7 +55,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         title: Text('Register'),
         centerTitle: true,
@@ -92,7 +92,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   // Dropdown menu for phone providers.
                   Padding(
                     padding: const EdgeInsets.only(top: 15.0, bottom: 20),
-                    child: MaterialButton(
+                    child: ReusableOutlineButton(
                       onPressed: () async {
                         if(assertNoNullFields()) {
                           setState(() {
@@ -111,10 +111,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           showSnackBar('Missing Fields');
                           }
                         },
-                      child: Text('Submit', style: TextStyle(color: borderAndTextColor),),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      color: Colors.grey.shade300,
-                      elevation: 3,
+                      size: 110,
+                      icon: Icon(Icons.arrow_forward, size: 0,),
+                      label: Text('     Submit', style: TextStyle(fontWeight: FontWeight.bold),),
                     ),
                   ), //Submit button
                 ],

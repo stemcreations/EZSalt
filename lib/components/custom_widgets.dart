@@ -75,20 +75,32 @@ class ReusableOutlineButton extends StatelessWidget {
     return SizedBox(
       height: 40,
       width: size,
-      child: MaterialButton(
-        elevation: 4,
-        color: Colors.grey.shade300,
-        textColor: borderAndTextColor,
-        shape: RoundedRectangleBorder(
+      child: Container(
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: Row(
-          children: [
-            icon,
-            label,
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.blue.withOpacity(0.4),
+              blurRadius: 3,
+              offset: Offset(0, 2),
+            ),
           ],
         ),
-        onPressed: onPressed,
+        child: MaterialButton(
+          //elevation: 4,
+          color: Colors.grey.shade200,
+          textColor: borderAndTextColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Row(
+            children: [
+              icon,
+              label,
+            ],
+          ),
+          onPressed: onPressed,
+        ),
       ),
     );
   }

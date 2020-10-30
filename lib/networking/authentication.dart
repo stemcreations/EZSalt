@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../constants.dart';
+
 class AuthService {
   UserCredential  currentUser;
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
@@ -81,7 +83,7 @@ class AuthService {
       'send_percent':{'high': null, 'low': 15},
       'percent': 88.0,
       'distance': 15,
-      'phone_provider': 'null',
+      'phone_provider': '@vtext.com',
       'sensor': 'Set Device ID',
       'depth': 20,
       'street_address': 'null',
@@ -110,7 +112,6 @@ class AuthService {
   }
 
   Future<UserCredential> signInWithEmailAndPassword(String email, String password) async {
-    auth.setPersistence(Persistence.LOCAL);
       currentUser = await auth.signInWithEmailAndPassword(
           email: email,
           password: password
