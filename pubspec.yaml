@@ -38,6 +38,7 @@ dependencies:
   flutter_webview_plugin: ^0.3.11
   google_sign_in: ^4.5.5
   auto_size_text: ^2.1.0
+  apple_sign_in: ^0.1.0
 
 dev_dependencies:
   flutter_test:

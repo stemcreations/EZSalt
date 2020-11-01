@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:apple_sign_in/apple_sign_in.dart';
 
 import '../constants.dart';
 
@@ -9,6 +11,69 @@ class AuthService {
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   GoogleSignIn googleSignIn = GoogleSignIn();
+
+  Future<void> signInWithApple({List<Scope> scopes = const []}) async {
+    bool isAvailable = await AppleSignIn.isAvailable();
+    if(isAvailable){
+      final result = await AppleSignIn.performRequests(
+          [AppleIdRequest(requestedScopes: scopes)]);
+      switch (result.status) {
+        case AuthorizationStatus.authorized:
+          final appleIdCredential = result.credential;
+          final oAuthProvider = OAuthProvider('apple.com');
+          final credential = oAuthProvider.credential(
+            idToken: String.fromCharCodes(appleIdCredential.identityToken),
+            accessToken:
+            String.fromCharCodes(appleIdCredential.authorizationCode),
+          );
+          final authResult = await auth.signInWithCredential(credential);
+          final User user = authResult.user;
+
+          assert(!user.isAnonymous);
+          assert(await user.getIdToken() != null);
+          final User currentUser = auth.currentUser;
+          assert(user.uid == currentUser.uid);
+
+          DocumentSnapshot snapshot = await _fireStore.collection('users').doc(currentUser.uid).get();
+
+          if(!snapshot.exists){
+            await _fireStore.collection('users').doc(currentUser.uid).set({
+              'first_name': 'null',
+              'last_name': 'null',
+              'email': currentUser.email,
+              'phone': 'null',
+              'send_percent':{'high': null, 'low': 15},
+              'percent': 88.0,
+              'distance': 15,
+              'phone_provider': '@page.nextell.com',
+              'sensor': 'EZSalt_null12',
+              'depth': 90,
+              'street_address': 'null',
+              'city': 'null',
+              'state': 'null',
+              'zipcode': 10101,
+            });
+            return 'new user created';
+          }
+          return;
+
+        case AuthorizationStatus.error:
+          print(result.error.toString());
+          throw PlatformException(
+            code: 'ERROR_AUTHORIZATION_DENIED',
+            message: result.error.toString(),
+          );
+
+        case AuthorizationStatus.cancelled:
+          throw PlatformException(
+            code: 'ERROR_ABORTED_BY_USER',
+            message: 'Sign in aborted by user',
+          );
+      }
+    }else{
+      print('apple sign in not available');
+    }
+  }
 
   Future<String> signInWithGoogle() async {
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();

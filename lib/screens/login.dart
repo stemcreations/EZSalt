@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:ez_salt/networking/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,6 +35,25 @@ class _LoginPageState extends State<LoginPage> {
             appBar: AppBar(title: Text('Purchase EZsalt Sensor'),),
           ))
       );
+    }
+  }
+
+  Widget checkPlatform(){
+    if(Platform.isIOS){
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 3, top: 10),
+        child: ReusableOutlineButton(
+          size: 230,
+          icon: Icon(FontAwesomeIcons.apple),
+          label: Text('Continue with Apple'),
+          onPressed: () async {
+            AuthService().signInWithApple(scopes: [Scope.email, Scope.fullName]);
+          },
+        ),
+      );
+    }
+    else{
+      return SizedBox(height: 0,);
     }
   }
 
@@ -262,6 +284,7 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       },
                   ),
+                  checkPlatform(),
                   Padding(
                     padding: const EdgeInsets.only(top: 10, bottom: 3),
                     child: ReusableOutlineButton(
@@ -271,16 +294,6 @@ class _LoginPageState extends State<LoginPage> {
                       icon: Icon(Icons.developer_board),
                     ),
                   ),
-                  //TODO add apple login integration with firebase
-                  // Padding(
-                  //   padding: const EdgeInsets.only(bottom: 3, top: 10),
-                  //   child: ReusableOutlineButton(
-                  //     size: 230,
-                  //     icon: Icon(FontAwesomeIcons.facebook),
-                  //     label: Text('   Continue with Facebook'),
-                  //     onPressed: () async {print(await AuthService().checkAuthenticationState());},
-                  //   ),
-                  // ),
                 ],
               ),
             ),
