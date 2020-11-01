@@ -271,7 +271,7 @@ class _LoginPageState extends State<LoginPage> {
                       icon: Icon(Icons.developer_board),
                     ),
                   ),
-                  //TODO add apple login integration with firebase and facebook to allow signin with Facebook
+                  //TODO add apple login integration with firebase
                   // Padding(
                   //   padding: const EdgeInsets.only(bottom: 3, top: 10),
                   //   child: ReusableOutlineButton(

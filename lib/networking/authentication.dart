@@ -11,7 +11,6 @@ class AuthService {
   GoogleSignIn googleSignIn = GoogleSignIn();
 
   Future<String> signInWithGoogle() async {
-    auth.setPersistence(Persistence.LOCAL);
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
@@ -29,10 +28,6 @@ class AuthService {
 
     DocumentSnapshot snapshot = await _fireStore.collection('users').doc(currentUser.uid).get();
 
-
-    //This Section works but i need to send them to the profile setup page after
-    // selecting google signin if they dont already have an account
-    //
     if(!snapshot.exists){
       await _fireStore.collection('users').doc(currentUser.uid).set({
         'first_name': 'null',
