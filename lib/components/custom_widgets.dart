@@ -65,7 +65,7 @@ class CustomTextField extends StatelessWidget {
 // ============= BUTTONS BELOW =============== //
 
 class ReusableOutlineButton extends StatelessWidget {
-  ReusableOutlineButton({this.icon, @required this.label, @required this.onPressed, @required this.size});
+  ReusableOutlineButton({@required this.icon, @required this.label, @required this.onPressed, @required this.size});
   final Icon icon;
   final Text label;
   final Function onPressed;
@@ -82,7 +82,7 @@ class ReusableOutlineButton extends StatelessWidget {
             BoxShadow(
               color: Colors.blue.withOpacity(0.4),
               blurRadius: 3,
-              offset: Offset(0, 2),
+              offset: Offset(0, 0),
             ),
           ],
         ),

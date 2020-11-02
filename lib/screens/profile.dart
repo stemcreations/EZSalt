@@ -135,18 +135,15 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10.0),
-                          child: MaterialButton(
-                            minWidth: 120,
-                            elevation: 3,
-                            color: Colors.grey.shade300,
-                            textColor: borderAndTextColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
+                          child: ReusableOutlineButton(
+                            icon: Icon(Icons.add, size: 0,),
+                            label: Text('Submit'),
+                            size: 120,
                             onPressed: () async {
                               await AuthService().updateName(firstName, lastName);
                               getProfileData();
                               Navigator.of(context).pop();
                             },
-                            child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
                           ),
                         )
                       ],
@@ -194,19 +191,17 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: MaterialButton(
-                            minWidth: 120,
-                            elevation: 3,
-                            color: Colors.grey.shade300,
-                            textColor: borderAndTextColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
+                          padding: const EdgeInsets.only(top: 80.0),
+                          child: ReusableOutlineButton(
+                            icon: Icon(Icons.add, size: 0,),
+                            label: Text('Submit'),
+                            size: 120,
                             onPressed: () async {
                               await AuthService().updatePhone(phoneNumber, selectedPhoneCarrier);
                               getProfileData();
                               Navigator.of(context).pop();
                             },
-                            child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+
                           ),
                         )
                       ],
@@ -232,59 +227,51 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Dialog(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width / 1,
-                height: MediaQuery.of(context).size.height / 1,
+                height: MediaQuery.of(context).size.height / 1.9,
                 child: SingleChildScrollView(
                   child: Container(
                     decoration: new BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          children: [
-                            Padding(padding: const EdgeInsets.only(top: 10), child: Text('Update Address', style: TextStyle(fontSize: 20, color: borderAndTextColor),),),
-                            Padding(
-                                padding: const EdgeInsets.only(top: 2.5),
-                                child: CustomTextField(text: 'Street Address', autoFocus: true, onChanged: (value){
-                                  streetAddress = value;
-                                },)
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(top: 2.5),
-                                child: CustomTextField(text: 'City', autoFocus: true, onChanged: (value){
-                                  city = value;
-                                },)
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(top: 2.5),
-                                child: CustomTextField(text: 'State', autoFocus: true, onChanged: (value){
-                                  state = value;
-                                },)
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(top: 2.5, bottom: 10),
-                                child: CustomTextField(text: 'Zip Code', autoFocus: true,keyboardType: TextInputType.number, onChanged: (value){
-                                  zipCode = value;
-                                },)
-                            ),
-                          ],
+                        Padding(padding: const EdgeInsets.only(top: 10), child: Text('Update Address', style: TextStyle(fontSize: 20, color: borderAndTextColor),),),
+                        Padding(
+                            padding: const EdgeInsets.only(top: 2.5),
+                            child: CustomTextField(text: 'Street Address', autoFocus: true, onChanged: (value){
+                              streetAddress = value;
+                            },)
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: MaterialButton(
-                            minWidth: 120,
-                            elevation: 3,
-                            color: Colors.grey.shade300,
-                            textColor: borderAndTextColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
+                            padding: const EdgeInsets.only(top: 2.5),
+                            child: CustomTextField(text: 'City', autoFocus: true, onChanged: (value){
+                              city = value;
+                            },)
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.only(top: 2.5),
+                            child: CustomTextField(text: 'State', autoFocus: true, onChanged: (value){
+                              state = value;
+                            },)
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.only(top: 2.5, bottom: 10),
+                            child: CustomTextField(text: 'Zip Code', autoFocus: true,keyboardType: TextInputType.number, onChanged: (value){
+                              zipCode = value;
+                            },)
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: ReusableOutlineButton(
                             onPressed: () async {
                               await AuthService().updateAddress(streetAddress, city, state, int.parse(zipCode));
                               getProfileData();
                               Navigator.of(context).pop();
                             },
-                            child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                            icon: Icon(Icons.add, size: 0,),
+                            label: Text('Submit'),
+                            size: 120,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -325,19 +312,16 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: MaterialButton(
-                            minWidth: 120,
-                            elevation: 3,
-                            color: Colors.grey.shade300,
-                            textColor: borderAndTextColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
+                          padding: const EdgeInsets.only(top: 80.0),
+                          child: ReusableOutlineButton(
+                            icon: Icon(Icons.add, size: 0,),
+                            label: Text('Submit'),
+                            size: 120,
                             onPressed: () async {
                               await AuthService().updateEmail(email);
                               getProfileData();
                               Navigator.of(context).pop();
                             },
-                            child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
                           ),
                         )
                       ],
@@ -381,18 +365,15 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10.0),
-                          child: MaterialButton(
-                            minWidth: 120,
-                            elevation: 3,
-                            color: Colors.grey.shade300,
-                            textColor: borderAndTextColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
+                          child: ReusableOutlineButton(
+                            icon: Icon(Icons.add, size: 0,),
+                            label: Text('Submit'),
+                            size: 120,
                             onPressed: () async {
                               await AuthService().updateTankDepth(int.parse(tankDepth));
                               getProfileData();
                               Navigator.of(context).pop();
                             },
-                            child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
                           ),
                         )
                       ],
@@ -436,18 +417,15 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10.0),
-                          child: MaterialButton(
-                            minWidth: 120,
-                            elevation: 3,
-                            color: Colors.grey.shade300,
-                            textColor: borderAndTextColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
+                          child: ReusableOutlineButton(
+                            icon: Icon(Icons.add, size: 0,),
+                            label: Text('Submit'),
+                            size: 120,
                             onPressed: () async {
                               await AuthService().updateTankDepthNotification(int.parse(tankDepthPercent));
                               getProfileData();
                               Navigator.of(context).pop();
                             },
-                            child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
                           ),
                         )
                       ],
@@ -497,18 +475,15 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10.0),
-                          child: MaterialButton(
-                            minWidth: 120,
-                            elevation: 3,
-                            color: Colors.grey.shade300,
-                            textColor: borderAndTextColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
+                          child: ReusableOutlineButton(
+                            icon: Icon(Icons.add, size: 0,),
+                            label: Text('Submit'),
+                            size: 120,
                             onPressed: () async {
                               await AuthService().updateSensor(deviceID);
                               getProfileData();
                               Navigator.of(context).pop();
                             },
-                            child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
                           ),
                         )
                       ],

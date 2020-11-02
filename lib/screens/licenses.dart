@@ -10,6 +10,10 @@ class _LicensesState extends State<Licenses> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('Licenses'),
+      ),
       backgroundColor: backgroundColor,
       body: SingleChildScrollView(
         child: Center(

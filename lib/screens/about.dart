@@ -10,6 +10,10 @@ class _AboutState extends State<About> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('About'),
+        centerTitle: true,
+      ),
       backgroundColor: backgroundColor,
       body: Center(
         child: Column(
