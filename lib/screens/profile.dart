@@ -26,7 +26,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void getProfileData() async {
     profileData = await AuthService().getProfile();
-    print(profileData);
     sendPercent = profileData['send_percent'];
     setState(() {});
   }

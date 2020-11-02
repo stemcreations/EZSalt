@@ -29,3 +29,25 @@ Map phoneCarriersReversed = {
   '@email.uscc.net' : 'U.S. Cellular',
   '@mymetropcs.com' : 'Metro PCS',
 };
+
+List<String> requiredAccountParameters = [
+  'first_name',
+  'last_name',
+  'email',
+  'phone',
+  'send_percent',
+  'percent',
+  'distance',
+  'phone_provider',
+  'sensor',
+  'depth',
+  'street_address',
+  'city',
+  'state',
+  'zipcode',
+];
+
+List<String> sendPercentParameters = [
+  'high',
+  'low',
+];

@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:ez_salt/constants.dart';
 
-import '../constants.dart';
 
 class AuthService {
   UserCredential  currentUser;
@@ -35,26 +35,8 @@ class AuthService {
           assert(user.uid == currentUser.uid);
 
           DocumentSnapshot snapshot = await _fireStore.collection('users').doc(currentUser.uid).get();
-
-          if(!snapshot.exists){
-            await _fireStore.collection('users').doc(currentUser.uid).set({
-              'first_name': 'null',
-              'last_name': 'null',
-              'email': currentUser.email,
-              'phone': 'null',
-              'send_percent':{'high': null, 'low': 15},
-              'percent': 88.0,
-              'distance': 15,
-              'phone_provider': '@page.nextell.com',
-              'sensor': 'EZSalt_null12',
-              'depth': 90,
-              'street_address': 'null',
-              'city': 'null',
-              'state': 'null',
-              'zipcode': 10101,
-            });
-            return 'new user created';
-          }
+          await checkAccountsRequiredParameters();
+          await setAccountsRequiredParameters();
           return;
 
         case AuthorizationStatus.error:
@@ -92,26 +74,8 @@ class AuthService {
     assert(user.uid == currentUser.uid);
 
     DocumentSnapshot snapshot = await _fireStore.collection('users').doc(currentUser.uid).get();
-
-    if(!snapshot.exists){
-      await _fireStore.collection('users').doc(currentUser.uid).set({
-        'first_name': 'null',
-        'last_name': 'null',
-        'email': currentUser.email,
-        'phone': 'null',
-        'send_percent':{'high': null, 'low': 15},
-        'percent': 88.0,
-        'distance': 15,
-        'phone_provider': '@page.nextell.com',
-        'sensor': 'EZSalt_null12',
-        'depth': 90,
-        'street_address': 'null',
-        'city': 'null',
-        'state': 'null',
-        'zipcode': 10101,
-      });
-      return 'new user created';
-    }
+    await checkAccountsRequiredParameters();
+    await setAccountsRequiredParameters();
 
     return 'signInWithGoogle succeeded';
   }
@@ -135,22 +99,7 @@ class AuthService {
         email: email,
         password: password
     );
-    _fireStore.collection('users').doc(user.user.uid).set({
-      'first_name': 'null',
-      'last_name': 'null',
-      'email': email,
-      'phone': 'null',
-      'send_percent':{'high': null, 'low': 15},
-      'percent': 88.0,
-      'distance': 15,
-      'phone_provider': '@vtext.com',
-      'sensor': 'Set Device ID',
-      'depth': 20,
-      'street_address': 'null',
-      'city': 'null',
-      'state': 'null',
-      'zipcode': 'null',
-    });
+    await setAccountsRequiredParameters();
   }
 
   Future profileAndDeviceSetup(
@@ -176,6 +125,8 @@ class AuthService {
           email: email,
           password: password
       );
+      await checkAccountsRequiredParameters();
+      await setAccountsRequiredParameters();
       if(currentUser != null) {
         return currentUser;
       }else{
@@ -262,5 +213,63 @@ class AuthService {
     });
   }
 
+  Future setAccountsRequiredParameters() async {
+    final User currentUser = auth.currentUser;
+    DocumentSnapshot snapshot = await _fireStore.collection('users').doc(currentUser.uid).get();
+    await checkAccountsRequiredParameters();
+    if(!snapshot.exists){
+      await _fireStore.collection('users').doc(currentUser.uid).set({
+        'first_name': 'null',
+        'last_name': 'null',
+        'email': currentUser.email,
+        'phone': 'null',
+        'send_percent':{'high': null, 'low': 15},
+        'percent': 10.0,
+        'distance': 15,
+        'phone_provider': '@tmomail.net',
+        'sensor': 'EZSalt_null12',
+        'depth': 90,
+        'street_address': 'null',
+        'city': 'null',
+        'state': 'null',
+        'zipcode': 10101,
+      });
+      return 'new user created';
+    }
+  }
+
+  Future checkAccountsRequiredParameters() async {
+    Map userProfile;
+    final User currentUser = auth.currentUser;
+    DocumentSnapshot snapshot = await _fireStore.collection('users').doc(currentUser.uid).get();
+    if(snapshot.exists){
+      userProfile = await getProfile();
+      for(final parameter in requiredAccountParameters){
+        if(!userProfile.containsKey(parameter)){
+          if(parameter != 'zipcode' && parameter != 'percent' && parameter != 'distance' && parameter != 'depth' && parameter != 'send_percent' && parameter != 'phone_provider') {
+            await _fireStore.collection('users').doc(currentUser.uid).update({
+              parameter : 'null'
+            });
+            print('missing strings');
+          }else if(parameter != 'send_percent' && parameter != 'phone_provider'){
+            await _fireStore.collection('users').doc(currentUser.uid).update({
+              parameter : 10
+            });
+            print('integers');
+          }else if(parameter == 'send_percent' && parameter != 'phone_provider'){
+            await _fireStore.collection('users').doc(currentUser.uid).update({
+              parameter : {'high': null, 'low': 15},
+            });
+            print('send percent');
+          }else if(parameter == 'phone_provider'){
+            await _fireStore.collection('users').doc(currentUser.uid).update({
+              parameter : '@tmomail.net',
+            });
+          }
+        }
+      }
+    }
+    return null;
+  }
 }
 

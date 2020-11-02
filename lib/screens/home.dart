@@ -70,7 +70,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var drawerHeader = UserAccountsDrawerHeader(
-      accountName: Text(firstName + ' ' + lastName),
+      //accountName: Text(firstName + ' ' + lastName),
       accountEmail: Text(email),
       currentAccountPicture: Text('EZsalt', style: TextStyle(fontFamily: 'EZSalt', color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),);
     final drawerItems = ListView(
