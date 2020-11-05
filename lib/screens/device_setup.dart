@@ -14,6 +14,8 @@ class DeviceSetup extends StatefulWidget {
 }
 
 class _DeviceSetupState extends State<DeviceSetup> {
+  Map phoneProviders = {};
+  Map phoneProvidersReversed = {};
   double containerHeight;
   String selectedPhoneCarrier;
   String firstName;
@@ -29,13 +31,19 @@ class _DeviceSetupState extends State<DeviceSetup> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final deviceIdTextController = TextEditingController();
 
+  void getProfileData() async {
+    phoneProviders = await AuthService().getPhoneProviders();
+    phoneProvidersReversed = await AuthService().getPhoneProvidersReversed();
+    setState(() {});
+  }
+
   Widget dropDownBuilder(){
 
     List<DropdownMenuItem<String>> dropDownItemList = [];
 
-    for(final name in phoneCarriers.keys){
+    for(final name in phoneProviders.keys){
       String phoneCarrier = name;
-      String phoneCarrierValue = phoneCarriers[name];
+      String phoneCarrierValue = phoneProviders[name];
       var newDropDownItem = DropdownMenuItem(
         child: Text(phoneCarrier),
         value: phoneCarrierValue,
@@ -76,15 +84,15 @@ class _DeviceSetupState extends State<DeviceSetup> {
     List<Widget> pickerList = [];
     List<String> phoneCarrierList = [];
 
-    for(final name in phoneCarriers.keys){
-      selectedPhoneCarrier = phoneCarriers['AT&T'];
+    for(final name in phoneProviders.keys){
+      selectedPhoneCarrier = phoneProviders['AT&T'];
       String phoneCarrier = name;
       phoneCarrierList.add(name);
       var pickerItem = Text(phoneCarrier);
       pickerList.add(pickerItem);
     }
     return CupertinoPicker(
-        onSelectedItemChanged: (int value) { selectedPhoneCarrier = phoneCarriers[phoneCarrierList[value]];},
+        onSelectedItemChanged: (int value) { selectedPhoneCarrier = phoneProviders[phoneCarrierList[value]];},
     itemExtent: 32.0,
     children: pickerList);
 
@@ -92,6 +100,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
 
   @override
   void initState() {
+    getProfileData();
     dropDownBuilder();
     super.initState();
   }

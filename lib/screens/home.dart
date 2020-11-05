@@ -46,6 +46,8 @@ class _HomeState extends State<Home> {
     if(await AuthService().checkAuthenticationState() != 'logged in'){
       dispose();
     }
+    AuthService().getPhoneProviders();
+    AuthService().getPhoneProvidersReversed();
   }
 
   @override

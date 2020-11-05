@@ -1,20 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ez_salt/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:apple_sign_in/apple_sign_in.dart';
-import 'package:ez_salt/constants.dart';
-
 
 class AuthService {
-  UserCredential  currentUser;
+  UserCredential currentUser;
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   GoogleSignIn googleSignIn = GoogleSignIn();
 
   Future<void> signInWithApple({List<Scope> scopes = const []}) async {
     bool isAvailable = await AppleSignIn.isAvailable();
-    if(isAvailable){
+    if (isAvailable) {
       final result = await AppleSignIn.performRequests(
           [AppleIdRequest(requestedScopes: scopes)]);
       switch (result.status) {
@@ -24,7 +23,7 @@ class AuthService {
           final credential = oAuthProvider.credential(
             idToken: String.fromCharCodes(appleIdCredential.identityToken),
             accessToken:
-            String.fromCharCodes(appleIdCredential.authorizationCode),
+                String.fromCharCodes(appleIdCredential.authorizationCode),
           );
           final authResult = await auth.signInWithCredential(credential);
           final User user = authResult.user;
@@ -34,7 +33,8 @@ class AuthService {
           final User currentUser = auth.currentUser;
           assert(user.uid == currentUser.uid);
 
-          DocumentSnapshot snapshot = await _fireStore.collection('users').doc(currentUser.uid).get();
+          DocumentSnapshot snapshot =
+              await _fireStore.collection('users').doc(currentUser.uid).get();
           await checkAccountsRequiredParameters();
           await setAccountsRequiredParameters();
           return;
@@ -52,20 +52,22 @@ class AuthService {
             message: 'Sign in aborted by user',
           );
       }
-    }else{
+    } else {
       print('apple sign in not available');
     }
   }
 
   Future<String> signInWithGoogle() async {
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+    final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleSignInAuthentication.accessToken,
       idToken: googleSignInAuthentication.idToken,
     );
 
-    final UserCredential userCredential = await auth.signInWithCredential(credential);
+    final UserCredential userCredential =
+        await auth.signInWithCredential(credential);
     final User user = userCredential.user;
 
     assert(!user.isAnonymous);
@@ -73,7 +75,8 @@ class AuthService {
     final User currentUser = auth.currentUser;
     assert(user.uid == currentUser.uid);
 
-    DocumentSnapshot snapshot = await _fireStore.collection('users').doc(currentUser.uid).get();
+    DocumentSnapshot snapshot =
+        await _fireStore.collection('users').doc(currentUser.uid).get();
     await checkAccountsRequiredParameters();
     await setAccountsRequiredParameters();
 
@@ -86,26 +89,30 @@ class AuthService {
   }
 
   Future<String> checkAuthenticationState() async {
-    if(auth.currentUser == null){
+    if (auth.currentUser == null) {
       return 'not logged in';
-    }else{
+    } else {
       return 'logged in';
     }
   }
 
   Future createUserWithEmailAndPassword(String email, String password) async {
-
     UserCredential user = await auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password
-    );
+        email: email, password: password);
     await setAccountsRequiredParameters();
   }
 
   Future profileAndDeviceSetup(
-      String deviceID, String address, String city, String state,
-      int zipCode, int tankDepth, firstName, lastName, phoneProvider, phoneNumber) async {
-
+      String deviceID,
+      String address,
+      String city,
+      String state,
+      int zipCode,
+      int tankDepth,
+      firstName,
+      lastName,
+      phoneProvider,
+      phoneNumber) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'first_name': firstName,
       'last_name': lastName,
@@ -120,25 +127,24 @@ class AuthService {
     });
   }
 
-  Future<UserCredential> signInWithEmailAndPassword(String email, String password) async {
-      currentUser = await auth.signInWithEmailAndPassword(
-          email: email,
-          password: password
-      );
-      await checkAccountsRequiredParameters();
-      await setAccountsRequiredParameters();
-      if(currentUser != null) {
-        return currentUser;
-      }else{
-        return null;
-      }
+  Future<UserCredential> signInWithEmailAndPassword(
+      String email, String password) async {
+    currentUser =
+        await auth.signInWithEmailAndPassword(email: email, password: password);
+    await checkAccountsRequiredParameters();
+    await setAccountsRequiredParameters();
+    if (currentUser != null) {
+      return currentUser;
+    } else {
+      return null;
+    }
   }
 
   Future getTankLevel() async {
-    if (auth.currentUser.uid != null){
-    final DocumentSnapshot currentUserTankLevel = await _fireStore
-        .collection('users').doc(auth.currentUser.uid).get();
-    return currentUserTankLevel.get('percent');
+    if (auth.currentUser.uid != null) {
+      final DocumentSnapshot currentUserTankLevel =
+          await _fireStore.collection('users').doc(auth.currentUser.uid).get();
+      return currentUserTankLevel.get('percent');
     }
     return null;
   }
@@ -146,9 +152,9 @@ class AuthService {
   //Gets the current users profile data in dictionary/Map form
   Future<Map> getProfile() async {
     Map profileData;
-    if (auth.currentUser.uid != null){
-      final DocumentSnapshot currentUserDatabaseProfile = await _fireStore
-          .collection('users').doc(auth.currentUser.uid).get();
+    if (auth.currentUser.uid != null) {
+      final DocumentSnapshot currentUserDatabaseProfile =
+          await _fireStore.collection('users').doc(auth.currentUser.uid).get();
       profileData = currentUserDatabaseProfile.data();
       return profileData;
     }
@@ -173,7 +179,8 @@ class AuthService {
     print('finished');
   }
 
-  Future updateAddress(String address, String city, String state, int zipCode) async {
+  Future updateAddress(
+      String address, String city, String state, int zipCode) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'street_address': address,
       'city': city,
@@ -184,7 +191,7 @@ class AuthService {
 
   Future updateEmail(String email) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
-      'email' : email,
+      'email': email,
     });
   }
 
@@ -203,7 +210,7 @@ class AuthService {
 
   Future updateTankDepthNotification(int tankPercent) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
-      'send_percent':{'high': null, 'low': tankPercent},
+      'send_percent': {'high': null, 'low': tankPercent},
     });
   }
 
@@ -215,15 +222,16 @@ class AuthService {
 
   Future setAccountsRequiredParameters() async {
     final User currentUser = auth.currentUser;
-    DocumentSnapshot snapshot = await _fireStore.collection('users').doc(currentUser.uid).get();
+    DocumentSnapshot snapshot =
+        await _fireStore.collection('users').doc(currentUser.uid).get();
     await checkAccountsRequiredParameters();
-    if(!snapshot.exists){
+    if (!snapshot.exists) {
       await _fireStore.collection('users').doc(currentUser.uid).set({
         'first_name': 'null',
         'last_name': 'null',
         'email': currentUser.email,
         'phone': 'null',
-        'send_percent':{'high': null, 'low': 15},
+        'send_percent': {'high': null, 'low': 15},
         'percent': 10.0,
         'distance': 15,
         'phone_provider': '@tmomail.net',
@@ -241,29 +249,39 @@ class AuthService {
   Future checkAccountsRequiredParameters() async {
     Map userProfile;
     final User currentUser = auth.currentUser;
-    DocumentSnapshot snapshot = await _fireStore.collection('users').doc(currentUser.uid).get();
-    if(snapshot.exists){
+    DocumentSnapshot snapshot =
+        await _fireStore.collection('users').doc(currentUser.uid).get();
+    if (snapshot.exists) {
       userProfile = await getProfile();
-      for(final parameter in requiredAccountParameters){
-        if(!userProfile.containsKey(parameter)){
-          if(parameter != 'zipcode' && parameter != 'percent' && parameter != 'distance' && parameter != 'depth' && parameter != 'send_percent' && parameter != 'phone_provider') {
-            await _fireStore.collection('users').doc(currentUser.uid).update({
-              parameter : 'null'
-            });
+      for (final parameter in requiredAccountParameters) {
+        if (!userProfile.containsKey(parameter)) {
+          if (parameter != 'zipcode' &&
+              parameter != 'percent' &&
+              parameter != 'distance' &&
+              parameter != 'depth' &&
+              parameter != 'send_percent' &&
+              parameter != 'phone_provider') {
+            await _fireStore
+                .collection('users')
+                .doc(currentUser.uid)
+                .update({parameter: 'null'});
             print('missing strings');
-          }else if(parameter != 'send_percent' && parameter != 'phone_provider'){
-            await _fireStore.collection('users').doc(currentUser.uid).update({
-              parameter : 10
-            });
+          } else if (parameter != 'send_percent' &&
+              parameter != 'phone_provider') {
+            await _fireStore
+                .collection('users')
+                .doc(currentUser.uid)
+                .update({parameter: 10});
             print('integers');
-          }else if(parameter == 'send_percent' && parameter != 'phone_provider'){
+          } else if (parameter == 'send_percent' &&
+              parameter != 'phone_provider') {
             await _fireStore.collection('users').doc(currentUser.uid).update({
-              parameter : {'high': null, 'low': 15},
+              parameter: {'high': null, 'low': 15},
             });
             print('send percent');
-          }else if(parameter == 'phone_provider'){
+          } else if (parameter == 'phone_provider') {
             await _fireStore.collection('users').doc(currentUser.uid).update({
-              parameter : '@tmomail.net',
+              parameter: '@tmomail.net',
             });
           }
         }
@@ -271,5 +289,23 @@ class AuthService {
     }
     return null;
   }
-}
 
+  Future<Map> getPhoneProviders() async {
+    Map data = {};
+    Map phoneProviders = {};
+    final DocumentSnapshot phoneProviderSnapshot =
+        await _fireStore.collection('variables').doc('Admin').get();
+    data = phoneProviderSnapshot.data();
+    phoneProviders = data['ProviderOptions'];
+    return phoneProviders;
+  }
+
+  Future<Map> getPhoneProvidersReversed() async {
+    Map phoneProvidersReversed = {};
+    Map phoneProviders = await getPhoneProviders();
+    for (final provider in phoneProviders.keys) {
+      phoneProvidersReversed.addAll({phoneProviders[provider]: provider});
+    }
+    return phoneProvidersReversed;
+  }
+}

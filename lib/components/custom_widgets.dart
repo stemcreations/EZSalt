@@ -1,11 +1,21 @@
-import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:ez_salt/constants.dart';
+import 'package:flutter/material.dart';
 // =============== TEXT FIELDS BELOW =============== //
 
 class CustomTextField extends StatelessWidget {
-  CustomTextField({@required this.text, this.icon, this.keyboardType,
-    this.obscureText = false, @required this.onChanged, this.maxLength, this.labelText,
-    this.controller, this.initialValue, this.horizontalPadding = 35, this.autoFocus = false,
+  CustomTextField({
+    @required this.text,
+    this.icon,
+    this.keyboardType,
+    this.obscureText = false,
+    @required this.onChanged,
+    this.maxLength,
+    this.labelText,
+    this.controller,
+    this.initialValue,
+    this.horizontalPadding = 35,
+    this.autoFocus = false,
   });
 
   final double horizontalPadding;
@@ -23,7 +33,8 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 35, right: horizontalPadding, top: 5, bottom: 5),
+      padding: EdgeInsets.only(
+          left: 35, right: horizontalPadding, top: 5, bottom: 5),
       child: TextFormField(
         autofocus: autoFocus,
         initialValue: initialValue,
@@ -33,9 +44,7 @@ class CustomTextField extends StatelessWidget {
         onChanged: onChanged,
         obscureText: obscureText,
         keyboardType: keyboardType,
-        style: TextStyle(
-          color: borderAndTextColor
-        ),
+        style: TextStyle(color: borderAndTextColor),
         textAlign: TextAlign.center,
         decoration: InputDecoration(
           labelText: labelText,
@@ -65,7 +74,11 @@ class CustomTextField extends StatelessWidget {
 // ============= BUTTONS BELOW =============== //
 
 class ReusableOutlineButton extends StatelessWidget {
-  ReusableOutlineButton({@required this.icon, @required this.label, @required this.onPressed, @required this.size});
+  ReusableOutlineButton(
+      {@required this.icon,
+      @required this.label,
+      @required this.onPressed,
+      @required this.size});
   final Icon icon;
   final Text label;
   final Function onPressed;
@@ -117,7 +130,12 @@ class ReusableOutlineButton extends StatelessWidget {
 // ============= CUSTOM CARD VIEWS ==============//
 
 class TwoLineCustomCard extends StatelessWidget {
-  TwoLineCustomCard({this.firstLine, this.secondLine, this.icon, this.enterEditMode, this.onTap});
+  TwoLineCustomCard(
+      {this.firstLine,
+      this.secondLine,
+      this.icon,
+      this.enterEditMode,
+      this.onTap});
 
   final String firstLine;
   final String secondLine;
@@ -127,66 +145,101 @@ class TwoLineCustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(child: Column(children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Card(
+      child: Column(
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0, top: 35, bottom: 35, right: 10),
-                child: Icon(icon, color: Colors.grey.shade600,),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        height: 40,
-                        child: VerticalDivider(color: Colors.black, thickness: .6,),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text(firstLine, style: TextStyle(color: Colors.grey.shade600, fontSize: 16),),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20.0, top: 35, bottom: 35, right: 10),
+                    child: Icon(
+                      icon,
+                      color: Colors.grey.shade600,
+                    ),
                   ),
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: 40,
-                        child: VerticalDivider(color: Colors.black, thickness: .6,),
+                      Row(
+                        children: [
+                          Container(
+                            height: 40,
+                            child: VerticalDivider(
+                              color: Colors.black,
+                              thickness: .6,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: SizedBox(
+                                height: 20,
+                                width: MediaQuery.of(context).size.width / 1.6,
+                                child: AutoSizeText(
+                                  firstLine,
+                                  style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 16),
+                                  minFontSize: 10,
+                                )),
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text(secondLine, style: TextStyle(color: Colors.grey.shade600, fontSize: 16),),
+                      Row(
+                        children: [
+                          Container(
+                            height: 40,
+                            child: VerticalDivider(
+                              color: Colors.black,
+                              thickness: .6,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: SizedBox(
+                              height: 20,
+                              width: MediaQuery.of(context).size.width / 1.6,
+                              child: AutoSizeText(
+                                secondLine,
+                                style: TextStyle(
+                                    color: Colors.grey.shade600, fontSize: 16),
+                                minFontSize: 10,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ],
               ),
+              Visibility(
+                child: GestureDetector(
+                  onTap: onTap,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 15.0, left: 5),
+                    child: Icon(
+                      Icons.edit,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                visible: enterEditMode,
+              ),
             ],
-          ),
-          Visibility(
-            child: GestureDetector(
-              onTap: onTap,
-              child: Padding(
-              padding: const EdgeInsets.only(right: 15.0),
-              child: Icon(Icons.edit, color: Colors.grey.shade600,),
-            ),),
-            visible: enterEditMode,
           ),
         ],
       ),
-    ],
-    ),
     );
   }
 }
 
 class CustomProfileCard extends StatelessWidget {
-  CustomProfileCard({@required this.cardData, this.icon, this.enterEditMode, this.onTap});
+  CustomProfileCard(
+      {@required this.cardData, this.icon, this.enterEditMode, this.onTap});
 
   final String cardData;
   final Icon icon;
@@ -204,29 +257,40 @@ class CustomProfileCard extends StatelessWidget {
               Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 20.0, top: 20, bottom: 20, right: 10),
+                    padding: const EdgeInsets.only(
+                        left: 20.0, top: 20, bottom: 20, right: 10),
                     child: icon,
                   ),
                   Container(
                     height: 50,
-                    child: VerticalDivider(color: Colors.black, thickness: .6,),
+                    child: VerticalDivider(
+                      color: Colors.black,
+                      thickness: .6,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0),
-                    child: Text(cardData, style: TextStyle(color: Colors.grey.shade600, fontSize: 16),),
+                    child: Text(
+                      cardData,
+                      style:
+                          TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                    ),
                   ),
                 ],
               ),
-
             ],
           ),
           Visibility(
             child: GestureDetector(
               onTap: onTap,
               child: Padding(
-              padding: const EdgeInsets.only(right: 15.0),
-              child: Icon(Icons.edit, color: Colors.grey.shade600,),
-            ),),
+                padding: const EdgeInsets.only(right: 15.0),
+                child: Icon(
+                  Icons.edit,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ),
             visible: enterEditMode,
           ),
         ],
@@ -234,4 +298,3 @@ class CustomProfileCard extends StatelessWidget {
     );
   }
 }
-
