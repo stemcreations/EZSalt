@@ -1,12 +1,13 @@
+import 'dart:io';
+
+import 'package:ez_salt/components/custom_widgets.dart';
+import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ez_salt/components/custom_widgets.dart';
-import 'package:ez_salt/constants.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'dart:io';
 
 class DeviceSetup extends StatefulWidget {
   @override
@@ -37,11 +38,10 @@ class _DeviceSetupState extends State<DeviceSetup> {
     setState(() {});
   }
 
-  Widget dropDownBuilder(){
-
+  Widget dropDownBuilder() {
     List<DropdownMenuItem<String>> dropDownItemList = [];
 
-    for(final name in phoneProviders.keys){
+    for (final name in phoneProviders.keys) {
       String phoneCarrier = name;
       String phoneCarrierValue = phoneProviders[name];
       var newDropDownItem = DropdownMenuItem(
@@ -54,14 +54,20 @@ class _DeviceSetupState extends State<DeviceSetup> {
       padding: const EdgeInsets.only(right: 35, left: 35, top: 5, bottom: 5),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: borderAndTextColor), borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: primaryThemeColor),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
-          padding: const EdgeInsets.only(top: 5, bottom: 5, right: 30, left: 30),
+          padding:
+              const EdgeInsets.only(top: 5, bottom: 5, right: 30, left: 30),
           child: DropdownButton(
-            style: TextStyle(color: borderAndTextColor, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: primaryThemeColor, fontWeight: FontWeight.bold),
             value: selectedPhoneCarrier,
-            hint: Text('Select Phone Carrier', style: TextStyle(color: borderAndTextColor),),
+            hint: Text(
+              'Select Phone Carrier',
+              style: TextStyle(color: primaryThemeColor),
+            ),
             icon: Icon(Icons.keyboard_arrow_down),
             isExpanded: true,
             underline: Container(),
@@ -77,14 +83,14 @@ class _DeviceSetupState extends State<DeviceSetup> {
     );
   }
 
-  Widget getIosPicker(){
+  Widget getIosPicker() {
     setState(() {
       containerHeight = 150;
     });
     List<Widget> pickerList = [];
     List<String> phoneCarrierList = [];
 
-    for(final name in phoneProviders.keys){
+    for (final name in phoneProviders.keys) {
       selectedPhoneCarrier = phoneProviders['AT&T'];
       String phoneCarrier = name;
       phoneCarrierList.add(name);
@@ -92,10 +98,11 @@ class _DeviceSetupState extends State<DeviceSetup> {
       pickerList.add(pickerItem);
     }
     return CupertinoPicker(
-        onSelectedItemChanged: (int value) { selectedPhoneCarrier = phoneProviders[phoneCarrierList[value]];},
-    itemExtent: 32.0,
-    children: pickerList);
-
+        onSelectedItemChanged: (int value) {
+          selectedPhoneCarrier = phoneProviders[phoneCarrierList[value]];
+        },
+        itemExtent: 32.0,
+        children: pickerList);
   }
 
   @override
@@ -105,17 +112,25 @@ class _DeviceSetupState extends State<DeviceSetup> {
     super.initState();
   }
 
-  void showSnackBar(String message){
-    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message),));
+  void showSnackBar(String message) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
   }
 
-  bool assertNoNullFields(){
-    if(state != null && city != null && address != null && firstName != null
-        && tankDepth != null && zipCode != null && deviceID != null
-        && lastName != null && phoneNumber != null && selectedPhoneCarrier != null
-    ){
+  bool assertNoNullFields() {
+    if (state != null &&
+        city != null &&
+        address != null &&
+        firstName != null &&
+        tankDepth != null &&
+        zipCode != null &&
+        deviceID != null &&
+        lastName != null &&
+        phoneNumber != null &&
+        selectedPhoneCarrier != null) {
       return true;
-    }else {
+    } else {
       return false;
     }
   }
@@ -123,11 +138,12 @@ class _DeviceSetupState extends State<DeviceSetup> {
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
     try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#00FFFFFF', 'Cancel', true, ScanMode.BARCODE);
-    }on PlatformException{
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#00FFFFFF', 'Cancel', true, ScanMode.BARCODE);
+    } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
-    if(!mounted) return;
+    if (!mounted) return;
     setState(() {
       deviceIdTextController.text = barcodeScanRes;
     });
@@ -153,43 +169,83 @@ class _DeviceSetupState extends State<DeviceSetup> {
                   'EZsalt',
                   style: TextStyle(
                     fontFamily: 'EZSalt',
-                    color: borderAndTextColor,
+                    color: primaryThemeColor,
                     fontSize: 30.0,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
-              CustomTextField(text: 'First Name', onChanged: (text) => firstName = text.trim(),),
-              CustomTextField(text: 'Last Name', onChanged: (text) => lastName = text.trim(),),
-              CustomTextField(text: 'Phone Number', onChanged: (text) => phoneNumber = text.trim(), keyboardType: TextInputType.phone,),
-              CustomTextField(text: 'Street Address', onChanged: (text) => address = text.trim(),),
-              CustomTextField(text: 'City', onChanged: (text) => city = text,),
-              CustomTextField(text: 'State', onChanged: (text) => state = text,),
-              CustomTextField(text: 'Zip Code', keyboardType: TextInputType.number, onChanged: (number) => zipCode = number,),
-              CustomTextField(text: 'Tank Depth cm.', keyboardType: TextInputType.number, onChanged: (number) => tankDepth = number,),
+              CustomTextField(
+                text: 'First Name',
+                onChanged: (text) => firstName = text.trim(),
+              ),
+              CustomTextField(
+                text: 'Last Name',
+                onChanged: (text) => lastName = text.trim(),
+              ),
+              CustomTextField(
+                text: 'Phone Number',
+                onChanged: (text) => phoneNumber = text.trim(),
+                keyboardType: TextInputType.phone,
+              ),
+              CustomTextField(
+                text: 'Street Address',
+                onChanged: (text) => address = text.trim(),
+              ),
+              CustomTextField(
+                text: 'City',
+                onChanged: (text) => city = text,
+              ),
+              CustomTextField(
+                text: 'State',
+                onChanged: (text) => state = text,
+              ),
+              CustomTextField(
+                text: 'Zip Code',
+                keyboardType: TextInputType.number,
+                onChanged: (number) => zipCode = number,
+              ),
+              CustomTextField(
+                text: 'Tank Depth cm.',
+                keyboardType: TextInputType.number,
+                onChanged: (number) => tankDepth = number,
+              ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(child: CustomTextField(horizontalPadding: 5, text: 'Device ID', controller: deviceIdTextController, maxLength: 13, onChanged: (text) => deviceID = text)),
-                  GestureDetector(child: Padding(
-                    padding: const EdgeInsets.only(bottom: 17, right: 35),
-                    child: Icon(Icons.camera_alt_outlined, color: borderAndTextColor, size: 40,),
-                  ), onTap: (){
-                    scanBarcodeNormal();
-                  },)
+                  Expanded(
+                      child: CustomTextField(
+                          horizontalPadding: 5,
+                          text: 'Device ID',
+                          controller: deviceIdTextController,
+                          maxLength: 13,
+                          onChanged: (text) => deviceID = text)),
+                  GestureDetector(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 17, right: 35),
+                      child: Icon(
+                        Icons.camera_alt_outlined,
+                        color: primaryThemeColor,
+                        size: 40,
+                      ),
+                    ),
+                    onTap: () {
+                      scanBarcodeNormal();
+                    },
+                  )
                 ],
               ),
               Container(
                 height: containerHeight,
                 alignment: Alignment.center,
                 child: Platform.isIOS ? getIosPicker() : dropDownBuilder(),
-                ),
+              ),
               //tank depth
               Padding(
                 padding: const EdgeInsets.only(top: 15.0, bottom: 30),
                 child: ReusableOutlineButton(
                   onPressed: () async {
-                    if(assertNoNullFields()) {
+                    if (assertNoNullFields()) {
                       await AuthService().profileAndDeviceSetup(
                           deviceID,
                           address,
@@ -200,16 +256,21 @@ class _DeviceSetupState extends State<DeviceSetup> {
                           firstName,
                           lastName,
                           selectedPhoneCarrier,
-                          phoneNumber
-                      );
+                          phoneNumber);
                       Navigator.pushReplacementNamed(context, '/home');
-                    }else{
+                    } else {
                       showSnackBar('Missing Fields');
                     }
                   },
                   size: 110,
-                  icon: Icon(Icons.arrow_forward, size: 0,),
-                  label: Text('Submit', style: TextStyle(fontWeight: FontWeight.bold),),
+                  icon: Icon(
+                    Icons.arrow_forward,
+                    size: 0,
+                  ),
+                  label: Text(
+                    'Submit',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ), //Submit button
             ],

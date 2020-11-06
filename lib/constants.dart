@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-Color borderAndTextColor = Colors.blue;
+Color primaryThemeColor = Colors.blue;
 Color focusedBorderColor = Colors.blueAccent;
 Color backgroundColor = Colors.white;
 
 Map unknownPhoneProvider = {
-  'unknown' : 'unknown',
+  'unknown': 'unknown',
 };
 
 List<String> requiredAccountParameters = [

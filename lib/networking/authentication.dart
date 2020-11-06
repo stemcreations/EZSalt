@@ -77,8 +77,9 @@ class AuthService {
 
     DocumentSnapshot snapshot =
         await _fireStore.collection('users').doc(currentUser.uid).get();
-    await checkAccountsRequiredParameters();
-    await setAccountsRequiredParameters();
+    if (await setAccountsRequiredParameters() == false) {
+      return 'new user created';
+    }
 
     return 'signInWithGoogle succeeded';
   }
@@ -131,7 +132,6 @@ class AuthService {
       String email, String password) async {
     currentUser =
         await auth.signInWithEmailAndPassword(email: email, password: password);
-    await checkAccountsRequiredParameters();
     await setAccountsRequiredParameters();
     if (currentUser != null) {
       return currentUser;
@@ -220,7 +220,7 @@ class AuthService {
     });
   }
 
-  Future setAccountsRequiredParameters() async {
+  Future<bool> setAccountsRequiredParameters() async {
     final User currentUser = auth.currentUser;
     DocumentSnapshot snapshot =
         await _fireStore.collection('users').doc(currentUser.uid).get();
@@ -242,8 +242,9 @@ class AuthService {
         'state': 'null',
         'zipcode': 10101,
       });
-      return 'new user created';
+      return false;
     }
+    return true;
   }
 
   Future checkAccountsRequiredParameters() async {

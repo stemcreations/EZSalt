@@ -21,17 +21,39 @@ class _AboutState extends State<About> {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 15.0),
-              child: Text('EZsalt', style: TextStyle(fontFamily: 'EZSalt', color: borderAndTextColor, fontSize: 50, fontWeight: FontWeight.bold),),
+              child: Text(
+                'EZsalt',
+                style: TextStyle(
+                    fontFamily: 'EZSalt',
+                    color: primaryThemeColor,
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.copyright_outlined, color: Colors.black,),
-                Text('2020', style: TextStyle(color: Colors.black, fontSize: 15),),
+                Icon(
+                  Icons.copyright_outlined,
+                  color: Colors.black,
+                ),
+                Text(
+                  '2020',
+                  style: TextStyle(color: Colors.black, fontSize: 15),
+                ),
               ],
             ),
-            MaterialButton(onPressed: (){Navigator.pushNamed(context, '/licenses');},
-              child: Text('Licenses', style: TextStyle(color: borderAndTextColor, fontSize: 20, decoration: TextDecoration.underline),),
+            MaterialButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/licenses');
+              },
+              child: Text(
+                'Licenses',
+                style: TextStyle(
+                    color: primaryThemeColor,
+                    fontSize: 20,
+                    decoration: TextDecoration.underline),
+              ),
             ),
           ],
         ),

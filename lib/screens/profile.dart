@@ -106,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   'EZsalt',
                   style: TextStyle(
                       fontFamily: 'EZSalt',
-                      color: borderAndTextColor,
+                      color: primaryThemeColor,
                       fontSize: 30,
                       fontWeight: FontWeight.w900),
                 ),
@@ -228,7 +228,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Text(
                                 'Update Name',
                                 style: TextStyle(
-                                    fontSize: 20, color: borderAndTextColor),
+                                    fontSize: 20, color: primaryThemeColor),
                               ),
                             ),
                             Padding(
@@ -309,7 +309,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Text(
                                 'Update Phone Number',
                                 style: TextStyle(
-                                    fontSize: 20, color: borderAndTextColor),
+                                    fontSize: 20, color: primaryThemeColor),
                               ),
                             ),
                             Container(
@@ -386,7 +386,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Text(
                             'Update Address',
                             style: TextStyle(
-                                fontSize: 20, color: borderAndTextColor),
+                                fontSize: 20, color: primaryThemeColor),
                           ),
                         ),
                         Padding(
@@ -480,7 +480,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Text(
                                 'Update Email',
                                 style: TextStyle(
-                                    fontSize: 20, color: borderAndTextColor),
+                                    fontSize: 20, color: primaryThemeColor),
                               ),
                             ),
                             Padding(
@@ -549,7 +549,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Text(
                                 'Update Tank Depth',
                                 style: TextStyle(
-                                    fontSize: 20, color: borderAndTextColor),
+                                    fontSize: 20, color: primaryThemeColor),
                               ),
                             ),
                             Padding(
@@ -620,7 +620,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Text(
                                 'Update Tank Depth Notification',
                                 style: TextStyle(
-                                    fontSize: 18, color: borderAndTextColor),
+                                    fontSize: 18, color: primaryThemeColor),
                               ),
                             ),
                             Padding(
@@ -691,7 +691,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Text(
                                 'Update Sensor ID',
                                 style: TextStyle(
-                                    fontSize: 20, color: borderAndTextColor),
+                                    fontSize: 20, color: primaryThemeColor),
                               ),
                             ),
                             Row(
@@ -710,7 +710,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         bottom: 17, right: 35),
                                     child: Icon(
                                       Icons.camera_alt_outlined,
-                                      color: borderAndTextColor,
+                                      color: primaryThemeColor,
                                       size: 40,
                                     ),
                                   ),
@@ -780,7 +780,7 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: const EdgeInsets.only(right: 35, left: 35, top: 5, bottom: 5),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: borderAndTextColor),
+          border: Border.all(color: primaryThemeColor),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
@@ -788,11 +788,11 @@ class _ProfilePageState extends State<ProfilePage> {
               const EdgeInsets.only(top: 5, bottom: 5, right: 30, left: 30),
           child: DropdownButton(
             style: TextStyle(
-                color: borderAndTextColor, fontWeight: FontWeight.bold),
+                color: primaryThemeColor, fontWeight: FontWeight.bold),
             value: selectedPhoneCarrier,
             hint: Text(
               'Select Phone Carrier',
-              style: TextStyle(color: borderAndTextColor),
+              style: TextStyle(color: primaryThemeColor),
             ),
             icon: Icon(Icons.keyboard_arrow_down),
             isExpanded: true,

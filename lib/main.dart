@@ -1,15 +1,16 @@
-import 'package:ez_salt/screens/about.dart';
-import 'package:ez_salt/screens/licenses.dart';
+import 'package:ez_salt/screens//home.dart';
 import 'package:ez_salt/screens//login.dart';
 import 'package:ez_salt/screens//profile.dart';
 import 'package:ez_salt/screens//register.dart';
+import 'package:ez_salt/screens/about.dart';
+import 'package:ez_salt/screens/device_setup.dart';
+import 'package:ez_salt/screens/licenses.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:ez_salt/screens//home.dart';
-import 'package:ez_salt/screens/device_setup.dart';
 import 'package:flutter/services.dart';
-import 'networking/authentication.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
+import 'networking/authentication.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,11 +22,11 @@ void main() async {
   runApp(myApp);
 }
 
-Future<bool> checkLoggedInState () async {
+Future<bool> checkLoggedInState() async {
   String authState = await AuthService().checkAuthenticationState();
-  if(authState == 'logged in'){
+  if (authState == 'logged in') {
     return true;
-  }else{
+  } else {
     return false;
   }
 }
@@ -67,9 +68,21 @@ class MyApp extends StatelessWidget with PortraitModeMixin {
         '/deviceSetup': (context) => DeviceSetup(),
         '/licenses': (context) => Licenses(),
         '/about': (context) => About(),
+        "/deliveryWeb": (context) => new WebviewScaffold(
+              url: 'https://square.site/book/RF2BTQNX9JXWK/ezsalt',
+              appBar: new AppBar(
+                centerTitle: true,
+                title: new Text("Schedule Delivery"),
+              ),
+            ),
+        "/orderSensorWeb": (context) => new WebviewScaffold(
+              url: 'https://www.ezsalt.xyz/',
+              appBar: new AppBar(
+                centerTitle: true,
+                title: new Text("Order Sensor"),
+              ),
+            ),
       },
     );
   }
 }
-
-

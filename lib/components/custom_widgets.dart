@@ -44,7 +44,7 @@ class CustomTextField extends StatelessWidget {
         onChanged: onChanged,
         obscureText: obscureText,
         keyboardType: keyboardType,
-        style: TextStyle(color: borderAndTextColor),
+        style: TextStyle(color: primaryThemeColor),
         textAlign: TextAlign.center,
         decoration: InputDecoration(
           labelText: labelText,
@@ -54,15 +54,15 @@ class CustomTextField extends StatelessWidget {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: borderAndTextColor),
+            borderSide: BorderSide(color: primaryThemeColor),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: borderAndTextColor),
+            borderSide: BorderSide(color: primaryThemeColor),
           ),
           hintText: text,
           hintStyle: TextStyle(
-            color: borderAndTextColor,
+            color: primaryThemeColor,
           ),
           prefixIcon: icon,
         ),
@@ -102,7 +102,7 @@ class ReusableOutlineButton extends StatelessWidget {
         child: MaterialButton(
           //elevation: 4,
           color: Colors.grey.shade200,
-          textColor: borderAndTextColor,
+          textColor: primaryThemeColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.0),
           ),
@@ -298,3 +298,18 @@ class CustomProfileCard extends StatelessWidget {
     );
   }
 }
+
+// Future<void> openWebView(String url) async {
+//   if (await canLaunch(url)) {
+//     Navigator.of(context).push(MaterialPageRoute(
+//         builder: (context) => WebviewScaffold(
+//               initialChild: Center(
+//                 child: CircularProgressIndicator(),
+//               ),
+//               url: url,
+//               appBar: AppBar(
+//                 title: Text('Schedule Delivery'),
+//               ),
+//             )));
+//   }
+// }

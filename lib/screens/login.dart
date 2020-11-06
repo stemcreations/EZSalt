@@ -1,17 +1,15 @@
 import 'dart:io';
 
 import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:ez_salt/components/custom_widgets.dart';
+import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:ez_salt/constants.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -23,23 +21,13 @@ class _LoginPageState extends State<LoginPage> {
   String password;
   bool _isAsyncCall = false;
   final formKey = GlobalKey<FormState>();
-  final snackBar = SnackBar(content: Text('Username Not Found'),);
+  final snackBar = SnackBar(
+    content: Text('Username Not Found'),
+  );
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  Future<void> openWebView(String url) async {
-    if(await canLaunch(url)){
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => WebviewScaffold(
-            initialChild: Center(child: CircularProgressIndicator(),),
-            url: url,
-            appBar: AppBar(title: Text('Purchase EZsalt Sensor'),),
-          ))
-      );
-    }
-  }
-
-  Widget checkPlatform(){
-    if(Platform.isIOS){
+  Widget checkPlatform() {
+    if (Platform.isIOS) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 3, top: 10),
         child: ReusableOutlineButton(
@@ -47,13 +35,15 @@ class _LoginPageState extends State<LoginPage> {
           icon: Icon(FontAwesomeIcons.apple),
           label: Text('Continue with Apple'),
           onPressed: () async {
-            AuthService().signInWithApple(scopes: [Scope.email, Scope.fullName]);
+            AuthService()
+                .signInWithApple(scopes: [Scope.email, Scope.fullName]);
           },
         ),
       );
-    }
-    else{
-      return SizedBox(height: 0,);
+    } else {
+      return SizedBox(
+        height: 0,
+      );
     }
   }
 
@@ -62,15 +52,17 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-  void showSnackBar(String message){
-    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message),));
+  void showSnackBar(String message) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
   }
 
   void _submit() async {
     setState(() {
       _isAsyncCall = true;
     });
-    if(email != null && password != null) {
+    if (email != null && password != null) {
       try {
         await AuthService().signInWithEmailAndPassword(email, password);
         if (AuthService().auth.currentUser.uid != null) {
@@ -94,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
           print('Wrong password provided for that user.');
         }
       }
-    }else{
+    } else {
       setState(() {
         print('missing value');
         _isAsyncCall = false;
@@ -102,56 +94,77 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void resetPasswordDialog(BuildContext context){
+  void resetPasswordDialog(BuildContext context) {
     String resetEmail = '';
     showDialog(
-      context: context,
-      builder: (BuildContext context){
-        return Center(
-          child: Dialog(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width / 1.3,
-              height: MediaQuery.of(context).size.height / 3,
-              child: Container(
-                decoration: new BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        Padding(padding: const EdgeInsets.only(top: 20), child: Text('Reset Password', style: TextStyle(fontSize: 20, color: borderAndTextColor),),),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5.0),
-                          child: CustomTextField(text: 'Email Address', autoFocus: true, keyboardType: TextInputType.emailAddress, onChanged: (String value) { setState(() {
-                            resetEmail = value.trim();
-                          });},)
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: MaterialButton(
-                        minWidth: 120,
-                        elevation: 3,
-                        color: Colors.grey.shade300,
-                        textColor: borderAndTextColor,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0),),
-                        onPressed: () async {
-                          String result = await AuthService().resetPassword(resetEmail);
-                          print(result);
-                          Navigator.of(context).pop();
-                          },
-                        child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: Dialog(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width / 1.3,
+                height: MediaQuery.of(context).size.height / 3,
+                child: Container(
+                  decoration: new BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: Text(
+                              'Reset Password',
+                              style: TextStyle(
+                                  fontSize: 20, color: primaryThemeColor),
+                            ),
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.only(top: 5.0),
+                              child: CustomTextField(
+                                text: 'Email Address',
+                                autoFocus: true,
+                                keyboardType: TextInputType.emailAddress,
+                                onChanged: (String value) {
+                                  setState(() {
+                                    resetEmail = value.trim();
+                                  });
+                                },
+                              )),
+                        ],
                       ),
-                    )
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: MaterialButton(
+                          minWidth: 120,
+                          elevation: 3,
+                          color: Colors.grey.shade300,
+                          textColor: primaryThemeColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          onPressed: () async {
+                            String result =
+                                await AuthService().resetPassword(resetEmail);
+                            print(result);
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'Submit',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      }
-    );
+          );
+        });
   }
 
   @override
@@ -173,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                     'EZsalt',
                     style: TextStyle(
                       fontFamily: 'EZSalt',
-                      color: borderAndTextColor,
+                      color: primaryThemeColor,
                       fontSize: 30.0,
                       fontWeight: FontWeight.w900,
                     ),
@@ -183,33 +196,41 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   CustomTextField(
                     keyboardType: TextInputType.emailAddress,
-                    onChanged: (text){
+                    onChanged: (text) {
                       setState(() {
                         email = text.trim();
                       });
                     },
                     text: 'Username',
-                    icon: Icon(Icons.person, color: borderAndTextColor,),
+                    icon: Icon(
+                      Icons.person,
+                      color: primaryThemeColor,
+                    ),
                   ), // Sign-in email form field
                   CustomTextField(
-                    onChanged: (text){
+                    onChanged: (text) {
                       setState(() {
                         password = text.trim();
                       });
                     },
                     obscureText: true,
                     text: 'Password',
-                    icon: Icon(Icons.security, color: borderAndTextColor,),
+                    icon: Icon(
+                      Icons.security,
+                      color: primaryThemeColor,
+                    ),
                   ), // Sign-in password field
                   Row(
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 30),
                         child: MaterialButton(
-                          onPressed: () { resetPasswordDialog(context); },
+                          onPressed: () {
+                            resetPasswordDialog(context);
+                          },
                           child: Text(
                             'Forgot Password?',
-                            style: TextStyle(color: borderAndTextColor),
+                            style: TextStyle(color: primaryThemeColor),
                           ),
                         ),
                       ),
@@ -222,17 +243,29 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         ReusableOutlineButton(
                           size: 110,
-                          label: Text('Login', style: TextStyle(fontWeight: FontWeight.bold),),
-                          icon: Icon(Icons.arrow_forward, size: 0, ),
+                          label: Text(
+                            'Login',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          icon: Icon(
+                            Icons.arrow_forward,
+                            size: 0,
+                          ),
                           onPressed: () async {
                             _submit();
                           },
                         ),
                         ReusableOutlineButton(
                           size: 110,
-                          label: Text('Register', style: TextStyle(fontWeight: FontWeight.bold),),
-                          icon: Icon(Icons.arrow_forward, size: 0,),
-                          onPressed: (){
+                          label: Text(
+                            'Register',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          icon: Icon(
+                            Icons.arrow_forward,
+                            size: 0,
+                          ),
+                          onPressed: () {
                             Navigator.pushNamed(context, '/register');
                           },
                         ),
@@ -250,13 +283,13 @@ class _LoginPageState extends State<LoginPage> {
                               indent: 70,
                               endIndent: 5,
                               thickness: 2,
-                              color: borderAndTextColor,
+                              color: primaryThemeColor,
                             ),
                           ),
                         ),
                         Text(
                           'OR',
-                          style: TextStyle(color: borderAndTextColor),
+                          style: TextStyle(color: primaryThemeColor),
                         ),
                         Expanded(
                           child: Container(
@@ -264,7 +297,7 @@ class _LoginPageState extends State<LoginPage> {
                               indent: 5,
                               endIndent: 70,
                               thickness: 2,
-                              color: borderAndTextColor,
+                              color: primaryThemeColor,
                             ),
                           ),
                         ),
@@ -277,19 +310,21 @@ class _LoginPageState extends State<LoginPage> {
                     label: Text('Continue with Google'),
                     onPressed: () async {
                       String result = await AuthService().signInWithGoogle();
-                      if(result == 'new user created'){
+                      if (result == 'new user created') {
                         Navigator.pushReplacementNamed(context, '/deviceSetup');
-                        }else{
+                      } else {
                         Navigator.pushReplacementNamed(context, '/home');
-                        }
-                      },
+                      }
+                    },
                   ),
                   checkPlatform(),
                   Padding(
                     padding: const EdgeInsets.only(top: 10, bottom: 3),
                     child: ReusableOutlineButton(
                       label: Text('Buy Sensor'),
-                      onPressed: (){openWebView('https://www.ezsalt.xyz/');},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/orderSensorWeb');
+                      },
                       size: 230,
                       icon: Icon(Icons.developer_board),
                     ),
@@ -299,8 +334,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-      ),// This trailing comma makes auto-formatting nicer for build methods.
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
-

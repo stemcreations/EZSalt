@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "629048129398-mh3m20s3o3onte4tt8kfhme29k53j82e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.devtechhub.ez_salt",
+            "certificate_hash": "2c262a2ab21a285869a8f8f4cbc1377c496b12a0"
+          }
+        },
+        {
+          "client_id": "629048129398-1ucqaktjg9620hq3qfoi3cafuj81bk6u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.devtechhub.ez_salt",
+            "certificate_hash": "f407ca69db08600c633483adebef2b8a7d328698"
+          }
+        },
+        {
+          "client_id": "629048129398-notv0pirsau4nna6jctc6lfkh269g4vf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.devtechhub.ez_salt",
+            "certificate_hash": "55ea853d730420e10af4f815721aad0192a70dae"
+          }
+        },
+        {
           "client_id": "629048129398-1j3k84pn63ebpoqo59ifke6fim5kkjef.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -30,6 +54,13 @@
             {
               "client_id": "629048129398-1j3k84pn63ebpoqo59ifke6fim5kkjef.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "629048129398-v5q83eu2kmc974j53qmvs1ak0b77ho4u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.devtechhub.ezSalt"
+              }
             }
           ]
         }
