@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -45,6 +46,11 @@ class _LoginPageState extends State<LoginPage> {
         height: 0,
       );
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -312,7 +318,7 @@ class _LoginPageState extends State<LoginPage> {
                       String result = await AuthService().signInWithGoogle();
                       if (result == 'new user created') {
                         Navigator.pushReplacementNamed(context, '/deviceSetup');
-                      } else {
+                      } else if (result == 'signInWithGoogle succeeded') {
                         Navigator.pushReplacementNamed(context, '/home');
                       }
                     },
@@ -323,7 +329,10 @@ class _LoginPageState extends State<LoginPage> {
                     child: ReusableOutlineButton(
                       label: Text('Buy Sensor'),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/orderSensorWeb');
+                        launchInWebViewWithJavaScript(
+                          'https://www.ezsalt.xyz/',
+                        );
+                        //Navigator.pushNamed(context, '/orderSensorWeb');
                       },
                       size: 230,
                       icon: Icon(Icons.developer_board),
@@ -336,5 +345,18 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  Future<void> launchInWebViewWithJavaScript(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: true,
+        forceWebView: true,
+        enableJavaScript: true,
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

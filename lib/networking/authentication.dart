@@ -9,7 +9,12 @@ class AuthService {
   UserCredential currentUser;
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  GoogleSignIn googleSignIn = GoogleSignIn();
+  GoogleSignIn googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
 
   Future<void> signInWithApple({List<Scope> scopes = const []}) async {
     bool isAvailable = await AppleSignIn.isAvailable();
@@ -58,30 +63,38 @@ class AuthService {
   }
 
   Future<String> signInWithGoogle() async {
-    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken,
-    );
+    try {
+      final GoogleSignInAccount googleSignInAccount =
+          await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
 
-    final UserCredential userCredential =
-        await auth.signInWithCredential(credential);
-    final User user = userCredential.user;
+      final UserCredential userCredential =
+          await auth.signInWithCredential(credential);
+      final User user = userCredential.user;
 
-    assert(!user.isAnonymous);
-    assert(await user.getIdToken() != null);
-    final User currentUser = auth.currentUser;
-    assert(user.uid == currentUser.uid);
-
-    DocumentSnapshot snapshot =
-        await _fireStore.collection('users').doc(currentUser.uid).get();
-    if (await setAccountsRequiredParameters() == false) {
-      return 'new user created';
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
+      final User currentUser = auth.currentUser;
+      assert(user.uid == currentUser.uid);
+      DocumentSnapshot snapshot =
+          await _fireStore.collection('users').doc(currentUser.uid).get();
+      if (await setAccountsRequiredParameters() == false) {
+        return 'new user created';
+      }
+      if (user != null) {
+        return 'signInWithGoogle succeeded';
+      } else {
+        return 'not signed in';
+      }
+    } catch (e) {
+      print(e);
+      return e.toString();
     }
-
-    return 'signInWithGoogle succeeded';
   }
 
   void signOut() async {

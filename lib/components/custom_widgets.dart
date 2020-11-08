@@ -270,10 +270,14 @@ class CustomProfileCard extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0),
-                    child: Text(
-                      cardData,
-                      style:
-                          TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                    child: SizedBox(
+                      height: 20,
+                      width: MediaQuery.of(context).size.width / 1.6,
+                      child: AutoSizeText(
+                        cardData,
+                        style: TextStyle(
+                            color: Colors.grey.shade600, fontSize: 16),
+                      ),
                     ),
                   ),
                 ],

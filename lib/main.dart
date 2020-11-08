@@ -8,7 +8,6 @@ import 'package:ez_salt/screens/licenses.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 import 'networking/authentication.dart';
 
@@ -68,20 +67,6 @@ class MyApp extends StatelessWidget with PortraitModeMixin {
         '/deviceSetup': (context) => DeviceSetup(),
         '/licenses': (context) => Licenses(),
         '/about': (context) => About(),
-        "/deliveryWeb": (context) => new WebviewScaffold(
-              url: 'https://square.site/book/RF2BTQNX9JXWK/ezsalt',
-              appBar: new AppBar(
-                centerTitle: true,
-                title: new Text("Schedule Delivery"),
-              ),
-            ),
-        "/orderSensorWeb": (context) => new WebviewScaffold(
-              url: 'https://www.ezsalt.xyz/',
-              appBar: new AppBar(
-                centerTitle: true,
-                title: new Text("Order Sensor"),
-              ),
-            ),
       },
     );
   }

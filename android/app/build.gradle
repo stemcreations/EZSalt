@@ -33,6 +33,7 @@ if (keystorePropertiesFile.exists()) {
 
 
     android {
+
         compileSdkVersion 29
 
         sourceSets {
@@ -41,11 +42,12 @@ if (keystorePropertiesFile.exists()) {
 
         lintOptions {
             disable 'InvalidPackage'
+            checkReleaseBuilds false
         }
 
         defaultConfig {
             applicationId "com.devtechhub.ez_salt"
-            minSdkVersion 16
+            minSdkVersion 19
             targetSdkVersion 29
             versionCode flutterVersionCode.toInteger()
             versionName flutterVersionName

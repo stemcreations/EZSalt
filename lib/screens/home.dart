@@ -7,6 +7,7 @@ import 'package:ez_salt/networking/authentication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -191,7 +192,10 @@ class _HomeState extends State<Home> {
                 child: ReusableOutlineButton(
                   label: Text('Schedule Delivery'),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/deliveryWeb');
+                    launchInWebViewWithJavaScript(
+                      'https://square.site/book/RF2BTQNX9JXWK/ezsalt',
+                    );
+                    //Navigator.pushNamed(context, '/deliveryWeb');
                   },
                   size: 230,
                   icon: Icon(
@@ -205,5 +209,18 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  Future<void> launchInWebViewWithJavaScript(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: true,
+        forceWebView: true,
+        enableJavaScript: true,
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
