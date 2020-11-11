@@ -109,10 +109,24 @@ class AuthService {
     }
   }
 
-  Future createUserWithEmailAndPassword(String email, String password) async {
-    UserCredential user = await auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    await setAccountsRequiredParameters();
+  Future<String> createUserWithEmailAndPassword(
+      String email, String password) async {
+    try {
+      UserCredential user = await auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      await setAccountsRequiredParameters();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'week-password') {
+        return 'Password too weak';
+      } else if (e.code == 'email-already-in-use') {
+        return 'Email address already in use';
+      }
+    } catch (e) {
+      print(e);
+    }
+    return 'Account Created';
   }
 
   Future profileAndDeviceSetup(
@@ -140,15 +154,33 @@ class AuthService {
     });
   }
 
-  Future<UserCredential> signInWithEmailAndPassword(
+  Future<String> signInWithEmailAndPassword(
       String email, String password) async {
-    currentUser =
-        await auth.signInWithEmailAndPassword(email: email, password: password);
+    try {
+      currentUser = await auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      print('user authenticated');
+      return 'user authenticated';
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        return 'User not found';
+      } else if (e.code == 'wrong-password') {
+        return 'Incorrect password';
+      } else if (e.code == 'invalid-email') {
+        return 'Invalid email';
+      }
+    } catch (e) {
+      return e.toString();
+    }
     await setAccountsRequiredParameters();
     if (currentUser != null) {
-      return currentUser;
+      print('user authenticated');
+      return 'user authenticated';
     } else {
-      return null;
+      print('not authenticated');
+      return 'not authenticated';
     }
   }
 

@@ -4,7 +4,6 @@ import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -65,39 +64,44 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _submit() async {
+    String result;
     setState(() {
       _isAsyncCall = true;
     });
-    if (email != null && password != null) {
-      try {
-        await AuthService().signInWithEmailAndPassword(email, password);
-        if (AuthService().auth.currentUser.uid != null) {
-          setState(() {
-            _isAsyncCall = false;
-            formKey.currentState.reset();
-            Navigator.pushReplacementNamed(context, '/home');
-          });
-        }
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'user-not-found') {
-          showSnackBar('Username Not Found');
-          setState(() {
-            _isAsyncCall = false;
-          });
-        } else if (e.code == 'wrong-password') {
-          showSnackBar('Incorrect Password');
-          setState(() {
-            _isAsyncCall = false;
-          });
-          print('Wrong password provided for that user.');
-        }
+    if (email != null && password != null && password != '' && email != '') {
+      result = await AuthService().signInWithEmailAndPassword(email, password);
+      if (result == 'user authenticated') {
+        setState(() {
+          _isAsyncCall = false;
+          formKey.currentState.reset();
+          Navigator.pushReplacementNamed(context, '/home');
+        });
+      } else if (result == 'User not found') {
+        showSnackBar(result);
+        setState(() {
+          _isAsyncCall = false;
+        });
+      } else if (result == 'Incorrect password') {
+        showSnackBar(result);
+        setState(() {
+          _isAsyncCall = false;
+        });
+      } else {
+        showSnackBar(result);
+        setState(() {
+          _isAsyncCall = false;
+        });
       }
     } else {
+      showSnackBar('Missing Value');
       setState(() {
         print('missing value');
         _isAsyncCall = false;
       });
     }
+    setState(() {
+      _isAsyncCall = false;
+    });
   }
 
   void resetPasswordDialog(BuildContext context) {
