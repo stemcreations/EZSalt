@@ -116,17 +116,23 @@ class AuthService {
         email: email,
         password: password,
       );
-      await setAccountsRequiredParameters();
+      if (user != null) {
+        await setAccountsRequiredParameters();
+        return 'Account Created';
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'week-password') {
         return 'Password too weak';
       } else if (e.code == 'email-already-in-use') {
         return 'Email address already in use';
+      } else {
+        return e.code.toString();
       }
     } catch (e) {
       print(e);
+      return e.toString();
     }
-    return 'Account Created';
+    return 'User not created';
   }
 
   Future profileAndDeviceSetup(

@@ -10,6 +10,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  String result;
   bool _isAsyncCall = false;
   String email;
   String password;
@@ -27,7 +28,11 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   bool assertNoNullFields() {
-    if (email != null && passwordsMatch != false) {
+    if (email != null &&
+        passwordsMatch != false &&
+        email != '' &&
+        password != '') {
+      print('true');
       return true;
     } else {
       return false;
@@ -111,21 +116,39 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: const EdgeInsets.only(top: 15.0, bottom: 20),
                     child: ReusableOutlineButton(
                       onPressed: () async {
-                        if (assertNoNullFields()) {
+                        if (email != null &&
+                            password != null &&
+                            password != '' &&
+                            passwordsMatch != null &&
+                            passwordsMatch != false &&
+                            confirmedPassword != '' &&
+                            confirmedPassword != null) {
                           setState(() {
                             _isAsyncCall = true;
                           });
-                          await AuthService().createUserWithEmailAndPassword(
+                          result = await AuthService()
+                              .createUserWithEmailAndPassword(
                             email,
                             password,
                           );
-                          formKey.currentState.reset();
+                          print(result);
+                          if (result == 'Account Created') {
+                            formKey.currentState.reset();
+                            setState(() {
+                              _isAsyncCall = false;
+                            });
+                            Navigator.pushReplacementNamed(
+                                context, '/deviceSetup');
+                          } else {
+                            setState(() {
+                              _isAsyncCall = false;
+                            });
+                            showSnackBar(result);
+                          }
+                        } else {
                           setState(() {
                             _isAsyncCall = false;
                           });
-                          Navigator.pushReplacementNamed(
-                              context, '/deviceSetup');
-                        } else {
                           showSnackBar('Missing Fields');
                         }
                       },
