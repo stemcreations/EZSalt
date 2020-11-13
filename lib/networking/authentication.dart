@@ -285,7 +285,6 @@ class AuthService {
     final User currentUser = auth.currentUser;
     DocumentSnapshot snapshot =
         await _fireStore.collection('users').doc(currentUser.uid).get();
-    await checkAccountsRequiredParameters();
     if (!snapshot.exists) {
       await _fireStore.collection('users').doc(currentUser.uid).set({
         'first_name': null,
@@ -306,6 +305,7 @@ class AuthService {
       });
       return false;
     }
+    await checkAccountsRequiredParameters();
     return true;
   }
 
@@ -318,7 +318,12 @@ class AuthService {
       userProfile = await getProfile();
       for (final parameter in requiredAccountParameters) {
         if (!userProfile.containsKey(parameter)) {
-          if (parameter != 'zipcode' &&
+          if (parameter == 'delivery_enabled') {
+            await _fireStore.collection('users').doc(currentUser.uid).update({
+              parameter: false,
+            });
+            print('missing boolean');
+          } else if (parameter != 'zipcode' &&
               parameter != 'percent' &&
               parameter != 'distance' &&
               parameter != 'depth' &&
@@ -349,10 +354,7 @@ class AuthService {
             await _fireStore.collection('users').doc(currentUser.uid).update({
               parameter: null,
             });
-          } else if (parameter == 'delivery_enabled') {
-            await _fireStore.collection('users').doc(currentUser.uid).update({
-              parameter: false,
-            });
+            print('phone number');
           }
         }
       }

@@ -25,5 +25,5 @@ List<String> requiredAccountParameters = [
   'city',
   'state',
   'zipcode',
-  'deliver_enabled',
+  'delivery_enabled'
 ];
