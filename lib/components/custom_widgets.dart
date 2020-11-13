@@ -36,6 +36,7 @@ class CustomTextField extends StatelessWidget {
       padding: EdgeInsets.only(
           left: 35, right: horizontalPadding, top: 5, bottom: 5),
       child: TextFormField(
+        textCapitalization: TextCapitalization.words,
         autofocus: autoFocus,
         initialValue: initialValue,
         controller: controller,
@@ -303,17 +304,73 @@ class CustomProfileCard extends StatelessWidget {
   }
 }
 
-// Future<void> openWebView(String url) async {
-//   if (await canLaunch(url)) {
-//     Navigator.of(context).push(MaterialPageRoute(
-//         builder: (context) => WebviewScaffold(
-//               initialChild: Center(
-//                 child: CircularProgressIndicator(),
-//               ),
-//               url: url,
-//               appBar: AppBar(
-//                 title: Text('Schedule Delivery'),
-//               ),
-//             )));
-//   }
-// }
+class CustomBottomSheet extends StatelessWidget {
+  CustomBottomSheet(
+      {@required this.context,
+      @required this.label,
+      @required this.inputType,
+      @required this.hintText,
+      @required this.onPressed,
+      @required this.onChanged,
+      @required this.onCancelPressed});
+  final String label;
+  final BuildContext context;
+  final TextInputType inputType;
+  final String hintText;
+  final Function onPressed;
+  final Function onChanged;
+  final Function onCancelPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 250,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: primaryThemeColor,
+                fontSize: 16,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: CustomTextField(
+                keyboardType: inputType,
+                text: hintText,
+                onChanged: onChanged,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ReusableOutlineButton(
+                    icon: Icon(
+                      Icons.add,
+                      size: 0,
+                    ),
+                    label: Text('Cancel'),
+                    onPressed: onCancelPressed,
+                    size: 100),
+                SizedBox(
+                  width: 20,
+                ),
+                ReusableOutlineButton(
+                    icon: Icon(
+                      Icons.add,
+                      size: 0,
+                    ),
+                    label: Text('Submit'),
+                    onPressed: onPressed,
+                    size: 100),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

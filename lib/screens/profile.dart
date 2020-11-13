@@ -13,6 +13,10 @@ class ProfilePage extends StatefulWidget {
   _ProfilePageState createState() => _ProfilePageState();
 }
 
+//TODO use bottom sheet instead of popup dialog
+//TODO ask user if they want salt delivery and ask for zipCode
+//TODO change edit to on long press? and populate text field with current value first
+
 class _ProfilePageState extends State<ProfilePage> {
   Map profileData = {
     'street_address': 'null',
@@ -28,6 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
     'first_name': 'null',
     'email': 'null'
   };
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Map sendPercent = {'high': 'null', 'low': 15};
   Map phoneProviders = {};
   Map phoneProvidersReversed = {};
@@ -36,6 +41,9 @@ class _ProfilePageState extends State<ProfilePage> {
   String selectedPhoneCarrier;
   bool enterEditMode = false;
   bool editAddress = false;
+  bool deliveryAvailable = false;
+  bool deliveryEnabled = false; //TODO make this a variable inside each profile
+  String zipCode;
 
   bool checkIfPhoneProviderIsValid() {
     if (phoneProvidersReversed.containsKey(profileData['phone_provider'])) {
@@ -50,6 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
     phoneProvidersReversed = await AuthService().getPhoneProvidersReversed();
     profileData = await AuthService().getProfile();
     sendPercent = profileData['send_percent'];
+    deliveryEnabled = profileData['delivery_enabled'];
     setState(() {});
   }
 
@@ -72,6 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Profile'),
         centerTitle: true,
@@ -111,6 +121,68 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontWeight: FontWeight.w900),
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Enable Salt Delivery:',
+                    style: TextStyle(
+                      color: primaryThemeColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Switch(
+                    value: deliveryEnabled,
+                    onChanged: (bool value) {
+                      if (deliveryEnabled == false) {
+                        _scaffoldKey.currentState.showBottomSheet(
+                          (context) => CustomBottomSheet(
+                            context: context,
+                            label: 'See if delivery is available in your area?',
+                            hintText: 'Zip Code',
+                            inputType: TextInputType.number,
+                            onChanged: (value) {
+                              zipCode = value;
+                            },
+                            onPressed: () async {
+                              deliveryAvailable = await AuthService()
+                                  .checkDeliveryZipCodes(int.parse(zipCode));
+                              if (deliveryAvailable == true) {
+                                await AuthService()
+                                    .updateDeliveryEnabled(deliveryAvailable);
+                                //Check to see if the user already has address info in their profile and if so just enable delivery
+                                if (profileData['city'] == null) {
+                                  await Navigator.pushReplacementNamed(
+                                      context, '/addressSetup');
+                                } else {
+                                  deliveryEnabled = deliveryAvailable;
+                                  Navigator.pop(context);
+                                }
+                              } else {
+                                await AuthService()
+                                    .updateDeliveryEnabled(deliveryAvailable);
+                                Navigator.pop(context);
+                              }
+                              setState(() {
+                                deliveryEnabled = deliveryAvailable;
+                              });
+                              if (deliveryAvailable == false) {
+                                Navigator.pop(context);
+                              }
+                            },
+                            onCancelPressed: () => Navigator.pop(context),
+                          ),
+                        );
+                      } else {
+                        AuthService().updateDeliveryEnabled(value);
+                        setState(() {
+                          deliveryEnabled = value;
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
               CustomProfileCard(
                 onTap: () {
                   changeNameDialog(context);
@@ -123,19 +195,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Colors.grey.shade600,
                 ),
               ),
-              TwoLineCustomCard(
-                onTap: () {
-                  changeAddressDialog(context);
-                },
-                enterEditMode: enterEditMode,
-                icon: Icons.location_on,
-                firstLine: profileData['street_address'],
-                secondLine: profileData['city'] +
-                    ' ' +
-                    profileData['state'] +
-                    ', ' +
-                    profileData['zipcode'].toString(),
-              ),
+              deliveryEnabled
+                  ? TwoLineCustomCard(
+                      onTap: () {
+                        changeAddressDialog(context);
+                      },
+                      enterEditMode: enterEditMode,
+                      icon: Icons.location_on,
+                      firstLine: profileData['street_address'],
+                      secondLine: profileData['city'] +
+                          ' ' +
+                          profileData['state'] +
+                          ', ' +
+                          profileData['zipcode'].toString(),
+                    )
+                  : SizedBox(),
               CustomProfileCard(
                 onTap: () {
                   changeEmailDialog(context);

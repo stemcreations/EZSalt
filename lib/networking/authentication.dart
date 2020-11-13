@@ -5,6 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+//TODO remove automatic cloud firestore automatic field population or set all values to null and when going to profile page check for null values
+//TODO When registering setup profile and store values in a temporary variable that can be used after email and password are submitted before setting up email and password
+
 class AuthService {
   UserCredential currentUser;
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
@@ -145,7 +148,8 @@ class AuthService {
       firstName,
       lastName,
       phoneProvider,
-      phoneNumber) async {
+      phoneNumber,
+      bool enabledDelivery) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'first_name': firstName,
       'last_name': lastName,
@@ -157,6 +161,7 @@ class AuthService {
       'city': city,
       'state': state,
       'zipcode': zipCode,
+      'delivery_enabled': enabledDelivery,
     });
   }
 
@@ -258,6 +263,12 @@ class AuthService {
     });
   }
 
+  Future updateDeliveryEnabled(bool enableDelivery) async {
+    await _fireStore.collection('users').doc(auth.currentUser.uid).update({
+      'delivery_enabled': enableDelivery,
+    });
+  }
+
   Future updateTankDepthNotification(int tankPercent) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'send_percent': {'high': null, 'low': tankPercent},
@@ -277,20 +288,21 @@ class AuthService {
     await checkAccountsRequiredParameters();
     if (!snapshot.exists) {
       await _fireStore.collection('users').doc(currentUser.uid).set({
-        'first_name': 'null',
-        'last_name': 'null',
+        'first_name': null,
+        'last_name': null,
         'email': currentUser.email,
-        'phone': 'null',
+        'phone': null,
         'send_percent': {'high': null, 'low': 15},
         'percent': 10.0,
         'distance': 15,
-        'phone_provider': '@tmomail.net',
-        'sensor': 'EZSalt_null12',
+        'phone_provider': null,
+        'sensor': null,
         'depth': 90,
-        'street_address': 'null',
-        'city': 'null',
-        'state': 'null',
-        'zipcode': 10101,
+        'street_address': null,
+        'city': null,
+        'state': null,
+        'zipcode': null,
+        'delivery_enabled': false,
       });
       return false;
     }
@@ -311,28 +323,35 @@ class AuthService {
               parameter != 'distance' &&
               parameter != 'depth' &&
               parameter != 'send_percent' &&
-              parameter != 'phone_provider') {
+              parameter != 'phone_provider' &&
+              parameter != 'delivery_enabled') {
             await _fireStore
                 .collection('users')
                 .doc(currentUser.uid)
-                .update({parameter: 'null'});
+                .update({parameter: null});
             print('missing strings');
           } else if (parameter != 'send_percent' &&
-              parameter != 'phone_provider') {
+              parameter != 'phone_provider' &&
+              parameter != 'delivery_enabled') {
             await _fireStore
                 .collection('users')
                 .doc(currentUser.uid)
-                .update({parameter: 10});
+                .update({parameter: null});
             print('integers');
           } else if (parameter == 'send_percent' &&
-              parameter != 'phone_provider') {
+              parameter != 'phone_provider' &&
+              parameter != 'delivery_enabled') {
             await _fireStore.collection('users').doc(currentUser.uid).update({
               parameter: {'high': null, 'low': 15},
             });
             print('send percent');
           } else if (parameter == 'phone_provider') {
             await _fireStore.collection('users').doc(currentUser.uid).update({
-              parameter: '@tmomail.net',
+              parameter: null,
+            });
+          } else if (parameter == 'delivery_enabled') {
+            await _fireStore.collection('users').doc(currentUser.uid).update({
+              parameter: false,
             });
           }
         }
@@ -349,6 +368,19 @@ class AuthService {
     data = phoneProviderSnapshot.data();
     phoneProviders = data['ProviderOptions'];
     return phoneProviders;
+  }
+
+  Future<bool> checkDeliveryZipCodes(int zipCode) async {
+    Map data = {};
+    List deliveryZipCodes = [];
+    final DocumentSnapshot phoneProviderSnapshot =
+        await _fireStore.collection('variables').doc('Admin').get();
+    data = phoneProviderSnapshot.data();
+    deliveryZipCodes = data['delivery_zip_codes'];
+    if (deliveryZipCodes.contains(zipCode)) {
+      return true;
+    }
+    return false;
   }
 
   Future<Map> getPhoneProvidersReversed() async {

@@ -11,6 +11,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+//TODO launch in browser and notify user that they are leaving the app
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -276,7 +278,7 @@ class _LoginPageState extends State<LoginPage> {
                             size: 0,
                           ),
                           onPressed: () {
-                            Navigator.pushNamed(context, '/register');
+                            Navigator.pushNamed(context, '/deviceSetup');
                           },
                         ),
                       ],
@@ -355,8 +357,8 @@ class _LoginPageState extends State<LoginPage> {
     if (await canLaunch(url)) {
       await launch(
         url,
-        forceSafariVC: true,
-        forceWebView: true,
+        forceSafariVC: false,
+        forceWebView: false,
         enableJavaScript: true,
       );
     } else {

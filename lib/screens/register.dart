@@ -134,11 +134,22 @@ class _RegisterPageState extends State<RegisterPage> {
                           print(result);
                           if (result == 'Account Created') {
                             formKey.currentState.reset();
+                            await AuthService().profileAndDeviceSetup(
+                                newProfileSetupData[0],
+                                newProfileSetupData[1],
+                                newProfileSetupData[2],
+                                newProfileSetupData[3],
+                                newProfileSetupData[4],
+                                newProfileSetupData[5],
+                                newProfileSetupData[6],
+                                newProfileSetupData[7],
+                                newProfileSetupData[8],
+                                newProfileSetupData[9],
+                                newProfileSetupData[10]);
                             setState(() {
                               _isAsyncCall = false;
                             });
-                            Navigator.pushReplacementNamed(
-                                context, '/deviceSetup');
+                            Navigator.pushReplacementNamed(context, '/home');
                           } else {
                             setState(() {
                               _isAsyncCall = false;

@@ -39,16 +39,23 @@ class _AboutState extends State<About> {
                 ),
                 Text(
                   '2020',
-                  style: TextStyle(color: Colors.black, fontSize: 15),
+                  style: TextStyle(color: Colors.black, fontSize: 20),
                 ),
               ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Text(
+                'Version 1.0.8',
+                style: TextStyle(fontSize: 20),
+              ),
             ),
             MaterialButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/licenses');
               },
               child: Text(
-                'Licenses',
+                'License',
                 style: TextStyle(
                     color: primaryThemeColor,
                     fontSize: 20,

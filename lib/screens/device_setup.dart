@@ -15,6 +15,8 @@ class DeviceSetup extends StatefulWidget {
 }
 
 class _DeviceSetupState extends State<DeviceSetup> {
+  bool deliveryEnabled = false;
+  bool deliveryAvailable = false;
   Map phoneProviders = {};
   Map phoneProvidersReversed = {};
   double containerHeight;
@@ -119,7 +121,8 @@ class _DeviceSetupState extends State<DeviceSetup> {
   }
 
   bool assertNoNullFields() {
-    if (state != null &&
+    if (deliveryEnabled &&
+        state != null &&
         city != null &&
         address != null &&
         firstName != null &&
@@ -130,12 +133,20 @@ class _DeviceSetupState extends State<DeviceSetup> {
         phoneNumber != null &&
         selectedPhoneCarrier != null) {
       return true;
+    } else if (deliveryEnabled == false &&
+        firstName != null &&
+        tankDepth != null &&
+        deviceID != null &&
+        lastName != null &&
+        phoneNumber != null &&
+        selectedPhoneCarrier != null) {
+      return true;
     } else {
       return false;
     }
   }
 
-  Future<void> scanBarcodeNormal() async {
+  Future<String> scanBarcodeNormal() async {
     String barcodeScanRes;
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
@@ -143,10 +154,15 @@ class _DeviceSetupState extends State<DeviceSetup> {
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
-    if (!mounted) return;
-    setState(() {
-      deviceIdTextController.text = barcodeScanRes;
-    });
+    if (!mounted) return null;
+    if (barcodeScanRes != null) {
+      setState(() {
+        deviceIdTextController.text = barcodeScanRes;
+        deviceID = barcodeScanRes;
+        return barcodeScanRes;
+      });
+    }
+    return null;
   }
 
   @override
@@ -175,6 +191,46 @@ class _DeviceSetupState extends State<DeviceSetup> {
                   ),
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Enable Salt Delivery:',
+                    style: TextStyle(
+                      color: primaryThemeColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Switch(
+                    value: deliveryEnabled,
+                    onChanged: (bool value) {
+                      _scaffoldKey.currentState.showBottomSheet(
+                        (context) => CustomBottomSheet(
+                          context: context,
+                          label: 'See if delivery is available in your area?',
+                          hintText: 'Zip Code',
+                          inputType: TextInputType.number,
+                          onChanged: (value) {
+                            zipCode = value;
+                          },
+                          onPressed: () async {
+                            deliveryAvailable = await AuthService()
+                                .checkDeliveryZipCodes(int.parse(zipCode));
+                            setState(() {
+                              deliveryEnabled = deliveryAvailable;
+                            });
+                            Navigator.pop(context);
+                          },
+                          onCancelPressed: () => Navigator.pop(context),
+                        ),
+                      );
+                      setState(() {
+                        deliveryEnabled = deliveryAvailable;
+                      });
+                    },
+                  ),
+                ],
+              ),
               CustomTextField(
                 text: 'First Name',
                 onChanged: (text) => firstName = text.trim(),
@@ -188,22 +244,34 @@ class _DeviceSetupState extends State<DeviceSetup> {
                 onChanged: (text) => phoneNumber = text.trim(),
                 keyboardType: TextInputType.phone,
               ),
-              CustomTextField(
-                text: 'Street Address',
-                onChanged: (text) => address = text.trim(),
+              Visibility(
+                visible: deliveryAvailable,
+                child: CustomTextField(
+                  text: 'Street Address',
+                  onChanged: (text) => address = text.trim(),
+                ),
               ),
-              CustomTextField(
-                text: 'City',
-                onChanged: (text) => city = text,
+              Visibility(
+                visible: deliveryAvailable,
+                child: CustomTextField(
+                  text: 'City',
+                  onChanged: (text) => city = text,
+                ),
               ),
-              CustomTextField(
-                text: 'State',
-                onChanged: (text) => state = text,
+              Visibility(
+                visible: deliveryAvailable,
+                child: CustomTextField(
+                  text: 'State',
+                  onChanged: (text) => state = text,
+                ),
               ),
-              CustomTextField(
-                text: 'Zip Code',
-                keyboardType: TextInputType.number,
-                onChanged: (number) => zipCode = number,
+              Visibility(
+                visible: deliveryAvailable,
+                child: CustomTextField(
+                  text: 'Zip Code',
+                  keyboardType: TextInputType.number,
+                  onChanged: (number) => zipCode = number,
+                ),
               ),
               CustomTextField(
                 text: 'Tank Depth cm.',
@@ -246,7 +314,39 @@ class _DeviceSetupState extends State<DeviceSetup> {
                 child: ReusableOutlineButton(
                   onPressed: () async {
                     if (assertNoNullFields()) {
-                      await AuthService().profileAndDeviceSetup(
+                      if (address == null) {
+                        newProfileSetupData = [
+                          deviceID,
+                          null,
+                          null,
+                          null,
+                          null,
+                          int.parse(tankDepth),
+                          firstName,
+                          lastName,
+                          selectedPhoneCarrier,
+                          phoneNumber,
+                          deliveryEnabled
+                        ];
+                        if (await AuthService().checkAuthenticationState() ==
+                            'logged in') {
+                          await AuthService().profileAndDeviceSetup(
+                              deviceID,
+                              null,
+                              null,
+                              null,
+                              null,
+                              int.parse(tankDepth),
+                              firstName,
+                              lastName,
+                              selectedPhoneCarrier,
+                              phoneNumber,
+                              deliveryEnabled);
+                          Navigator.pushReplacementNamed(context, '/home');
+                        }
+                        print(newProfileSetupData);
+                      } else {
+                        newProfileSetupData = [
                           deviceID,
                           address,
                           city,
@@ -256,8 +356,30 @@ class _DeviceSetupState extends State<DeviceSetup> {
                           firstName,
                           lastName,
                           selectedPhoneCarrier,
-                          phoneNumber);
-                      Navigator.pushReplacementNamed(context, '/home');
+                          phoneNumber,
+                          deliveryEnabled
+                        ];
+                        if (await AuthService().checkAuthenticationState() ==
+                            'logged in') {
+                          await AuthService().profileAndDeviceSetup(
+                              deviceID,
+                              address,
+                              city,
+                              state,
+                              int.parse(zipCode),
+                              int.parse(tankDepth),
+                              firstName,
+                              lastName,
+                              selectedPhoneCarrier,
+                              phoneNumber,
+                              deliveryEnabled);
+                        }
+                        Navigator.pushReplacementNamed(context, '/home');
+                      }
+                      if (await AuthService().checkAuthenticationState() !=
+                          'logged in') {
+                        Navigator.pushNamed(context, '/register');
+                      }
                     } else {
                       showSnackBar('Missing Fields');
                     }

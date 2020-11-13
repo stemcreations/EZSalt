@@ -4,6 +4,8 @@ Color primaryThemeColor = Colors.blue;
 Color focusedBorderColor = Colors.blueAccent;
 Color backgroundColor = Colors.white;
 
+List newProfileSetupData;
+
 Map unknownPhoneProvider = {
   'unknown': 'unknown',
 };
@@ -23,4 +25,5 @@ List<String> requiredAccountParameters = [
   'city',
   'state',
   'zipcode',
+  'deliver_enabled',
 ];

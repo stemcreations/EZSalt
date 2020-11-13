@@ -3,6 +3,7 @@ import 'package:ez_salt/screens//login.dart';
 import 'package:ez_salt/screens//profile.dart';
 import 'package:ez_salt/screens//register.dart';
 import 'package:ez_salt/screens/about.dart';
+import 'package:ez_salt/screens/address_setup.dart';
 import 'package:ez_salt/screens/device_setup.dart';
 import 'package:ez_salt/screens/licenses.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -67,6 +68,7 @@ class MyApp extends StatelessWidget with PortraitModeMixin {
         '/deviceSetup': (context) => DeviceSetup(),
         '/licenses': (context) => Licenses(),
         '/about': (context) => About(),
+        '/addressSetup': (context) => AddressSetup(),
       },
     );
   }
