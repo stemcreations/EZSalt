@@ -16,6 +16,7 @@ class CustomTextField extends StatelessWidget {
     this.initialValue,
     this.horizontalPadding = 35,
     this.autoFocus = false,
+    this.textCapitalization = TextCapitalization.words,
   });
 
   final double horizontalPadding;
@@ -29,6 +30,7 @@ class CustomTextField extends StatelessWidget {
   final String labelText;
   final bool autoFocus;
   final TextEditingController controller;
+  final TextCapitalization textCapitalization;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class CustomTextField extends StatelessWidget {
       padding: EdgeInsets.only(
           left: 35, right: horizontalPadding, top: 5, bottom: 5),
       child: TextFormField(
-        textCapitalization: TextCapitalization.words,
+        textCapitalization: textCapitalization,
         autofocus: autoFocus,
         initialValue: initialValue,
         controller: controller,

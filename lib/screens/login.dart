@@ -220,6 +220,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ), // Sign-in email form field
                   CustomTextField(
+                    textCapitalization: TextCapitalization.none,
                     onChanged: (text) {
                       setState(() {
                         password = text.trim();

@@ -40,6 +40,11 @@ class _DeviceSetupState extends State<DeviceSetup> {
     setState(() {});
   }
 
+  int tankDepthToInt(String tankDepthString) {
+    double tankDepthDouble = double.parse(tankDepthString) * 2.54;
+    return tankDepthDouble.floor();
+  }
+
   Widget dropDownBuilder() {
     List<DropdownMenuItem<String>> dropDownItemList = [];
 
@@ -204,29 +209,39 @@ class _DeviceSetupState extends State<DeviceSetup> {
                   Switch(
                     value: deliveryEnabled,
                     onChanged: (bool value) {
-                      _scaffoldKey.currentState.showBottomSheet(
-                        (context) => CustomBottomSheet(
-                          context: context,
-                          label: 'See if delivery is available in your area?',
-                          hintText: 'Zip Code',
-                          inputType: TextInputType.number,
-                          onChanged: (value) {
-                            zipCode = value;
-                          },
-                          onPressed: () async {
-                            deliveryAvailable = await AuthService()
-                                .checkDeliveryZipCodes(int.parse(zipCode));
-                            setState(() {
-                              deliveryEnabled = deliveryAvailable;
-                            });
-                            Navigator.pop(context);
-                          },
-                          onCancelPressed: () => Navigator.pop(context),
-                        ),
-                      );
-                      setState(() {
-                        deliveryEnabled = deliveryAvailable;
-                      });
+                      if (deliveryEnabled == false) {
+                        _scaffoldKey.currentState.showBottomSheet(
+                          (context) => CustomBottomSheet(
+                            context: context,
+                            label: 'See if delivery is available in your area?',
+                            hintText: 'Zip Code',
+                            inputType: TextInputType.number,
+                            onChanged: (value) {
+                              zipCode = value;
+                            },
+                            onPressed: () async {
+                              deliveryAvailable = await AuthService()
+                                  .checkDeliveryZipCodes(int.parse(zipCode));
+                              if (deliveryAvailable == false) {
+                                showSnackBar('Delivery Not Available');
+                              }
+                              setState(() {
+                                deliveryEnabled = deliveryAvailable;
+                              });
+                              Navigator.pop(context);
+                            },
+                            onCancelPressed: () => Navigator.pop(context),
+                          ),
+                        );
+                        setState(() {
+                          deliveryEnabled = deliveryAvailable;
+                        });
+                      } else {
+                        setState(() {
+                          deliveryAvailable = value;
+                          deliveryEnabled = value;
+                        });
+                      }
                     },
                   ),
                 ],
@@ -274,7 +289,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                 ),
               ),
               CustomTextField(
-                text: 'Tank Depth cm.',
+                text: 'Tank Depth in.',
                 keyboardType: TextInputType.number,
                 onChanged: (number) => tankDepth = number,
               ),
@@ -321,7 +336,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                           null,
                           null,
                           null,
-                          int.parse(tankDepth),
+                          tankDepthToInt(tankDepth),
                           firstName,
                           lastName,
                           selectedPhoneCarrier,
@@ -336,7 +351,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                               null,
                               null,
                               null,
-                              int.parse(tankDepth),
+                              tankDepthToInt(tankDepth),
                               firstName,
                               lastName,
                               selectedPhoneCarrier,
@@ -352,7 +367,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                           city,
                           state,
                           int.parse(zipCode),
-                          int.parse(tankDepth),
+                          tankDepthToInt(tankDepth),
                           firstName,
                           lastName,
                           selectedPhoneCarrier,
@@ -367,7 +382,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                               city,
                               state,
                               int.parse(zipCode),
-                              int.parse(tankDepth),
+                              tankDepthToInt(tankDepth),
                               firstName,
                               lastName,
                               selectedPhoneCarrier,

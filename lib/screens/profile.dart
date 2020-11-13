@@ -53,6 +53,12 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void showSnackBar(String message) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
+  }
+
   void getProfileData() async {
     phoneProviders = await AuthService().getPhoneProviders();
     phoneProvidersReversed = await AuthService().getPhoneProvidersReversed();
@@ -150,18 +156,20 @@ class _ProfilePageState extends State<ProfilePage> {
                               if (deliveryAvailable == true) {
                                 await AuthService()
                                     .updateDeliveryEnabled(deliveryAvailable);
-                                //Check to see if the user already has address info in their profile and if so just enable delivery
+                                //If address data doesnt exist go to address setup page
                                 if (profileData['city'] == null) {
                                   await Navigator.pushReplacementNamed(
                                       context, '/addressSetup');
+                                  //if address exists turn on delivery
                                 } else {
                                   deliveryEnabled = deliveryAvailable;
                                   Navigator.pop(context);
                                 }
+                                //if delivery isnt available update the delivery parameter in the user profile
                               } else {
                                 await AuthService()
                                     .updateDeliveryEnabled(deliveryAvailable);
-                                Navigator.pop(context);
+                                showSnackBar('Delivery Not Available');
                               }
                               setState(() {
                                 deliveryEnabled = deliveryAvailable;
@@ -621,7 +629,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Padding(
                               padding: const EdgeInsets.only(top: 20),
                               child: Text(
-                                'Update Tank Depth',
+                                'Update Tank Depth in.',
                                 style: TextStyle(
                                     fontSize: 20, color: primaryThemeColor),
                               ),
@@ -651,8 +659,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             label: Text('Submit'),
                             size: 120,
                             onPressed: () async {
+                              double tankDepthDouble =
+                                  double.parse(tankDepth) * 2.54;
                               await AuthService()
-                                  .updateTankDepth(int.parse(tankDepth));
+                                  .updateTankDepth(tankDepthDouble.floor());
                               getProfileData();
                               Navigator.of(context).pop();
                             },
@@ -788,8 +798,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                       size: 40,
                                     ),
                                   ),
-                                  onTap: () {
-                                    scanBarcodeNormal();
+                                  onTap: () async {
+                                    deviceID = await scanBarcodeNormal();
                                   },
                                 )
                               ],
@@ -822,7 +832,7 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
-  Future<void> scanBarcodeNormal() async {
+  Future<String> scanBarcodeNormal() async {
     String barcodeScanRes;
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
@@ -830,10 +840,11 @@ class _ProfilePageState extends State<ProfilePage> {
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
-    if (!mounted) return;
+    if (!mounted) return null;
     setState(() {
       deviceIdTextController.text = barcodeScanRes;
     });
+    return barcodeScanRes;
   }
 
   Widget dropDownBuilder() {

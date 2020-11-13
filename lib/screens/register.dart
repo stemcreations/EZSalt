@@ -91,6 +91,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     keyboardType: TextInputType.emailAddress,
                   ), //email / username
                   CustomTextField(
+                    textCapitalization: TextCapitalization.none,
                     text: 'Password',
                     obscureText: true,
                     onChanged: (text) => password = text.trim(),
@@ -100,6 +101,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ), //password
                   CustomTextField(
+                    textCapitalization: TextCapitalization.none,
                     text: 'Confirm Password',
                     obscureText: true,
                     onChanged: (text) {

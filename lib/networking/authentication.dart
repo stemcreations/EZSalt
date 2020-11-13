@@ -385,6 +385,15 @@ class AuthService {
     return false;
   }
 
+  Future addDeliveryZipCode(int zipCode) async {
+    Map data = {};
+    List deliveryZipCodes = [];
+    final DocumentSnapshot phoneProviderSnapshot =
+        await _fireStore.collection('variables').doc('Admin').get();
+    data = phoneProviderSnapshot.data();
+    deliveryZipCodes = data['delivery_requested'];
+  }
+
   Future<Map> getPhoneProvidersReversed() async {
     Map phoneProvidersReversed = {};
     Map phoneProviders = await getPhoneProviders();
