@@ -10,8 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-//TODO change url launcher to launch in browser and notify user that they are leaving the app
-
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -23,6 +21,7 @@ class _HomeState extends State<Home> {
   String firstName;
   String lastName;
   String email = '';
+  bool deliveryEnabled = false;
 
   bool checkIfNameExists() {
     if (firstName == null || lastName == null) {
@@ -30,7 +29,6 @@ class _HomeState extends State<Home> {
       print(lastName);
       return false;
     } else {
-      print('not null');
       return true;
     }
   }
@@ -49,6 +47,7 @@ class _HomeState extends State<Home> {
       tankLevel = 1;
     }
     setState(() {
+      deliveryEnabled = profileData['delivery_enabled'];
       firstName = profileData['first_name'];
       lastName = profileData['last_name'];
       email = profileData['email'];
@@ -223,23 +222,44 @@ class _HomeState extends State<Home> {
                 thickness: 2,
               )),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 15.0),
-              child: ReusableOutlineButton(
-                label: Text('Schedule Delivery'),
-                onPressed: () {
-                  launchInWebViewWithJavaScript(
-                    'https://square.site/book/RF2BTQNX9JXWK/ezsalt',
-                  );
-                  //Navigator.pushNamed(context, '/deliveryWeb');
-                },
-                size: 230,
-                icon: Icon(
-                  Icons.developer_board,
-                  size: 0,
-                ),
-              ),
-            ),
+            deliveryEnabled
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 15.0),
+                    child: ReusableOutlineButton(
+                      label: Text('Schedule Delivery'),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Open Browser?'),
+                            content: Text(
+                                'Are you sure you want to leave the app and open a browser window?'),
+                            actions: [
+                              TextButton(
+                                child: Text('No'),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                              TextButton(
+                                child: Text('Yes'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  launchInWebViewWithJavaScript(
+                                    'https://square.site/book/RF2BTQNX9JXWK/ezsalt',
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      size: 230,
+                      icon: Icon(
+                        Icons.developer_board,
+                        size: 0,
+                      ),
+                    ),
+                  )
+                : SizedBox(),
           ],
         ),
       ),

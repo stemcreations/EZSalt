@@ -145,10 +145,10 @@ class AuthService {
       String state,
       int zipCode,
       int tankDepth,
-      firstName,
-      lastName,
-      phoneProvider,
-      phoneNumber,
+      String firstName,
+      String lastName,
+      String phoneProvider,
+      String phoneNumber,
       bool enabledDelivery) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'first_name': firstName,

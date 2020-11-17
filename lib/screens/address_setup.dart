@@ -14,6 +14,17 @@ class _AddressSetupState extends State<AddressSetup> {
   String city;
   String zipCode;
   String state;
+  Map profileData = {};
+
+  void getProfileData() async {
+    profileData = await AuthService().getProfile();
+  }
+
+  @override
+  void initState() {
+    getProfileData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,17 +68,47 @@ class _AddressSetupState extends State<AddressSetup> {
                 keyboardType: TextInputType.number,
                 onChanged: (number) => zipCode = number,
               ),
-              ReusableOutlineButton(
-                size: 150,
-                onPressed: () async {
-                  await AuthService()
-                      .updateAddress(address, city, state, int.parse(zipCode));
-                  Navigator.pushReplacementNamed(context, '/profile');
-                },
-                label: Text('Submit'),
-                icon: Icon(
-                  Icons.add,
-                  size: 0,
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ReusableOutlineButton(
+                        icon: Icon(
+                          Icons.add,
+                          size: 0,
+                        ),
+                        label: Text('Cancel'),
+                        onPressed: () async {
+                          if (profileData['delivery_enabled'] == true &&
+                              profileData['street_address'] != null &&
+                              profileData['city'] != null &&
+                              profileData['state'] != null &&
+                              profileData['zipcode'] != null) {
+                            Navigator.pushReplacementNamed(context, '/profile');
+                          } else {
+                            await AuthService().updateDeliveryEnabled(false);
+                            Navigator.pushReplacementNamed(context, '/profile');
+                          }
+                        },
+                        size: 100),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    ReusableOutlineButton(
+                      size: 100,
+                      onPressed: () async {
+                        await AuthService().updateAddress(
+                            address, city, state, int.parse(zipCode));
+                        Navigator.pushReplacementNamed(context, '/profile');
+                      },
+                      label: Text('Submit'),
+                      icon: Icon(
+                        Icons.add,
+                        size: 0,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

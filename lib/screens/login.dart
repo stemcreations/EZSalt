@@ -207,6 +207,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 30,
                   ),
                   CustomTextField(
+                    //labelText: 'Username',
                     keyboardType: TextInputType.emailAddress,
                     onChanged: (text) {
                       setState(() {
@@ -336,10 +337,28 @@ class _LoginPageState extends State<LoginPage> {
                     child: ReusableOutlineButton(
                       label: Text('Buy Sensor'),
                       onPressed: () {
-                        launchInWebViewWithJavaScript(
-                          'https://www.ezsalt.xyz/',
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Open Browser?'),
+                            content: Text(
+                                'Are you sure you want to leave the app and open a browser window?'),
+                            actions: [
+                              TextButton(
+                                child: Text('No'),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                              TextButton(
+                                  child: Text('Yes'),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    launchInWebViewWithJavaScript(
+                                      'https://www.ezsalt.xyz/',
+                                    );
+                                  }),
+                            ],
+                          ),
                         );
-                        //Navigator.pushNamed(context, '/orderSensorWeb');
                       },
                       size: 230,
                       icon: Icon(Icons.developer_board),

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DeviceSetup extends StatefulWidget {
   @override
@@ -306,10 +307,27 @@ class _DeviceSetupState extends State<DeviceSetup> {
                   GestureDetector(
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 17, right: 35),
-                      child: Icon(
-                        Icons.camera_alt_outlined,
-                        color: primaryThemeColor,
-                        size: 40,
+                      child: Row(
+                        children: [
+                          Text(
+                            '[',
+                            style: TextStyle(
+                                color: primaryThemeColor, fontSize: 40),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 3),
+                            child: FaIcon(
+                              FontAwesomeIcons.barcode,
+                              color: primaryThemeColor,
+                              size: 35,
+                            ),
+                          ),
+                          Text(
+                            ']',
+                            style: TextStyle(
+                                color: primaryThemeColor, fontSize: 40),
+                          ),
+                        ],
                       ),
                     ),
                     onTap: () {
@@ -343,6 +361,9 @@ class _DeviceSetupState extends State<DeviceSetup> {
                           phoneNumber,
                           deliveryEnabled
                         ];
+                        // If user was logged in but profile not completely setup then this block of code gets run
+                        // It updates the current users profile information with the information below.
+                        // This block runs if their delivery enabled is set to false
                         if (await AuthService().checkAuthenticationState() ==
                             'logged in') {
                           await AuthService().profileAndDeviceSetup(
@@ -374,6 +395,9 @@ class _DeviceSetupState extends State<DeviceSetup> {
                           phoneNumber,
                           deliveryEnabled
                         ];
+                        // If user was logged in but profile not completely setup then this block of code gets run
+                        // It updates the current users profile information with the information below.
+                        // also this block only runs if they have their delivery enabled set to true
                         if (await AuthService().checkAuthenticationState() ==
                             'logged in') {
                           await AuthService().profileAndDeviceSetup(
