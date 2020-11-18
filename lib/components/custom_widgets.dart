@@ -588,3 +588,20 @@ class BarcodeScanIcon extends StatelessWidget {
         onTap: onTap);
   }
 }
+
+//============ CUSTOM APP BAR ==================//
+
+AppBar customAppBar(String title, Widget leading, List<Widget> actions) {
+  return AppBar(
+    backgroundColor: primaryThemeColor,
+    title: SafeArea(
+      child: Text(
+        title,
+        style: TextStyle(fontFamily: 'EZSalt', fontWeight: FontWeight.w900),
+      ),
+    ),
+    centerTitle: true,
+    leading: SafeArea(child: leading),
+    actions: actions,
+  );
+}

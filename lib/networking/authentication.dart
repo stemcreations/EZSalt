@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 
 //TODO remove automatic cloud firestore automatic field population or set all values to null and when going to profile page check for null values
 //TODO When registering setup profile and store values in a temporary variable that can be used after email and password are submitted before setting up email and password
@@ -196,10 +199,11 @@ class AuthService {
   }
 
   Future getTankLevel() async {
+    refreshTankLevels();
     if (auth.currentUser.uid != null) {
       final DocumentSnapshot currentUserTankLevel =
           await _fireStore.collection('users').doc(auth.currentUser.uid).get();
-      return currentUserTankLevel.get('percent');
+      return currentUserTankLevel.get('temp_percent');
     }
     return null;
   }
@@ -401,5 +405,22 @@ class AuthService {
       phoneProvidersReversed.addAll({phoneProviders[provider]: provider});
     }
     return phoneProvidersReversed;
+  }
+
+  Future<dynamic> refreshTankLevels() async {
+    String uid = auth.currentUser.uid;
+    Map profileData = await getProfile();
+    String sensorId = profileData['sensor'];
+    String url =
+        'https://us-central1-ezsalt-iot-dev-env.cloudfunctions.net/api/refresh/?uid=$uid&sid=$sensorId';
+    var response = await http.get(url);
+    Map<String, dynamic> decodedData = jsonDecode(response.body);
+    if (decodedData['status'] == 'success') {
+      return decodedData['percent'];
+    } else if (decodedData['status'] == 'low_level') {
+      return decodedData['percent'];
+    } else {
+      return 'Failed to get sensor reading';
+    }
   }
 }

@@ -30,6 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
     'first_name': 'null',
     'email': 'null'
   };
+  PersistentBottomSheetController _sheetController;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String emailAddress;
   String firstName = '';
@@ -88,6 +89,11 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   void initState() {
     getPlatform();
     getProfileData();
@@ -102,6 +108,12 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: Text('Profile'),
         centerTitle: true,
+        leading: GestureDetector(
+          child: Icon(Icons.arrow_back),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
@@ -305,18 +317,24 @@ class _ProfilePageState extends State<ProfilePage> {
               ), //Email Address Card
               TwoLineCustomCard(
                 onTap: () {
-                  _scaffoldKey.currentState.showBottomSheet(
+                  _sheetController = _scaffoldKey.currentState.showBottomSheet(
                     (context) => CustomPhoneBottomSheet(
                       context: context,
                       label: 'Update Phone Number',
                       inputType: TextInputType.number,
                       hintText: 'Phone Number',
                       onPressed: () async {
-                        await AuthService()
-                            .updatePhone(phoneNumber, selectedPhoneCarrier);
-                        getProfileData();
-                        Navigator.of(context).pop();
-                        showSnackBar('Phone information updated.');
+                        if (phoneNumber != null &&
+                            selectedPhoneCarrier != null) {
+                          await AuthService()
+                              .updatePhone(phoneNumber, selectedPhoneCarrier);
+                          getProfileData();
+                          Navigator.of(context).pop();
+                          showSnackBar('Phone information updated.');
+                        } else {
+                          Navigator.of(context).pop();
+                          showSnackBar('Missing Data');
+                        }
                       },
                       onChanged: (value) {
                         setState(() {
@@ -328,10 +346,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       picker:
                           Platform.isIOS ? getIosPicker() : dropDownBuilder(),
-                      //TODO fix bug where after choosing the phone provider the picker needs to update to show the selected carrier
                     ),
                   );
-                  // changePhoneInformation(context);
                 },
                 enterEditMode: enterEditMode,
                 icon: Icons.phone,
@@ -1042,7 +1058,9 @@ class _ProfilePageState extends State<ProfilePage> {
             items: dropDownItemList,
             onChanged: (value) {
               setState(() {
-                selectedPhoneCarrier = value;
+                _sheetController.setState(() {
+                  selectedPhoneCarrier = value;
+                });
               });
             },
           ),

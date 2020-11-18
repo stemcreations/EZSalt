@@ -70,7 +70,9 @@ class _DeviceSetupState extends State<DeviceSetup> {
               const EdgeInsets.only(top: 5, bottom: 5, right: 30, left: 30),
           child: DropdownButton(
             style: TextStyle(
-                color: primaryThemeColor, fontWeight: FontWeight.bold),
+              color: primaryThemeColor,
+              fontWeight: FontWeight.bold,
+            ),
             value: selectedPhoneCarrier,
             hint: Text(
               'Select Phone Carrier',

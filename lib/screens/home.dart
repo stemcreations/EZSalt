@@ -16,6 +16,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Map profileData = {};
   int tankLevel = 1;
   String firstName;
@@ -34,7 +35,7 @@ class _HomeState extends State<Home> {
   }
 
   //This function pulls the current tank level readings from firebase and refreshes the state
-  void getTankLevel() async {
+  Future getTankLevel() async {
     var doubleTankLevel = await AuthService().getTankLevel();
     profileData = await AuthService().getProfile();
     if (doubleTankLevel.runtimeType == double) {
@@ -69,6 +70,14 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
+  _returnData(BuildContext context) async {
+    await Navigator.pushNamed(context, '/profile');
+    getTankLevel();
+    setState(() {
+      deliveryEnabled = profileData['delivery_enabled'];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var drawerHeader = UserAccountsDrawerHeader(
@@ -92,7 +101,8 @@ class _HomeState extends State<Home> {
           title: Text('Profile'),
           onTap: () {
             if (firstName != null) {
-              Navigator.pushNamed(context, '/profile');
+              Navigator.of(context).pop();
+              _returnData(context);
             } else {
               showDialog(
                   builder: (context) => AlertDialog(
@@ -155,6 +165,7 @@ class _HomeState extends State<Home> {
       ],
     );
     return Scaffold(
+      key: _scaffoldKey,
       drawer: Drawer(
         child: drawerItems,
       ),
@@ -260,6 +271,26 @@ class _HomeState extends State<Home> {
                     ),
                   )
                 : SizedBox(),
+            Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: ReusableOutlineButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    size: 0,
+                  ),
+                  label: Text('Refresh Tank Level'),
+                  onPressed: () async {
+                    var result = await AuthService().refreshTankLevels();
+                    if (result.runtimeType == double) {
+                      _scaffoldKey.currentState.showSnackBar(SnackBar(
+                        content: Text('Tank Level Refreshed'),
+                      ));
+                    }
+                    await getTankLevel();
+                    setState(() {});
+                  },
+                  size: 230),
+            )
           ],
         ),
       ),
