@@ -153,19 +153,24 @@ class AuthService {
       String phoneProvider,
       String phoneNumber,
       bool enabledDelivery) async {
-    await _fireStore.collection('users').doc(auth.currentUser.uid).update({
-      'first_name': firstName,
-      'last_name': lastName,
-      'phone_provider': phoneProvider,
-      'phone': phoneNumber,
-      'sensor': deviceID,
-      'depth': tankDepth,
-      'street_address': address,
-      'city': city,
-      'state': state,
-      'zipcode': zipCode,
-      'delivery_enabled': enabledDelivery,
-    });
+    try {
+      await _fireStore.collection('users').doc(auth.currentUser.uid).update({
+        'first_name': firstName,
+        'last_name': lastName,
+        'phone_provider': phoneProvider,
+        'phone': phoneNumber,
+        'sensor': deviceID,
+        'depth': tankDepth,
+        'street_address': address,
+        'city': city,
+        'state': state,
+        'zipcode': zipCode,
+        'delivery_enabled': enabledDelivery,
+        'temp_percent': 10
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<String> signInWithEmailAndPassword(
@@ -290,6 +295,7 @@ class AuthService {
     DocumentSnapshot snapshot =
         await _fireStore.collection('users').doc(currentUser.uid).get();
     if (!snapshot.exists) {
+      print('creating document');
       await _fireStore.collection('users').doc(currentUser.uid).set({
         'first_name': null,
         'last_name': null,

@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
 
   _returnData(BuildContext context) async {
     await Navigator.pushNamed(context, '/profile');
-    getTankLevel();
+    profileData = await AuthService().getProfile();
     setState(() {
       deliveryEnabled = profileData['delivery_enabled'];
     });
@@ -125,6 +125,24 @@ class _HomeState extends State<Home> {
                       ),
                   context: context);
             }
+          },
+        ),
+        ListTile(
+          title: Text('Update Salt Level'),
+          onTap: () async {
+            Navigator.of(context).pop();
+            var result = await AuthService().refreshTankLevels();
+            if (result.runtimeType == double) {
+              _scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text('Tank Level Refreshed'),
+              ));
+            } else {
+              _scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text('Sensor Reading Failed'),
+              ));
+            }
+            await getTankLevel();
+            setState(() {});
           },
         ),
         ListTile(
@@ -271,26 +289,6 @@ class _HomeState extends State<Home> {
                     ),
                   )
                 : SizedBox(),
-            Padding(
-              padding: const EdgeInsets.only(top: 15.0),
-              child: ReusableOutlineButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    size: 0,
-                  ),
-                  label: Text('Refresh Tank Level'),
-                  onPressed: () async {
-                    var result = await AuthService().refreshTankLevels();
-                    if (result.runtimeType == double) {
-                      _scaffoldKey.currentState.showSnackBar(SnackBar(
-                        content: Text('Tank Level Refreshed'),
-                      ));
-                    }
-                    await getTankLevel();
-                    setState(() {});
-                  },
-                  size: 230),
-            )
           ],
         ),
       ),

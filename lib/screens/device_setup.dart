@@ -368,6 +368,8 @@ class _DeviceSetupState extends State<DeviceSetup> {
                         // This block runs if their delivery enabled is set to false
                         if (await AuthService().checkAuthenticationState() ==
                             'logged in') {
+                          print('user is logged in');
+                          await AuthService().setAccountsRequiredParameters();
                           await AuthService().profileAndDeviceSetup(
                               deviceID,
                               null,
@@ -380,7 +382,9 @@ class _DeviceSetupState extends State<DeviceSetup> {
                               selectedPhoneCarrier,
                               phoneNumber,
                               deliveryEnabled);
-                          Navigator.pushReplacementNamed(context, '/home');
+                          print('account updated');
+                          await Navigator.pushReplacementNamed(
+                              context, '/home');
                         }
                         print(newProfileSetupData);
                       } else {
@@ -402,6 +406,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                         // also this block only runs if they have their delivery enabled set to true
                         if (await AuthService().checkAuthenticationState() ==
                             'logged in') {
+                          await AuthService().setAccountsRequiredParameters();
                           await AuthService().profileAndDeviceSetup(
                               deviceID,
                               address,
@@ -414,8 +419,10 @@ class _DeviceSetupState extends State<DeviceSetup> {
                               selectedPhoneCarrier,
                               phoneNumber,
                               deliveryEnabled);
+                          print('account updated 2');
+                          await Navigator.pushReplacementNamed(
+                              context, '/home');
                         }
-                        Navigator.pushReplacementNamed(context, '/home');
                       }
                       if (await AuthService().checkAuthenticationState() !=
                           'logged in') {

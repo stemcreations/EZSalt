@@ -46,7 +46,7 @@ class _AboutState extends State<About> {
             Padding(
               padding: const EdgeInsets.only(top: 15.0),
               child: Text(
-                'Version 1.1.0',
+                'Version 1.1.1',
                 style: TextStyle(fontSize: 20),
               ),
             ),
