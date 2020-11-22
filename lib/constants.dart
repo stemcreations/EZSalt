@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 Color primaryThemeColor = Colors.blue;
 Color focusedBorderColor = Colors.blueAccent;
 Color backgroundColor = Colors.white;
+Color profileScreenTextColor = Colors.grey.shade600;
 
 List newProfileSetupData;
 
@@ -25,5 +26,6 @@ List<String> requiredAccountParameters = [
   'city',
   'state',
   'zipcode',
-  'delivery_enabled'
+  'delivery_enabled',
+  'temp_percent'
 ];

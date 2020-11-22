@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:apple_sign_in/apple_sign_in.dart';
@@ -204,8 +205,8 @@ class AuthService {
   }
 
   Future getTankLevel() async {
-    refreshTankLevels();
     if (auth.currentUser.uid != null) {
+      await refreshTankLevels();
       final DocumentSnapshot currentUserTankLevel =
           await _fireStore.collection('users').doc(auth.currentUser.uid).get();
       return currentUserTankLevel.get('temp_percent');
@@ -312,6 +313,7 @@ class AuthService {
         'state': null,
         'zipcode': null,
         'delivery_enabled': false,
+        'temp_percent': 10
       });
       return false;
     }
@@ -419,14 +421,26 @@ class AuthService {
     String sensorId = profileData['sensor'];
     String url =
         'https://us-central1-ezsalt-iot-dev-env.cloudfunctions.net/api/refresh/?uid=$uid&sid=$sensorId';
-    var response = await http.get(url);
-    Map<String, dynamic> decodedData = jsonDecode(response.body);
-    if (decodedData['status'] == 'success') {
-      return decodedData['percent'];
-    } else if (decodedData['status'] == 'low_level') {
-      return decodedData['percent'];
-    } else {
-      return 'Failed to get sensor reading';
+    try {
+      var response =
+          await http.get(url).timeout(Duration(seconds: 7), onTimeout: () {
+        print('No response received');
+        return null;
+      });
+      if (response != null) {
+        Map<String, dynamic> decodedData = jsonDecode(response.body);
+        if (decodedData['status'] == 'success') {
+          return decodedData['percent'];
+        } else if (decodedData['status'] == 'low_level') {
+          return decodedData['percent'];
+        } else {
+          print('failed');
+          return 'Failed to get sensor reading';
+        }
+      }
+    } on FormatException catch (e) {
+      print(e.message);
+      return 'Sensor Reading Failed';
     }
   }
 }

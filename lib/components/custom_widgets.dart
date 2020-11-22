@@ -188,7 +188,10 @@ class TwoLineCustomCard extends StatelessWidget {
                                 child: AutoSizeText(
                                   firstLine,
                                   style: TextStyle(
-                                      color: primaryThemeColor, fontSize: 16),
+                                    color: profileScreenTextColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                   minFontSize: 10,
                                 )),
                           ),
@@ -211,7 +214,10 @@ class TwoLineCustomCard extends StatelessWidget {
                               child: AutoSizeText(
                                 secondLine,
                                 style: TextStyle(
-                                    color: primaryThemeColor, fontSize: 16),
+                                  color: profileScreenTextColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                                 minFontSize: 10,
                               ),
                             ),
@@ -284,8 +290,11 @@ class CustomProfileCard extends StatelessWidget {
                       width: MediaQuery.of(context).size.width / 1.6,
                       child: AutoSizeText(
                         cardData,
-                        style:
-                            TextStyle(color: primaryThemeColor, fontSize: 16),
+                        style: TextStyle(
+                          color: profileScreenTextColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

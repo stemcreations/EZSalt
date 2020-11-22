@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -47,6 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool editAddress = false;
   bool deliveryAvailable = false;
   bool deliveryEnabled = false;
+  bool _isAsyncCall = true;
   String tankDepth;
   String zipCode;
   String tankDepthPercent;
@@ -77,7 +79,9 @@ class _ProfilePageState extends State<ProfilePage> {
     profileData = await AuthService().getProfile();
     sendPercent = profileData['send_percent'];
     deliveryEnabled = profileData['delivery_enabled'];
-    setState(() {});
+    setState(() {
+      _isAsyncCall = false;
+    });
   }
 
   void getPlatform() {
@@ -103,360 +107,372 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text('Profile'),
-        centerTitle: true,
-        leading: GestureDetector(
-          child: Icon(Icons.arrow_back),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10.0),
-            child: GestureDetector(
-              child: Icon(Icons.edit),
-              onTap: () {
-                setState(() {
-                  if (enterEditMode) {
-                    enterEditMode = false;
-                  } else {
-                    enterEditMode = true;
-                  }
-                });
-              },
-            ),
-          )
-        ],
-      ),
-      backgroundColor: backgroundColor,
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 40),
-                child: Text(
-                  'EZsalt',
-                  style: TextStyle(
-                      fontFamily: 'EZSalt',
-                      color: primaryThemeColor,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w900),
-                ),
+    return _isAsyncCall
+        ? ModalProgressHUD(inAsyncCall: _isAsyncCall, child: Scaffold())
+        : Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              title: Text('Profile'),
+              centerTitle: true,
+              leading: GestureDetector(
+                child: Icon(Icons.arrow_back),
+                onTap: () {
+                  Navigator.pop(context);
+                },
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Enable Salt Delivery:',
-                    style: TextStyle(
-                      color: primaryThemeColor,
-                      fontSize: 16,
-                    ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: GestureDetector(
+                    child: Icon(Icons.edit),
+                    onTap: () {
+                      setState(() {
+                        if (enterEditMode) {
+                          enterEditMode = false;
+                        } else {
+                          enterEditMode = true;
+                        }
+                      });
+                    },
                   ),
-                  Switch(
-                    value: deliveryEnabled,
-                    onChanged: (bool value) {
-                      if (deliveryEnabled == false) {
+                )
+              ],
+            ),
+            backgroundColor: backgroundColor,
+            body: SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
+                      child: Text(
+                        'EZsalt',
+                        style: TextStyle(
+                            fontFamily: 'EZSalt',
+                            color: primaryThemeColor,
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Enable Salt Delivery:',
+                          style: TextStyle(
+                            color: primaryThemeColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Switch(
+                          value: deliveryEnabled,
+                          onChanged: (bool value) {
+                            if (deliveryEnabled == false) {
+                              _scaffoldKey.currentState.showBottomSheet(
+                                (context) => CustomBottomSheet(
+                                  context: context,
+                                  label:
+                                      'See if delivery is available in your area?',
+                                  hintText: 'Zip Code',
+                                  inputType: TextInputType.number,
+                                  onChanged: (value) {
+                                    zipCode = value;
+                                  },
+                                  onPressed: () async {
+                                    deliveryAvailable = await AuthService()
+                                        .checkDeliveryZipCodes(
+                                            int.parse(zipCode));
+                                    if (deliveryAvailable == true) {
+                                      await AuthService().updateDeliveryEnabled(
+                                          deliveryAvailable);
+                                      //If address data doesnt exist go to address setup page
+                                      if (profileData['city'] == null) {
+                                        await Navigator.pushReplacementNamed(
+                                            context, '/addressSetup');
+                                        //if address exists turn on delivery
+                                      } else {
+                                        deliveryEnabled = deliveryAvailable;
+                                        Navigator.pop(context);
+                                      }
+                                      //if delivery isnt available update the delivery parameter in the user profile
+                                    } else {
+                                      await AuthService().updateDeliveryEnabled(
+                                          deliveryAvailable);
+                                      showSnackBar('Delivery Not Available');
+                                    }
+                                    setState(() {
+                                      deliveryEnabled = deliveryAvailable;
+                                    });
+                                    if (deliveryAvailable == false) {
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                                  onCancelPressed: () => Navigator.pop(context),
+                                ),
+                              );
+                            } else {
+                              AuthService().updateDeliveryEnabled(value);
+                              setState(() {
+                                deliveryEnabled = value;
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ), // Delivery enabled toggle switch
+                    CustomProfileCard(
+                      onTap: () {
                         _scaffoldKey.currentState.showBottomSheet(
                           (context) => CustomBottomSheet(
                             context: context,
-                            label: 'See if delivery is available in your area?',
-                            hintText: 'Zip Code',
-                            inputType: TextInputType.number,
-                            onChanged: (value) {
-                              zipCode = value;
-                            },
+                            label: 'Update first and last name',
+                            inputType: TextInputType.text,
+                            hintText: 'Enter first & last name',
                             onPressed: () async {
-                              deliveryAvailable = await AuthService()
-                                  .checkDeliveryZipCodes(int.parse(zipCode));
-                              if (deliveryAvailable == true) {
-                                await AuthService()
-                                    .updateDeliveryEnabled(deliveryAvailable);
-                                //If address data doesnt exist go to address setup page
-                                if (profileData['city'] == null) {
-                                  await Navigator.pushReplacementNamed(
-                                      context, '/addressSetup');
-                                  //if address exists turn on delivery
-                                } else {
-                                  deliveryEnabled = deliveryAvailable;
-                                  Navigator.pop(context);
-                                }
-                                //if delivery isnt available update the delivery parameter in the user profile
-                              } else {
-                                await AuthService()
-                                    .updateDeliveryEnabled(deliveryAvailable);
-                                showSnackBar('Delivery Not Available');
-                              }
-                              setState(() {
-                                deliveryEnabled = deliveryAvailable;
-                              });
-                              if (deliveryAvailable == false) {
-                                Navigator.pop(context);
-                              }
-                            },
-                            onCancelPressed: () => Navigator.pop(context),
-                          ),
-                        );
-                      } else {
-                        AuthService().updateDeliveryEnabled(value);
-                        setState(() {
-                          deliveryEnabled = value;
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ), // Delivery enabled toggle switch
-              CustomProfileCard(
-                onTap: () {
-                  _scaffoldKey.currentState.showBottomSheet(
-                    (context) => CustomBottomSheet(
-                      context: context,
-                      label: 'Update first and last name',
-                      inputType: TextInputType.text,
-                      hintText: 'Enter first & last name',
-                      onPressed: () async {
-                        await AuthService().updateName(firstName, lastName);
-                        getProfileData();
-                        Navigator.of(context).pop();
-                        showSnackBar('Profile updated');
-                      },
-                      onChanged: (value) {
-                        String names = value;
-                        List tempNames = names.split(' ');
-                        firstName = tempNames[0];
-                        if (tempNames.length > 1) {
-                          lastName = tempNames[1];
-                        }
-                        print(firstName + lastName);
-                      },
-                      onCancelPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  );
-                  //changeNameDialog(context);
-                },
-                enterEditMode: enterEditMode,
-                cardData:
-                    profileData['first_name'] + ' ' + profileData['last_name'],
-                icon: Icons.person,
-              ), // Names Card
-              deliveryEnabled
-                  ? TwoLineCustomCard(
-                      onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                                  title: Text('Edit Address'),
-                                  content: Text(
-                                      'Are you sure you want to edit your address?'),
-                                  actions: [
-                                    TextButton(
-                                      child: Text('No'),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: Text('Yes'),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        Navigator.pushReplacementNamed(
-                                            context, '/addressSetup');
-                                      },
-                                    ),
-                                  ],
-                                ));
-                        //changeAddressDialog(context);
-                      },
-                      enterEditMode: enterEditMode,
-                      icon: Icons.location_on,
-                      firstLine: profileData['street_address'],
-                      secondLine: profileData['city'] +
-                          ' ' +
-                          profileData['state'] +
-                          ', ' +
-                          profileData['zipcode'].toString(),
-                    ) // Address Card
-                  : SizedBox(),
-              CustomProfileCard(
-                onTap: () {
-                  _scaffoldKey.currentState
-                      .showBottomSheet((context) => CustomBottomSheet(
-                          context: context,
-                          label: 'Update E-Mail Address',
-                          inputType: TextInputType.emailAddress,
-                          hintText: 'Enter E-Mail Address',
-                          onPressed: () async {
-                            await AuthService().updateEmail(emailAddress);
-                            getProfileData();
-                            Navigator.of(context).pop();
-                            showSnackBar('E-Mail Address Updated');
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              emailAddress = value;
-                            });
-                          },
-                          onCancelPressed: () {
-                            Navigator.pop(context);
-                          }));
-                  //changeEmailDialog(context);
-                },
-                enterEditMode: enterEditMode,
-                cardData: profileData['email'],
-                icon: Icons.email,
-              ), //Email Address Card
-              TwoLineCustomCard(
-                onTap: () {
-                  _sheetController = _scaffoldKey.currentState.showBottomSheet(
-                    (context) => CustomPhoneBottomSheet(
-                      context: context,
-                      label: 'Update Phone Number',
-                      inputType: TextInputType.number,
-                      hintText: 'Phone Number',
-                      onPressed: () async {
-                        if (phoneNumber != null &&
-                            selectedPhoneCarrier != null) {
-                          await AuthService()
-                              .updatePhone(phoneNumber, selectedPhoneCarrier);
-                          getProfileData();
-                          Navigator.of(context).pop();
-                          showSnackBar('Phone information updated.');
-                        } else {
-                          Navigator.of(context).pop();
-                          showSnackBar('Missing Data');
-                        }
-                      },
-                      onChanged: (value) {
-                        setState(() {
-                          phoneNumber = value.trim();
-                        });
-                      },
-                      onCancelPressed: () {
-                        Navigator.pop(context);
-                      },
-                      picker:
-                          Platform.isIOS ? getIosPicker() : dropDownBuilder(),
-                    ),
-                  );
-                },
-                enterEditMode: enterEditMode,
-                icon: Icons.phone,
-                firstLine: profileData['phone'],
-                secondLine: checkIfPhoneProviderIsValid()
-                    ? phoneProvidersReversed[profileData['phone_provider']]
-                    : unknownPhoneProvider['unknown'],
-              ),
-              CustomProfileCard(
-                onTap: () {
-                  _scaffoldKey.currentState
-                      .showBottomSheet((context) => CustomBottomSheet(
-                          context: context,
-                          label: 'Update Tank Depth',
-                          inputType: TextInputType.number,
-                          hintText: 'Tank Depth in inches',
-                          onPressed: () async {
-                            double tankDepthDouble =
-                                double.parse(tankDepth) * 2.54;
-                            await AuthService()
-                                .updateTankDepth(tankDepthDouble.floor());
-                            getProfileData();
-                            showSnackBar('Tank Depth Updated');
-                            Navigator.of(context).pop();
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              tankDepth = value;
-                            });
-                          },
-                          onCancelPressed: () {
-                            Navigator.pop(context);
-                          }));
-                  //changeTankDepthDialog(context);
-                },
-                enterEditMode: enterEditMode,
-                cardData: 'Tank Depth: ' + tankDepthToInt().toString() + 'in',
-                icon: Icons.delete_outline,
-              ), // Tank Depth Card
-              CustomProfileCard(
-                onTap: () {
-                  _scaffoldKey.currentState.showBottomSheet(
-                    (context) => CustomBottomSheetWithCamera(
-                      context: context,
-                      label: 'Update Device ID',
-                      inputType: TextInputType.text,
-                      hintText: 'Enter Device ID',
-                      controller: deviceIdTextController,
-                      onPressed: () async {
-                        await AuthService().updateSensor(deviceID);
-                        getProfileData();
-                        Navigator.of(context).pop();
-                        showSnackBar('Device Id Updated');
-                      },
-                      onChanged: (value) {
-                        setState(() {
-                          deviceID = value;
-                        });
-                      },
-                      onCancelPressed: () {
-                        Navigator.pop(context);
-                      },
-                      onTap: () async {
-                        deviceID = await scanBarcodeNormal();
-                      },
-                    ),
-                  );
-                  //changeSensorDialog(context);
-                },
-                enterEditMode: enterEditMode,
-                cardData: profileData['sensor'],
-                icon: Icons.developer_board,
-              ), // Device ID Card
-              CustomProfileCard(
-                onTap: () {
-                  _scaffoldKey.currentState
-                      .showBottomSheet((context) => CustomBottomSheet(
-                            context: context,
-                            label:
-                                'Change when you receive low salt notifications.',
-                            hintText: 'Notification depth %',
-                            onPressed: () async {
-                              await AuthService().updateTankDepthNotification(
-                                  int.parse(tankDepthPercent));
+                              await AuthService()
+                                  .updateName(firstName, lastName);
                               getProfileData();
-                              showSnackBar('Notification depth changed');
+                              Navigator.of(context).pop();
+                              showSnackBar('Profile updated');
+                            },
+                            onChanged: (value) {
+                              String names = value;
+                              List tempNames = names.split(' ');
+                              firstName = tempNames[0];
+                              if (tempNames.length > 1) {
+                                lastName = tempNames[1];
+                              }
+                              print(firstName + lastName);
+                            },
+                            onCancelPressed: () {
                               Navigator.pop(context);
                             },
-                            onChanged: (percent) async {
+                          ),
+                        );
+                        //changeNameDialog(context);
+                      },
+                      enterEditMode: enterEditMode,
+                      cardData: profileData['first_name'] +
+                          ' ' +
+                          profileData['last_name'],
+                      icon: Icons.person,
+                    ), // Names Card
+                    deliveryEnabled
+                        ? TwoLineCustomCard(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                        title: Text('Edit Address'),
+                                        content: Text(
+                                            'Are you sure you want to edit your address?'),
+                                        actions: [
+                                          TextButton(
+                                            child: Text('No'),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: Text('Yes'),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              Navigator.pushReplacementNamed(
+                                                  context, '/addressSetup');
+                                            },
+                                          ),
+                                        ],
+                                      ));
+                              //changeAddressDialog(context);
+                            },
+                            enterEditMode: enterEditMode,
+                            icon: Icons.location_on,
+                            firstLine: profileData['street_address'],
+                            secondLine: profileData['city'] +
+                                ' ' +
+                                profileData['state'] +
+                                ', ' +
+                                profileData['zipcode'].toString(),
+                          ) // Address Card
+                        : SizedBox(),
+                    CustomProfileCard(
+                      onTap: () {
+                        _scaffoldKey.currentState
+                            .showBottomSheet((context) => CustomBottomSheet(
+                                context: context,
+                                label: 'Update E-Mail Address',
+                                inputType: TextInputType.emailAddress,
+                                hintText: 'Enter E-Mail Address',
+                                onPressed: () async {
+                                  await AuthService().updateEmail(emailAddress);
+                                  getProfileData();
+                                  Navigator.of(context).pop();
+                                  showSnackBar('E-Mail Address Updated');
+                                },
+                                onChanged: (value) {
+                                  setState(() {
+                                    emailAddress = value;
+                                  });
+                                },
+                                onCancelPressed: () {
+                                  Navigator.pop(context);
+                                }));
+                        //changeEmailDialog(context);
+                      },
+                      enterEditMode: enterEditMode,
+                      cardData: profileData['email'],
+                      icon: Icons.email,
+                    ), //Email Address Card
+                    TwoLineCustomCard(
+                      onTap: () {
+                        _sheetController =
+                            _scaffoldKey.currentState.showBottomSheet(
+                          (context) => CustomPhoneBottomSheet(
+                            context: context,
+                            label: 'Update Phone Number',
+                            inputType: TextInputType.number,
+                            hintText: 'Phone Number',
+                            onPressed: () async {
+                              if (phoneNumber != null &&
+                                  selectedPhoneCarrier != null) {
+                                await AuthService().updatePhone(
+                                    phoneNumber, selectedPhoneCarrier);
+                                getProfileData();
+                                Navigator.of(context).pop();
+                                showSnackBar('Phone information updated.');
+                              } else {
+                                Navigator.of(context).pop();
+                                showSnackBar('Missing Data');
+                              }
+                            },
+                            onChanged: (value) {
                               setState(() {
-                                tankDepthPercent = percent;
+                                phoneNumber = value.trim();
                               });
                             },
-                            onCancelPressed: () => Navigator.pop(context),
-                            inputType: TextInputType.number,
-                          ));
-                  //changeTankNotificationDepthDialog(context);
-                },
-                enterEditMode: enterEditMode,
-                cardData: 'Tank depth notification = ' +
-                    sendPercent['low'].toString() +
-                    '%',
-                icon: Icons.delete_outline,
-              ), // Notification Depth Card
-            ],
-          ),
-        ),
-      ),
-    );
+                            onCancelPressed: () {
+                              Navigator.pop(context);
+                            },
+                            picker: Platform.isIOS
+                                ? getIosPicker()
+                                : dropDownBuilder(),
+                          ),
+                        );
+                      },
+                      enterEditMode: enterEditMode,
+                      icon: Icons.phone,
+                      firstLine: profileData['phone'],
+                      secondLine: checkIfPhoneProviderIsValid()
+                          ? phoneProvidersReversed[
+                              profileData['phone_provider']]
+                          : unknownPhoneProvider['unknown'],
+                    ),
+                    CustomProfileCard(
+                      onTap: () {
+                        _scaffoldKey.currentState
+                            .showBottomSheet((context) => CustomBottomSheet(
+                                context: context,
+                                label: 'Update Tank Depth',
+                                inputType: TextInputType.number,
+                                hintText: 'Tank Depth in inches',
+                                onPressed: () async {
+                                  double tankDepthDouble =
+                                      double.parse(tankDepth) * 2.54;
+                                  await AuthService()
+                                      .updateTankDepth(tankDepthDouble.floor());
+                                  getProfileData();
+                                  showSnackBar('Tank Depth Updated');
+                                  Navigator.of(context).pop();
+                                },
+                                onChanged: (value) {
+                                  setState(() {
+                                    tankDepth = value;
+                                  });
+                                },
+                                onCancelPressed: () {
+                                  Navigator.pop(context);
+                                }));
+                        //changeTankDepthDialog(context);
+                      },
+                      enterEditMode: enterEditMode,
+                      cardData:
+                          'Tank Depth: ' + tankDepthToInt().toString() + 'in',
+                      icon: Icons.delete_outline,
+                    ), // Tank Depth Card
+                    CustomProfileCard(
+                      onTap: () {
+                        _scaffoldKey.currentState.showBottomSheet(
+                          (context) => CustomBottomSheetWithCamera(
+                            context: context,
+                            label: 'Update Device ID',
+                            inputType: TextInputType.text,
+                            hintText: 'Enter Device ID',
+                            controller: deviceIdTextController,
+                            onPressed: () async {
+                              await AuthService().updateSensor(deviceID);
+                              getProfileData();
+                              Navigator.of(context).pop();
+                              showSnackBar('Device Id Updated');
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                deviceID = value;
+                              });
+                            },
+                            onCancelPressed: () {
+                              Navigator.pop(context);
+                            },
+                            onTap: () async {
+                              deviceID = await scanBarcodeNormal();
+                            },
+                          ),
+                        );
+                        //changeSensorDialog(context);
+                      },
+                      enterEditMode: enterEditMode,
+                      cardData: profileData['sensor'],
+                      icon: Icons.developer_board,
+                    ), // Device ID Card
+                    CustomProfileCard(
+                      onTap: () {
+                        _scaffoldKey.currentState
+                            .showBottomSheet((context) => CustomBottomSheet(
+                                  context: context,
+                                  label:
+                                      'Change when you receive low salt notifications.',
+                                  hintText: 'Notification depth %',
+                                  onPressed: () async {
+                                    await AuthService()
+                                        .updateTankDepthNotification(
+                                            int.parse(tankDepthPercent));
+                                    getProfileData();
+                                    showSnackBar('Notification depth changed');
+                                    Navigator.pop(context);
+                                  },
+                                  onChanged: (percent) async {
+                                    setState(() {
+                                      tankDepthPercent = percent;
+                                    });
+                                  },
+                                  onCancelPressed: () => Navigator.pop(context),
+                                  inputType: TextInputType.number,
+                                ));
+                        //changeTankNotificationDepthDialog(context);
+                      },
+                      enterEditMode: enterEditMode,
+                      cardData: 'Tank depth notification = ' +
+                          sendPercent['low'].toString() +
+                          '%',
+                      icon: Icons.delete_outline,
+                    ), // Notification Depth Card
+                  ],
+                ),
+              ),
+            ),
+          );
   }
 
   // ===================DIALOG BOXES CHANGED TO BOTTOM SHEETS ========================//
