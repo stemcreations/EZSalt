@@ -20,8 +20,10 @@ class CustomTextField extends StatelessWidget {
     this.horizontalPadding = 35,
     this.autoFocus = false,
     this.textCapitalization = TextCapitalization.words,
+    this.hintTextColor = Colors.blue,
   });
 
+  final Color hintTextColor;
   final double horizontalPadding;
   final String initialValue;
   final String text;
@@ -69,7 +71,7 @@ class CustomTextField extends StatelessWidget {
           ),
           hintText: text,
           hintStyle: TextStyle(
-            color: primaryThemeColor,
+            color: hintTextColor,
           ),
           prefixIcon: icon,
         ),
@@ -166,6 +168,7 @@ class TwoLineCustomCard extends StatelessWidget {
                     child: Icon(
                       icon,
                       color: primaryThemeColor,
+                      size: 28,
                     ),
                   ),
                   Column(
@@ -228,18 +231,20 @@ class TwoLineCustomCard extends StatelessWidget {
                   ),
                 ],
               ),
-              Visibility(
-                child: GestureDetector(
-                  onTap: onTap,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 15.0, left: 5),
-                    child: Icon(
-                      Icons.edit,
-                      color: Colors.grey.shade600,
+              Flexible(
+                child: Visibility(
+                  child: GestureDetector(
+                    onTap: onTap,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 15.0, left: 5),
+                      child: Icon(
+                        Icons.edit,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ),
+                  visible: enterEditMode,
                 ),
-                visible: enterEditMode,
               ),
             ],
           ),
@@ -274,6 +279,7 @@ class CustomProfileCard extends StatelessWidget {
                     child: Icon(
                       icon,
                       color: primaryThemeColor,
+                      size: 28,
                     ),
                   ),
                   Container(
@@ -302,18 +308,20 @@ class CustomProfileCard extends StatelessWidget {
               ),
             ],
           ),
-          Visibility(
-            child: GestureDetector(
-              onTap: onTap,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 15.0),
-                child: Icon(
-                  Icons.edit,
-                  color: Colors.grey.shade600,
+          Flexible(
+            child: Visibility(
+              child: GestureDetector(
+                onTap: onTap,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 15.0),
+                  child: Icon(
+                    Icons.edit,
+                    color: Colors.grey.shade600,
+                  ),
                 ),
               ),
+              visible: enterEditMode,
             ),
-            visible: enterEditMode,
           ),
         ],
       ),
@@ -342,52 +350,69 @@ class CustomBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 250,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                color: primaryThemeColor,
-                fontSize: 16,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: CustomTextField(
-                keyboardType: inputType,
-                text: hintText,
-                onChanged: onChanged,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ReusableOutlineButton(
-                    icon: Icon(
-                      Icons.add,
-                      size: 0,
-                    ),
-                    label: Text('Cancel'),
-                    onPressed: onCancelPressed,
-                    size: 100),
-                SizedBox(
-                  width: 20,
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: 5,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 1.5,
+            color: Colors.grey,
+          ),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        height: 250,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: profileScreenTextColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                ReusableOutlineButton(
-                    icon: Icon(
-                      Icons.add,
-                      size: 0,
-                    ),
-                    label: Text('Submit'),
-                    onPressed: onPressed,
-                    size: 100),
-              ],
-            )
-          ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: CustomTextField(
+                  hintTextColor: profileScreenTextColor,
+                  keyboardType: inputType,
+                  text: hintText,
+                  onChanged: onChanged,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ReusableOutlineButton(
+                      icon: Icon(
+                        Icons.add,
+                        size: 0,
+                      ),
+                      label: Text('Cancel'),
+                      onPressed: onCancelPressed,
+                      size: 100),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  ReusableOutlineButton(
+                      icon: Icon(
+                        Icons.add,
+                        size: 0,
+                      ),
+                      label: Text('Submit'),
+                      onPressed: onPressed,
+                      size: 100),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -415,60 +440,73 @@ class CustomPhoneBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: Platform.isAndroid ? 290 : 350,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                color: primaryThemeColor,
-                fontSize: 16,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Container(
-                height: Platform.isIOS ? 150 : null,
-                alignment: Alignment.center,
-                child: picker,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: CustomTextField(
-                keyboardType: inputType,
-                text: hintText,
-                onChanged: onChanged,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ReusableOutlineButton(
-                    icon: Icon(
-                      Icons.add,
-                      size: 0,
-                    ),
-                    label: Text('Cancel'),
-                    onPressed: onCancelPressed,
-                    size: 100),
-                SizedBox(
-                  width: 20,
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: 5,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 1.5,
+            color: Colors.grey,
+          ),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        height: Platform.isAndroid ? 290 : 350,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: profileScreenTextColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-                ReusableOutlineButton(
-                    icon: Icon(
-                      Icons.add,
-                      size: 0,
-                    ),
-                    label: Text('Submit'),
-                    onPressed: onPressed,
-                    size: 100),
-              ],
-            )
-          ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Container(
+                  height: Platform.isIOS ? 150 : null,
+                  alignment: Alignment.center,
+                  child: picker,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: CustomTextField(
+                  hintTextColor: profileScreenTextColor,
+                  keyboardType: inputType,
+                  text: hintText,
+                  onChanged: onChanged,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ReusableOutlineButton(
+                      icon: Icon(
+                        Icons.add,
+                        size: 0,
+                      ),
+                      label: Text('Cancel'),
+                      onPressed: onCancelPressed,
+                      size: 100),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  ReusableOutlineButton(
+                      icon: Icon(
+                        Icons.add,
+                        size: 0,
+                      ),
+                      label: Text('Submit'),
+                      onPressed: onPressed,
+                      size: 100),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -498,64 +536,77 @@ class CustomBottomSheetWithCamera extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 250,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                color: primaryThemeColor,
-                fontSize: 16,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      controller: controller,
-                      keyboardType: inputType,
-                      text: hintText,
-                      onChanged: onChanged,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 15, right: 15),
-                    child: BarcodeScanIcon(onTap: onTap),
-                  )
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ReusableOutlineButton(
-                    icon: Icon(
-                      Icons.add,
-                      size: 0,
-                    ),
-                    label: Text('Cancel'),
-                    onPressed: onCancelPressed,
-                    size: 100),
-                SizedBox(
-                  width: 20,
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: 5,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 1.5,
+            color: Colors.grey,
+          ),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        height: 250,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: profileScreenTextColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-                ReusableOutlineButton(
-                    icon: Icon(
-                      Icons.add,
-                      size: 0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        hintTextColor: profileScreenTextColor,
+                        controller: controller,
+                        keyboardType: inputType,
+                        text: hintText,
+                        onChanged: onChanged,
+                      ),
                     ),
-                    label: Text('Submit'),
-                    onPressed: onPressed,
-                    size: 100),
-              ],
-            )
-          ],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15, right: 15),
+                      child: BarcodeScanIcon(onTap: onTap),
+                    )
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ReusableOutlineButton(
+                      icon: Icon(
+                        Icons.add,
+                        size: 0,
+                      ),
+                      label: Text('Cancel'),
+                      onPressed: onCancelPressed,
+                      size: 100),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  ReusableOutlineButton(
+                      icon: Icon(
+                        Icons.add,
+                        size: 0,
+                      ),
+                      label: Text('Submit'),
+                      onPressed: onPressed,
+                      size: 100),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

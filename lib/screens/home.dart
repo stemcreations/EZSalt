@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:ez_salt/components/common_functions.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
-import 'package:ez_salt/components/user_interface_adjustments.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,6 +17,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  AuthService _auth = AuthService();
+  CommonFunctions commonFunctions = CommonFunctions();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Map profileData = {};
   int tankLevel = 1;
@@ -28,35 +30,26 @@ class _HomeState extends State<Home> {
 
   bool checkIfNameExists() {
     if (firstName == null || lastName == null) {
-      print(firstName);
-      print(lastName);
       return false;
     } else {
       return true;
     }
   }
 
-  void showCustomSnackBar(String content) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(content),
-      elevation: 5,
-      behavior: SnackBarBehavior.floating,
-    ));
-  }
-
   //This function pulls the current tank level readings from firebase and refreshes the state
   Future getTankLevel() async {
-    await AuthService().refreshTankLevels();
-    var doubleTankLevel = await AuthService().getTankLevel();
-    profileData = await AuthService().getProfile();
+    var doubleTankLevel = await _auth.getTankLevel();
+    profileData = await _auth.getProfile();
     if (doubleTankLevel.runtimeType == double) {
-      String stringTankLevel = doubleTankLevel.toString();
-      tankLevel = double.parse(stringTankLevel).floor().toInt();
-    } else {
+      tankLevel = commonFunctions.doubleToInt(doubleTankLevel);
+    } else if (doubleTankLevel.runtimeType == int) {
       tankLevel = doubleTankLevel;
     }
     if (tankLevel <= 0) {
       tankLevel = 1;
+    }
+    if (tankLevel > 100) {
+      tankLevel = 100;
     }
     setState(() {
       _isAsyncCall = false;
@@ -67,24 +60,28 @@ class _HomeState extends State<Home> {
     });
   }
 
+  //If user is logged in get the tank level and profile data and if not then go to login screen
   void isLoggedIn() async {
-    if (await AuthService().checkAuthenticationState() != 'logged in') {
-      dispose();
+    if (await _auth.checkAuthenticationState() != 'logged in') {
+      setState(() {
+        _isAsyncCall = false;
+      });
+      Navigator.pushReplacementNamed(context, '/login');
+    } else {
+      await getTankLevel();
     }
-    AuthService().getPhoneProviders();
-    AuthService().getPhoneProvidersReversed();
   }
 
   @override
   void initState() {
     isLoggedIn();
-    getTankLevel();
     super.initState();
   }
 
-  _returnData(BuildContext context) async {
+  //Navigate to the profile screen when profile screen is popped refresh profile data.
+  _returnDataFromProfile(BuildContext context) async {
     await Navigator.pushNamed(context, '/profile');
-    profileData = await AuthService().getProfile();
+    profileData = await _auth.getProfile();
     setState(() {
       deliveryEnabled = profileData['delivery_enabled'];
     });
@@ -114,7 +111,7 @@ class _HomeState extends State<Home> {
           onTap: () {
             if (firstName != null) {
               Navigator.of(context).pop();
-              _returnData(context);
+              _returnDataFromProfile(context);
             } else {
               showDialog(
                   builder: (context) => AlertDialog(
@@ -165,7 +162,7 @@ class _HomeState extends State<Home> {
                           onPressed: () async {
                             Navigator.of(context).pop();
                             Navigator.pop(context);
-                            AuthService().signOut();
+                            _auth.signOut();
                             Navigator.pushReplacementNamed(context, '/login');
                           },
                           child: Text('Yes')),
@@ -189,8 +186,8 @@ class _HomeState extends State<Home> {
           centerTitle: true,
           title: Padding(
             padding: EdgeInsets.only(
-                top: UserInterface().getTopNotchSize(context),
-                bottom: UserInterface().getTopNotchSize(context) / 2),
+                top: CommonFunctions().getTopNotchSize(context),
+                bottom: CommonFunctions().getTopNotchSize(context) / 2),
             child: Text(
               'EZsalt',
               style:
@@ -313,7 +310,7 @@ class _HomeState extends State<Home> {
                         setState(() {
                           _isAsyncCall = true;
                         });
-                        var result = await AuthService()
+                        var result = await _auth
                             .refreshTankLevels()
                             .timeout(Duration(seconds: 7), onTimeout: () {
                           setState(() {
@@ -325,8 +322,14 @@ class _HomeState extends State<Home> {
                             ));
                           });
                         });
-                        if (result.runtimeType == double) {
+                        if (result.runtimeType == double ||
+                            result.runtimeType == int) {
                           setState(() {
+                            if (result.runtimeType == double) {
+                              tankLevel = commonFunctions.doubleToInt(result);
+                            } else {
+                              tankLevel = result;
+                            }
                             _isAsyncCall = false;
                           });
                           _scaffoldKey.currentState.showSnackBar(SnackBar(

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ez_salt/components/common_functions.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
@@ -16,6 +17,7 @@ class DeviceSetup extends StatefulWidget {
 }
 
 class _DeviceSetupState extends State<DeviceSetup> {
+  CommonFunctions commonFunctions = CommonFunctions();
   bool deliveryEnabled = false;
   bool deliveryAvailable = false;
   Map phoneProviders = {};
@@ -226,7 +228,11 @@ class _DeviceSetupState extends State<DeviceSetup> {
                               deliveryAvailable = await AuthService()
                                   .checkDeliveryZipCodes(int.parse(zipCode));
                               if (deliveryAvailable == false) {
-                                showSnackBar('Delivery Not Available');
+                                commonFunctions.showCustomSnackBar(
+                                  context,
+                                  _scaffoldKey,
+                                  'Delivery Not Available',
+                                );
                               }
                               setState(() {
                                 deliveryEnabled = deliveryAvailable;

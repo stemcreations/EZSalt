@@ -15,10 +15,13 @@ import 'networking/authentication.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  final bool isLogged = await checkLoggedInState();
+
+  final bool isLoggedIn = await checkLoggedInState();
+
   final MyApp myApp = MyApp(
-    initialRoute: isLogged ? '/home' : '/login',
+    initialRoute: isLoggedIn ? '/home' : '/login',
   );
+
   runApp(myApp);
 }
 

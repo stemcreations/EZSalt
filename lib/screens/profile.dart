@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ez_salt/components/common_functions.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
@@ -31,6 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
     'first_name': 'null',
     'email': 'null'
   };
+  CommonFunctions commonFunctions = CommonFunctions();
   PersistentBottomSheetController _sheetController;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String emailAddress;
@@ -200,7 +202,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                     } else {
                                       await AuthService().updateDeliveryEnabled(
                                           deliveryAvailable);
-                                      showSnackBar('Delivery Not Available');
+                                      commonFunctions.showCustomSnackBar(
+                                          context,
+                                          _scaffoldKey,
+                                          'Delivery Not Available');
+                                      //showSnackBar('Delivery Not Available');
                                     }
                                     setState(() {
                                       deliveryEnabled = deliveryAvailable;
@@ -211,6 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   },
                                   onCancelPressed: () => Navigator.pop(context),
                                 ),
+                                backgroundColor: Colors.transparent,
                               );
                             } else {
                               AuthService().updateDeliveryEnabled(value);
@@ -250,6 +257,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               Navigator.pop(context);
                             },
                           ),
+                          backgroundColor: Colors.transparent,
                         );
                         //changeNameDialog(context);
                       },
@@ -300,26 +308,29 @@ class _ProfilePageState extends State<ProfilePage> {
                         : SizedBox(),
                     CustomProfileCard(
                       onTap: () {
-                        _scaffoldKey.currentState
-                            .showBottomSheet((context) => CustomBottomSheet(
-                                context: context,
-                                label: 'Update E-Mail Address',
-                                inputType: TextInputType.emailAddress,
-                                hintText: 'Enter E-Mail Address',
-                                onPressed: () async {
-                                  await AuthService().updateEmail(emailAddress);
-                                  getProfileData();
-                                  Navigator.of(context).pop();
-                                  showSnackBar('E-Mail Address Updated');
-                                },
-                                onChanged: (value) {
-                                  setState(() {
-                                    emailAddress = value;
-                                  });
-                                },
-                                onCancelPressed: () {
-                                  Navigator.pop(context);
-                                }));
+                        _scaffoldKey.currentState.showBottomSheet(
+                          (context) => CustomBottomSheet(
+                            context: context,
+                            label: 'Update E-Mail Address',
+                            inputType: TextInputType.emailAddress,
+                            hintText: 'Enter E-Mail Address',
+                            onPressed: () async {
+                              await AuthService().updateEmail(emailAddress);
+                              getProfileData();
+                              Navigator.of(context).pop();
+                              showSnackBar('E-Mail Address Updated');
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                emailAddress = value;
+                              });
+                            },
+                            onCancelPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          backgroundColor: Colors.transparent,
+                        );
                         //changeEmailDialog(context);
                       },
                       enterEditMode: enterEditMode,
@@ -360,6 +371,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ? getIosPicker()
                                 : dropDownBuilder(),
                           ),
+                          backgroundColor: Colors.transparent,
                         );
                       },
                       enterEditMode: enterEditMode,
@@ -372,29 +384,32 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     CustomProfileCard(
                       onTap: () {
-                        _scaffoldKey.currentState
-                            .showBottomSheet((context) => CustomBottomSheet(
-                                context: context,
-                                label: 'Update Tank Depth',
-                                inputType: TextInputType.number,
-                                hintText: 'Tank Depth in inches',
-                                onPressed: () async {
-                                  double tankDepthDouble =
-                                      double.parse(tankDepth) * 2.54;
-                                  await AuthService()
-                                      .updateTankDepth(tankDepthDouble.floor());
-                                  getProfileData();
-                                  showSnackBar('Tank Depth Updated');
-                                  Navigator.of(context).pop();
-                                },
-                                onChanged: (value) {
-                                  setState(() {
-                                    tankDepth = value;
-                                  });
-                                },
-                                onCancelPressed: () {
-                                  Navigator.pop(context);
-                                }));
+                        _scaffoldKey.currentState.showBottomSheet(
+                          (context) => CustomBottomSheet(
+                            context: context,
+                            label: 'Update Tank Depth',
+                            inputType: TextInputType.number,
+                            hintText: 'Tank Depth in inches',
+                            onPressed: () async {
+                              double tankDepthDouble =
+                                  double.parse(tankDepth) * 2.54;
+                              await AuthService()
+                                  .updateTankDepth(tankDepthDouble.floor());
+                              getProfileData();
+                              showSnackBar('Tank Depth Updated');
+                              Navigator.of(context).pop();
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                tankDepth = value;
+                              });
+                            },
+                            onCancelPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          backgroundColor: Colors.transparent,
+                        );
                         //changeTankDepthDialog(context);
                       },
                       enterEditMode: enterEditMode,
@@ -429,6 +444,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               deviceID = await scanBarcodeNormal();
                             },
                           ),
+                          backgroundColor: Colors.transparent,
                         );
                         //changeSensorDialog(context);
                       },
@@ -438,28 +454,29 @@ class _ProfilePageState extends State<ProfilePage> {
                     ), // Device ID Card
                     CustomProfileCard(
                       onTap: () {
-                        _scaffoldKey.currentState
-                            .showBottomSheet((context) => CustomBottomSheet(
-                                  context: context,
-                                  label:
-                                      'Change when you receive low salt notifications.',
-                                  hintText: 'Notification depth %',
-                                  onPressed: () async {
-                                    await AuthService()
-                                        .updateTankDepthNotification(
-                                            int.parse(tankDepthPercent));
-                                    getProfileData();
-                                    showSnackBar('Notification depth changed');
-                                    Navigator.pop(context);
-                                  },
-                                  onChanged: (percent) async {
-                                    setState(() {
-                                      tankDepthPercent = percent;
-                                    });
-                                  },
-                                  onCancelPressed: () => Navigator.pop(context),
-                                  inputType: TextInputType.number,
-                                ));
+                        _scaffoldKey.currentState.showBottomSheet(
+                          (context) => CustomBottomSheet(
+                            context: context,
+                            label:
+                                'Change when you receive low salt notifications.',
+                            hintText: 'Notification depth %',
+                            onPressed: () async {
+                              await AuthService().updateTankDepthNotification(
+                                  int.parse(tankDepthPercent));
+                              getProfileData();
+                              showSnackBar('Notification depth changed');
+                              Navigator.pop(context);
+                            },
+                            onChanged: (percent) async {
+                              setState(() {
+                                tankDepthPercent = percent;
+                              });
+                            },
+                            onCancelPressed: () => Navigator.pop(context),
+                            inputType: TextInputType.number,
+                          ),
+                          backgroundColor: Colors.transparent,
+                        );
                         //changeTankNotificationDepthDialog(context);
                       },
                       enterEditMode: enterEditMode,
@@ -474,550 +491,6 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           );
   }
-
-  // ===================DIALOG BOXES CHANGED TO BOTTOM SHEETS ========================//
-
-  // void changeNameDialog(BuildContext context) {
-  //   String firstName = '';
-  //   String lastName = '';
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return Center(
-  //           child: Dialog(
-  //             child: SizedBox(
-  //               width: MediaQuery.of(context).size.width / 1,
-  //               height: MediaQuery.of(context).size.height / 2.5,
-  //               child: SingleChildScrollView(
-  //                 child: Container(
-  //                   decoration: new BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(20),
-  //                       color: Colors.white),
-  //                   child: Column(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Column(
-  //                         children: [
-  //                           Padding(
-  //                             padding: const EdgeInsets.only(top: 20),
-  //                             child: Text(
-  //                               'Update Name',
-  //                               style: TextStyle(
-  //                                   fontSize: 20, color: primaryThemeColor),
-  //                             ),
-  //                           ),
-  //                           Padding(
-  //                               padding: const EdgeInsets.only(top: 5.0),
-  //                               child: CustomTextField(
-  //                                 text: 'First Name',
-  //                                 autoFocus: true,
-  //                                 onChanged: (String value) {
-  //                                   setState(() {
-  //                                     firstName = value.trim();
-  //                                   });
-  //                                 },
-  //                               )),
-  //                           Padding(
-  //                               padding:
-  //                                   const EdgeInsets.only(top: 5.0, bottom: 20),
-  //                               child: CustomTextField(
-  //                                 text: 'Last Name',
-  //                                 autoFocus: true,
-  //                                 onChanged: (String value) {
-  //                                   setState(() {
-  //                                     lastName = value.trim();
-  //                                   });
-  //                                 },
-  //                               )),
-  //                         ],
-  //                       ),
-  //                       Padding(
-  //                         padding: const EdgeInsets.only(bottom: 10.0),
-  //                         child: ReusableOutlineButton(
-  //                           icon: Icon(
-  //                             Icons.add,
-  //                             size: 0,
-  //                           ),
-  //                           label: Text('Submit'),
-  //                           size: 120,
-  //                           onPressed: () async {
-  //                             await AuthService()
-  //                                 .updateName(firstName, lastName);
-  //                             getProfileData();
-  //                             Navigator.of(context).pop();
-  //                           },
-  //                         ),
-  //                       )
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
-  //
-  // void changePhoneInformation(BuildContext context) {
-  //   String phoneNumber;
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return Center(
-  //           child: Dialog(
-  //             child: SizedBox(
-  //               width: MediaQuery.of(context).size.width / 1,
-  //               height: MediaQuery.of(context).size.height / 2.5,
-  //               child: SingleChildScrollView(
-  //                 child: Container(
-  //                   decoration: new BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(20),
-  //                       color: Colors.white),
-  //                   child: Column(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Column(
-  //                         children: [
-  //                           Padding(
-  //                             padding: const EdgeInsets.only(top: 20),
-  //                             child: Text(
-  //                               'Update Phone Number',
-  //                               style: TextStyle(
-  //                                   fontSize: 20, color: primaryThemeColor),
-  //                             ),
-  //                           ),
-  //                           Container(
-  //                             height: containerHeight,
-  //                             alignment: Alignment.center,
-  //                             child: Platform.isIOS
-  //                                 ? getIosPicker()
-  //                                 : dropDownBuilder(),
-  //                           ),
-  //                           Padding(
-  //                               padding: const EdgeInsets.only(top: 5.0),
-  //                               child: CustomTextField(
-  //                                 text: 'Phone Number',
-  //                                 keyboardType: TextInputType.number,
-  //                                 autoFocus: true,
-  //                                 onChanged: (String value) {
-  //                                   setState(() {
-  //                                     phoneNumber = value.trim();
-  //                                   });
-  //                                 },
-  //                               )),
-  //                         ],
-  //                       ),
-  //                       Padding(
-  //                         padding: const EdgeInsets.only(top: 80.0),
-  //                         child: ReusableOutlineButton(
-  //                           icon: Icon(
-  //                             Icons.add,
-  //                             size: 0,
-  //                           ),
-  //                           label: Text('Submit'),
-  //                           size: 120,
-  //                           onPressed: () async {
-  //                             await AuthService().updatePhone(
-  //                                 phoneNumber, selectedPhoneCarrier);
-  //                             getProfileData();
-  //                             Navigator.of(context).pop();
-  //                           },
-  //                         ),
-  //                       )
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
-  //
-  // void changeAddressDialog(BuildContext context) {
-  //   String streetAddress;
-  //   String city;
-  //   String state;
-  //   String zipCode;
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return Center(
-  //           child: Dialog(
-  //             child: SizedBox(
-  //               width: MediaQuery.of(context).size.width / 1,
-  //               height: MediaQuery.of(context).size.height / 1.9,
-  //               child: SingleChildScrollView(
-  //                 child: Container(
-  //                   decoration: new BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(20),
-  //                       color: Colors.white),
-  //                   child: Column(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     children: [
-  //                       Padding(
-  //                         padding: const EdgeInsets.only(top: 10),
-  //                         child: Text(
-  //                           'Update Address',
-  //                           style: TextStyle(
-  //                               fontSize: 20, color: primaryThemeColor),
-  //                         ),
-  //                       ),
-  //                       Padding(
-  //                           padding: const EdgeInsets.only(top: 2.5),
-  //                           child: CustomTextField(
-  //                             text: 'Street Address',
-  //                             autoFocus: true,
-  //                             onChanged: (value) {
-  //                               streetAddress = value;
-  //                             },
-  //                           )),
-  //                       Padding(
-  //                           padding: const EdgeInsets.only(top: 2.5),
-  //                           child: CustomTextField(
-  //                             text: 'City',
-  //                             autoFocus: true,
-  //                             onChanged: (value) {
-  //                               city = value;
-  //                             },
-  //                           )),
-  //                       Padding(
-  //                           padding: const EdgeInsets.only(top: 2.5),
-  //                           child: CustomTextField(
-  //                             text: 'State',
-  //                             autoFocus: true,
-  //                             onChanged: (value) {
-  //                               state = value;
-  //                             },
-  //                           )),
-  //                       Padding(
-  //                           padding:
-  //                               const EdgeInsets.only(top: 2.5, bottom: 10),
-  //                           child: CustomTextField(
-  //                             text: 'Zip Code',
-  //                             autoFocus: true,
-  //                             keyboardType: TextInputType.number,
-  //                             onChanged: (value) {
-  //                               zipCode = value;
-  //                             },
-  //                           )),
-  //                       Padding(
-  //                         padding: const EdgeInsets.only(top: 10.0),
-  //                         child: ReusableOutlineButton(
-  //                           onPressed: () async {
-  //                             await AuthService().updateAddress(streetAddress,
-  //                                 city, state, int.parse(zipCode));
-  //                             getProfileData();
-  //                             Navigator.of(context).pop();
-  //                           },
-  //                           icon: Icon(
-  //                             Icons.add,
-  //                             size: 0,
-  //                           ),
-  //                           label: Text('Submit'),
-  //                           size: 120,
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
-  //
-  // void changeEmailDialog(BuildContext context) {
-  //   String email;
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return Center(
-  //           child: Dialog(
-  //             child: SizedBox(
-  //               width: MediaQuery.of(context).size.width / 1,
-  //               height: MediaQuery.of(context).size.height / 2.5,
-  //               child: SingleChildScrollView(
-  //                 child: Container(
-  //                   decoration: new BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(20),
-  //                       color: Colors.white),
-  //                   child: Column(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Column(
-  //                         children: [
-  //                           Padding(
-  //                             padding: const EdgeInsets.only(top: 20),
-  //                             child: Text(
-  //                               'Update Email',
-  //                               style: TextStyle(
-  //                                   fontSize: 20, color: primaryThemeColor),
-  //                             ),
-  //                           ),
-  //                           Padding(
-  //                               padding: const EdgeInsets.only(
-  //                                   top: 10.0, bottom: 40),
-  //                               child: CustomTextField(
-  //                                 text: 'Email Address',
-  //                                 autoFocus: true,
-  //                                 onChanged: (String value) {
-  //                                   setState(() {
-  //                                     email = value.trim();
-  //                                   });
-  //                                 },
-  //                               )),
-  //                         ],
-  //                       ),
-  //                       Padding(
-  //                         padding: const EdgeInsets.only(top: 80.0),
-  //                         child: ReusableOutlineButton(
-  //                           icon: Icon(
-  //                             Icons.add,
-  //                             size: 0,
-  //                           ),
-  //                           label: Text('Submit'),
-  //                           size: 120,
-  //                           onPressed: () async {
-  //                             await AuthService().updateEmail(email);
-  //                             getProfileData();
-  //                             Navigator.of(context).pop();
-  //                           },
-  //                         ),
-  //                       )
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
-  //
-  // void changeTankDepthDialog(BuildContext context) {
-  //   String tankDepth;
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return Center(
-  //           child: Dialog(
-  //             child: SizedBox(
-  //               width: MediaQuery.of(context).size.width / 1,
-  //               height: MediaQuery.of(context).size.height / 2.5,
-  //               child: SingleChildScrollView(
-  //                 child: Container(
-  //                   decoration: new BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(20),
-  //                       color: Colors.white),
-  //                   child: Column(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Column(
-  //                         children: [
-  //                           Padding(
-  //                             padding: const EdgeInsets.only(top: 20),
-  //                             child: Text(
-  //                               'Update Tank Depth in.',
-  //                               style: TextStyle(
-  //                                   fontSize: 20, color: primaryThemeColor),
-  //                             ),
-  //                           ),
-  //                           Padding(
-  //                               padding: const EdgeInsets.only(
-  //                                   top: 10.0, bottom: 40),
-  //                               child: CustomTextField(
-  //                                 text: 'Tank Depth',
-  //                                 autoFocus: true,
-  //                                 keyboardType: TextInputType.number,
-  //                                 onChanged: (String value) {
-  //                                   setState(() {
-  //                                     tankDepth = value.trim();
-  //                                   });
-  //                                 },
-  //                               )),
-  //                         ],
-  //                       ),
-  //                       Padding(
-  //                         padding: const EdgeInsets.only(bottom: 10.0),
-  //                         child: ReusableOutlineButton(
-  //                           icon: Icon(
-  //                             Icons.add,
-  //                             size: 0,
-  //                           ),
-  //                           label: Text('Submit'),
-  //                           size: 120,
-  //                           onPressed: () async {
-  //                             double tankDepthDouble =
-  //                                 double.parse(tankDepth) * 2.54;
-  //                             await AuthService()
-  //                                 .updateTankDepth(tankDepthDouble.floor());
-  //                             getProfileData();
-  //                             Navigator.of(context).pop();
-  //                           },
-  //                         ),
-  //                       )
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
-  //
-  // void changeTankNotificationDepthDialog(BuildContext context) {
-  //   String tankDepthPercent;
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return Center(
-  //           child: Dialog(
-  //             child: SizedBox(
-  //               width: MediaQuery.of(context).size.width / 1,
-  //               height: MediaQuery.of(context).size.height / 2.5,
-  //               child: SingleChildScrollView(
-  //                 child: Container(
-  //                   decoration: new BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(20),
-  //                       color: Colors.white),
-  //                   child: Column(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Column(
-  //                         children: [
-  //                           Padding(
-  //                             padding: const EdgeInsets.only(top: 20),
-  //                             child: Text(
-  //                               'Update Tank Depth Notification',
-  //                               style: TextStyle(
-  //                                   fontSize: 18, color: primaryThemeColor),
-  //                             ),
-  //                           ),
-  //                           Padding(
-  //                               padding: const EdgeInsets.only(
-  //                                   top: 10.0, bottom: 40),
-  //                               child: CustomTextField(
-  //                                 text: 'Tank Notification Depth',
-  //                                 autoFocus: true,
-  //                                 keyboardType: TextInputType.number,
-  //                                 onChanged: (String value) {
-  //                                   setState(() {
-  //                                     tankDepthPercent = value.trim();
-  //                                   });
-  //                                 },
-  //                               )),
-  //                         ],
-  //                       ),
-  //                       Padding(
-  //                         padding: const EdgeInsets.only(bottom: 10.0),
-  //                         child: ReusableOutlineButton(
-  //                           icon: Icon(
-  //                             Icons.add,
-  //                             size: 0,
-  //                           ),
-  //                           label: Text('Submit'),
-  //                           size: 120,
-  //                           onPressed: () async {
-  //                             await AuthService().updateTankDepthNotification(
-  //                                 int.parse(tankDepthPercent));
-  //                             getProfileData();
-  //                             Navigator.of(context).pop();
-  //                           },
-  //                         ),
-  //                       )
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
-  //
-  // void changeSensorDialog(BuildContext context) {
-  //   String deviceID;
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return Center(
-  //           child: Dialog(
-  //             child: SizedBox(
-  //               width: MediaQuery.of(context).size.width / 1,
-  //               height: MediaQuery.of(context).size.height / 2.5,
-  //               child: SingleChildScrollView(
-  //                 child: Container(
-  //                   decoration: new BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(20),
-  //                       color: Colors.white),
-  //                   child: Column(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Column(
-  //                         children: [
-  //                           Padding(
-  //                             padding: const EdgeInsets.only(top: 20),
-  //                             child: Text(
-  //                               'Update Sensor ID',
-  //                               style: TextStyle(
-  //                                   fontSize: 20, color: primaryThemeColor),
-  //                             ),
-  //                           ),
-  //                           Row(
-  //                             mainAxisSize: MainAxisSize.min,
-  //                             children: [
-  //                               Expanded(
-  //                                   child: CustomTextField(
-  //                                       horizontalPadding: 5,
-  //                                       text: 'Device ID',
-  //                                       controller: deviceIdTextController,
-  //                                       maxLength: 13,
-  //                                       onChanged: (text) => deviceID = text)),
-  //                               BarcodeScanIcon(
-  //                                 onTap: () async {
-  //                                   deviceID = await scanBarcodeNormal();
-  //                                 },
-  //                               )
-  //                             ],
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       Padding(
-  //                         padding: const EdgeInsets.only(bottom: 10.0),
-  //                         child: ReusableOutlineButton(
-  //                           icon: Icon(
-  //                             Icons.add,
-  //                             size: 0,
-  //                           ),
-  //                           label: Text('Submit'),
-  //                           size: 120,
-  //                           onPressed: () async {
-  //                             await AuthService().updateSensor(deviceID);
-  //                             getProfileData();
-  //                             Navigator.of(context).pop();
-  //                           },
-  //                         ),
-  //                       )
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
-
-  // ===================DIALOG BOXES CHANGED TO BOTTOM SHEETS ========================//
 
   Future<String> scanBarcodeNormal() async {
     String barcodeScanRes;

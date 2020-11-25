@@ -417,30 +417,32 @@ class AuthService {
 
   Future<dynamic> refreshTankLevels() async {
     String uid = auth.currentUser.uid;
-    Map profileData = await getProfile();
-    String sensorId = profileData['sensor'];
-    String url =
-        'https://us-central1-ezsalt-iot-dev-env.cloudfunctions.net/api/refresh/?uid=$uid&sid=$sensorId';
-    try {
-      var response =
-          await http.get(url).timeout(Duration(seconds: 7), onTimeout: () {
-        print('No response received');
-        return null;
-      });
-      if (response != null) {
-        Map<String, dynamic> decodedData = jsonDecode(response.body);
-        if (decodedData['status'] == 'success') {
-          return decodedData['percent'];
-        } else if (decodedData['status'] == 'low_level') {
-          return decodedData['percent'];
-        } else {
-          print('failed');
-          return 'Failed to get sensor reading';
+    if (await checkAuthenticationState() == 'logged in') {
+      Map profileData = await getProfile();
+      String sensorId = profileData['sensor'];
+      String url =
+          'https://us-central1-ezsalt-iot-dev-env.cloudfunctions.net/api/refresh/?uid=$uid&sid=$sensorId';
+      try {
+        var response =
+            await http.get(url).timeout(Duration(seconds: 7), onTimeout: () {
+          print('No response received');
+          return null;
+        });
+        if (response != null) {
+          Map<String, dynamic> decodedData = jsonDecode(response.body);
+          if (decodedData['status'] == 'success') {
+            return decodedData['percent'];
+          } else if (decodedData['status'] == 'low_level') {
+            return decodedData['percent'];
+          } else {
+            print('failed');
+            return 'Failed to get sensor reading';
+          }
         }
+      } on FormatException catch (e) {
+        print(e.message);
+        return 'Sensor Reading Failed';
       }
-    } on FormatException catch (e) {
-      print(e.message);
-      return 'Sensor Reading Failed';
     }
   }
 }
