@@ -2,7 +2,6 @@ import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -65,122 +64,130 @@ class _RegisterPageState extends State<RegisterPage> {
         centerTitle: true,
       ),
       body: Center(
-        child: ModalProgressHUD(
-          inAsyncCall: _isAsyncCall,
-          child: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 30),
-                    child: Text(
-                      'EZsalt',
-                      style: TextStyle(
-                        fontFamily: 'EZSalt',
-                        color: primaryThemeColor,
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
+        child: _isAsyncCall
+            ? Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                    ],
                   ),
-                  CustomTextField(
-                    text: 'Email Address',
-                    onChanged: (text) => email = text.trim(),
-                    keyboardType: TextInputType.emailAddress,
-                  ), //email / username
-                  CustomTextField(
-                    textCapitalization: TextCapitalization.none,
-                    text: 'Password',
-                    obscureText: true,
-                    onChanged: (text) => password = text.trim(),
-                    icon: Icon(
-                      icon,
-                      color: iconColor,
-                    ),
-                  ), //password
-                  CustomTextField(
-                    textCapitalization: TextCapitalization.none,
-                    text: 'Confirm Password',
-                    obscureText: true,
-                    onChanged: (text) {
-                      confirmedPassword = text;
-                      checkPasswordMatch();
-                    },
-                    icon: Icon(
-                      icon,
-                      color: iconColor,
-                    ),
-                  ), //re-enter password
-                  // Dropdown menu for phone providers.
-                  Padding(
-                    padding: const EdgeInsets.only(top: 15.0, bottom: 20),
-                    child: ReusableOutlineButton(
-                      onPressed: () async {
-                        if (email != null &&
-                            password != null &&
-                            password != '' &&
-                            passwordsMatch != null &&
-                            passwordsMatch != false &&
-                            confirmedPassword != '' &&
-                            confirmedPassword != null) {
-                          setState(() {
-                            _isAsyncCall = true;
-                          });
-                          result = await AuthService()
-                              .createUserWithEmailAndPassword(
-                            email,
-                            password,
-                          );
-                          print(result);
-                          if (result == 'Account Created') {
-                            formKey.currentState.reset();
-                            await AuthService().profileAndDeviceSetup(
-                                newProfileSetupData[0],
-                                newProfileSetupData[1],
-                                newProfileSetupData[2],
-                                newProfileSetupData[3],
-                                newProfileSetupData[4],
-                                newProfileSetupData[5],
-                                newProfileSetupData[6],
-                                newProfileSetupData[7],
-                                newProfileSetupData[8],
-                                newProfileSetupData[9],
-                                newProfileSetupData[10]);
-                            setState(() {
-                              _isAsyncCall = false;
-                            });
-                            Navigator.pushReplacementNamed(context, '/home');
-                          } else {
-                            setState(() {
-                              _isAsyncCall = false;
-                            });
-                            showSnackBar(result);
-                          }
-                        } else {
-                          setState(() {
-                            _isAsyncCall = false;
-                          });
-                          showSnackBar('Missing Fields');
-                        }
-                      },
-                      size: 110,
-                      icon: Icon(
-                        Icons.arrow_forward,
-                        size: 0,
+                ),
+              )
+            : SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 30),
+                        child: Text(
+                          'EZsalt',
+                          style: TextStyle(
+                            fontFamily: 'EZSalt',
+                            color: primaryThemeColor,
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                       ),
-                      label: Text(
-                        'Submit',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ), //Submit button
-                ],
+                      CustomTextField(
+                        text: 'Email Address',
+                        onChanged: (text) => email = text.trim(),
+                        keyboardType: TextInputType.emailAddress,
+                      ), //email / username
+                      CustomTextField(
+                        textCapitalization: TextCapitalization.none,
+                        text: 'Password',
+                        obscureText: true,
+                        onChanged: (text) => password = text.trim(),
+                        icon: Icon(
+                          icon,
+                          color: iconColor,
+                        ),
+                      ), //password
+                      CustomTextField(
+                        textCapitalization: TextCapitalization.none,
+                        text: 'Confirm Password',
+                        obscureText: true,
+                        onChanged: (text) {
+                          confirmedPassword = text;
+                          checkPasswordMatch();
+                        },
+                        icon: Icon(
+                          icon,
+                          color: iconColor,
+                        ),
+                      ), //re-enter password
+                      // Dropdown menu for phone providers.
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15.0, bottom: 20),
+                        child: ReusableOutlineButton(
+                          onPressed: () async {
+                            if (email != null &&
+                                password != null &&
+                                password != '' &&
+                                passwordsMatch != null &&
+                                passwordsMatch != false &&
+                                confirmedPassword != '' &&
+                                confirmedPassword != null) {
+                              setState(() {
+                                _isAsyncCall = true;
+                              });
+                              result = await AuthService()
+                                  .createUserWithEmailAndPassword(
+                                email,
+                                password,
+                              );
+                              print(result);
+                              if (result == 'Account Created') {
+                                await AuthService().profileAndDeviceSetup(
+                                    newProfileSetupData[0],
+                                    newProfileSetupData[1],
+                                    newProfileSetupData[2],
+                                    newProfileSetupData[3],
+                                    newProfileSetupData[4],
+                                    newProfileSetupData[5],
+                                    newProfileSetupData[6],
+                                    newProfileSetupData[7],
+                                    newProfileSetupData[8],
+                                    newProfileSetupData[9],
+                                    newProfileSetupData[10]);
+                                setState(() {
+                                  _isAsyncCall = false;
+                                });
+                                Navigator.pushReplacementNamed(
+                                    context, '/home');
+                              } else {
+                                setState(() {
+                                  _isAsyncCall = false;
+                                });
+                                showSnackBar(result);
+                              }
+                            } else {
+                              setState(() {
+                                _isAsyncCall = false;
+                              });
+                              showSnackBar('Missing Fields');
+                            }
+                          },
+                          size: 110,
+                          icon: Icon(
+                            Icons.arrow_forward,
+                            size: 0,
+                          ),
+                          label: Text(
+                            'Submit',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ), //Submit button
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
       ),
     );
   }

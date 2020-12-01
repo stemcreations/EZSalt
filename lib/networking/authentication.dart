@@ -5,6 +5,7 @@ import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -12,7 +13,7 @@ import 'package:http/http.dart' as http;
 //TODO remove automatic cloud firestore automatic field population or set all values to null and when going to profile page check for null values
 //TODO When registering setup profile and store values in a temporary variable that can be used after email and password are submitted before setting up email and password
 
-class AuthService {
+class AuthService extends ChangeNotifier {
   UserCredential currentUser;
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -103,7 +104,7 @@ class AuthService {
     }
   }
 
-  void signOut() async {
+  Future<void> signOut() async {
     await auth.signOut();
     await googleSignIn.signOut();
   }
@@ -204,12 +205,18 @@ class AuthService {
     }
   }
 
-  Future getTankLevel() async {
+  Future<dynamic> getTankLevel() async {
     if (auth.currentUser.uid != null) {
-      await refreshTankLevels();
-      final DocumentSnapshot currentUserTankLevel =
-          await _fireStore.collection('users').doc(auth.currentUser.uid).get();
-      return currentUserTankLevel.get('temp_percent');
+      var tankLevel = await refreshTankLevels();
+      if (tankLevel.runtimeType == double) {
+        final DocumentSnapshot currentUserTankLevel = await _fireStore
+            .collection('users')
+            .doc(auth.currentUser.uid)
+            .get();
+        return currentUserTankLevel.get('temp_percent');
+      } else {
+        return 'tank level reading failed';
+      }
     }
     return null;
   }
@@ -241,7 +248,7 @@ class AuthService {
       'first_name': firstName,
       'last_name': lastName,
     });
-    print('finished');
+    await getProfile();
   }
 
   Future updateAddress(
@@ -252,12 +259,14 @@ class AuthService {
       'state': state,
       'zipcode': zipCode,
     });
+    await getProfile();
   }
 
   Future updateEmail(String email) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'email': email,
     });
+    await getProfile();
   }
 
   Future updatePhone(String phoneNumber, String phoneProvider) async {
@@ -265,30 +274,35 @@ class AuthService {
       'phone_provider': phoneProvider,
       'phone': phoneNumber,
     });
+    await getProfile();
   }
 
   Future updateTankDepth(int tankDepth) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'depth': tankDepth,
     });
+    await getProfile();
   }
 
   Future updateDeliveryEnabled(bool enableDelivery) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'delivery_enabled': enableDelivery,
     });
+    await getProfile();
   }
 
   Future updateTankDepthNotification(int tankPercent) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'send_percent': {'high': null, 'low': tankPercent},
     });
+    await getProfile();
   }
 
   Future updateSensor(String deviceID) async {
     await _fireStore.collection('users').doc(auth.currentUser.uid).update({
       'sensor': deviceID,
     });
+    await getProfile();
   }
 
   Future<bool> setAccountsRequiredParameters() async {
@@ -399,6 +413,7 @@ class AuthService {
 
   Future addDeliveryZipCode(int zipCode) async {
     Map data = {};
+    //TODO create way to add delivery zipcodes to database
     List deliveryZipCodes = [];
     final DocumentSnapshot phoneProviderSnapshot =
         await _fireStore.collection('variables').doc('Admin').get();
@@ -425,7 +440,6 @@ class AuthService {
       try {
         var response =
             await http.get(url).timeout(Duration(seconds: 7), onTimeout: () {
-          print('No response received');
           return null;
         });
         if (response != null) {
@@ -435,7 +449,6 @@ class AuthService {
           } else if (decodedData['status'] == 'low_level') {
             return decodedData['percent'];
           } else {
-            print('failed');
             return 'Failed to get sensor reading';
           }
         }

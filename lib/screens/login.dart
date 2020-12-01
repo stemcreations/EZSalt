@@ -8,7 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 //TODO launch in browser and notify user that they are leaving the app
@@ -75,7 +74,6 @@ class _LoginPageState extends State<LoginPage> {
       if (result == 'user authenticated') {
         setState(() {
           _isAsyncCall = false;
-          formKey.currentState.reset();
           Navigator.pushReplacementNamed(context, '/home');
         });
       } else if (result == 'User not found') {
@@ -185,190 +183,202 @@ class _LoginPageState extends State<LoginPage> {
       key: _scaffoldKey,
       backgroundColor: backgroundColor,
       body: Center(
-        child: ModalProgressHUD(
-          inAsyncCall: _isAsyncCall,
-          child: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'EZsalt',
-                    style: TextStyle(
-                      fontFamily: 'EZSalt',
-                      color: primaryThemeColor,
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  CustomTextField(
-                    //labelText: 'Username',
-                    keyboardType: TextInputType.emailAddress,
-                    onChanged: (text) {
-                      setState(() {
-                        email = text.trim();
-                      });
-                    },
-                    text: 'Username',
-                    icon: Icon(
-                      Icons.person,
-                      color: primaryThemeColor,
-                    ),
-                  ), // Sign-in email form field
-                  CustomTextField(
-                    textCapitalization: TextCapitalization.none,
-                    onChanged: (text) {
-                      setState(() {
-                        password = text.trim();
-                      });
-                    },
-                    obscureText: true,
-                    text: 'Password',
-                    icon: Icon(
-                      Icons.security,
-                      color: primaryThemeColor,
-                    ),
-                  ), // Sign-in password field
-                  Row(
+        child: _isAsyncCall
+            ? Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 30),
-                        child: MaterialButton(
-                          onPressed: () {
-                            resetPasswordDialog(context);
-                          },
-                          child: Text(
-                            'Forgot Password?',
-                            style: TextStyle(color: primaryThemeColor),
+                      CircularProgressIndicator(),
+                    ],
+                  ),
+                ),
+              )
+            : SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'EZsalt',
+                        style: TextStyle(
+                          fontFamily: 'EZSalt',
+                          color: primaryThemeColor,
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      CustomTextField(
+                        //labelText: 'Username',
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (text) {
+                          setState(() {
+                            email = text.trim();
+                          });
+                        },
+                        text: 'Username',
+                        icon: Icon(
+                          Icons.person,
+                          color: primaryThemeColor,
+                        ),
+                      ), // Sign-in email form field
+                      CustomTextField(
+                        textCapitalization: TextCapitalization.none,
+                        onChanged: (text) {
+                          setState(() {
+                            password = text.trim();
+                          });
+                        },
+                        obscureText: true,
+                        text: 'Password',
+                        icon: Icon(
+                          Icons.security,
+                          color: primaryThemeColor,
+                        ),
+                      ), // Sign-in password field
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 30),
+                            child: MaterialButton(
+                              onPressed: () {
+                                resetPasswordDialog(context);
+                              },
+                              child: Text(
+                                'Forgot Password?',
+                                style: TextStyle(color: primaryThemeColor),
+                              ),
+                            ),
                           ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 230,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ReusableOutlineButton(
+                              size: 110,
+                              label: Text(
+                                'Login',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              icon: Icon(
+                                Icons.arrow_forward,
+                                size: 0,
+                              ),
+                              onPressed: () async {
+                                _submit();
+                              },
+                            ),
+                            ReusableOutlineButton(
+                              size: 110,
+                              label: Text(
+                                'Register',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              icon: Icon(
+                                Icons.arrow_forward,
+                                size: 0,
+                              ),
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/deviceSetup');
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                child: Divider(
+                                  indent: 70,
+                                  endIndent: 5,
+                                  thickness: 2,
+                                  color: primaryThemeColor,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'OR',
+                              style: TextStyle(color: primaryThemeColor),
+                            ),
+                            Expanded(
+                              child: Container(
+                                child: Divider(
+                                  indent: 5,
+                                  endIndent: 70,
+                                  thickness: 2,
+                                  color: primaryThemeColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ReusableOutlineButton(
+                        size: 230,
+                        icon: Icon(FontAwesomeIcons.google),
+                        label: Text('Continue with Google'),
+                        onPressed: () async {
+                          String result =
+                              await AuthService().signInWithGoogle();
+                          Map profile = await AuthService().getProfile();
+                          if (result == 'new user created' ||
+                              profile['first_name'] == null) {
+                            Navigator.pushReplacementNamed(
+                                context, '/deviceSetup');
+                          } else if (result == 'signInWithGoogle succeeded') {
+                            Navigator.pushReplacementNamed(context, '/home');
+                          }
+                        },
+                      ),
+                      checkPlatform(),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 3),
+                        child: ReusableOutlineButton(
+                          label: Text('Buy Sensor'),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Open Browser?'),
+                                content: Text(
+                                    'Are you sure you want to leave the app and open a browser window?'),
+                                actions: [
+                                  TextButton(
+                                    child: Text('No'),
+                                    onPressed: () => Navigator.pop(context),
+                                  ),
+                                  TextButton(
+                                      child: Text('Yes'),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        launchInWebViewWithJavaScript(
+                                          'https://www.ezsalt.xyz/',
+                                        );
+                                      }),
+                                ],
+                              ),
+                            );
+                          },
+                          size: 230,
+                          icon: Icon(Icons.developer_board),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(
-                    width: 230,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ReusableOutlineButton(
-                          size: 110,
-                          label: Text(
-                            'Login',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          icon: Icon(
-                            Icons.arrow_forward,
-                            size: 0,
-                          ),
-                          onPressed: () async {
-                            _submit();
-                          },
-                        ),
-                        ReusableOutlineButton(
-                          size: 110,
-                          label: Text(
-                            'Register',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          icon: Icon(
-                            Icons.arrow_forward,
-                            size: 0,
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/deviceSetup');
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            child: Divider(
-                              indent: 70,
-                              endIndent: 5,
-                              thickness: 2,
-                              color: primaryThemeColor,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          'OR',
-                          style: TextStyle(color: primaryThemeColor),
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Divider(
-                              indent: 5,
-                              endIndent: 70,
-                              thickness: 2,
-                              color: primaryThemeColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ReusableOutlineButton(
-                    size: 230,
-                    icon: Icon(FontAwesomeIcons.google),
-                    label: Text('Continue with Google'),
-                    onPressed: () async {
-                      String result = await AuthService().signInWithGoogle();
-                      if (result == 'new user created') {
-                        Navigator.pushReplacementNamed(context, '/deviceSetup');
-                      } else if (result == 'signInWithGoogle succeeded') {
-                        Navigator.pushReplacementNamed(context, '/home');
-                      }
-                    },
-                  ),
-                  checkPlatform(),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 3),
-                    child: ReusableOutlineButton(
-                      label: Text('Buy Sensor'),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text('Open Browser?'),
-                            content: Text(
-                                'Are you sure you want to leave the app and open a browser window?'),
-                            actions: [
-                              TextButton(
-                                child: Text('No'),
-                                onPressed: () => Navigator.pop(context),
-                              ),
-                              TextButton(
-                                  child: Text('Yes'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    launchInWebViewWithJavaScript(
-                                      'https://www.ezsalt.xyz/',
-                                    );
-                                  }),
-                            ],
-                          ),
-                        );
-                      },
-                      size: 230,
-                      icon: Icon(Icons.developer_board),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

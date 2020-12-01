@@ -2,13 +2,14 @@ import 'dart:io';
 
 import 'package:ez_salt/components/common_functions.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
+import 'package:ez_salt/components/profile_data.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -110,7 +111,16 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return _isAsyncCall
-        ? ModalProgressHUD(inAsyncCall: _isAsyncCall, child: Scaffold())
+        ? Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                ],
+              ),
+            ),
+          )
         : Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
@@ -187,8 +197,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                         .checkDeliveryZipCodes(
                                             int.parse(zipCode));
                                     if (deliveryAvailable == true) {
-                                      await AuthService().updateDeliveryEnabled(
-                                          deliveryAvailable);
+                                      Provider.of<ProfileData>(context,
+                                              listen: false)
+                                          .updateDelivery(deliveryAvailable);
+                                      // await AuthService().updateDeliveryEnabled(
+                                      //     deliveryAvailable);
                                       //If address data doesnt exist go to address setup page
                                       if (profileData['city'] == null) {
                                         await Navigator.pushReplacementNamed(
@@ -220,7 +233,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 backgroundColor: Colors.transparent,
                               );
                             } else {
-                              AuthService().updateDeliveryEnabled(value);
+                              Provider.of<ProfileData>(context, listen: false)
+                                  .updateDelivery(value);
+                              //AuthService().updateDeliveryEnabled(value);
                               setState(() {
                                 deliveryEnabled = value;
                               });
