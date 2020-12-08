@@ -62,4 +62,12 @@ class ProfileData extends ChangeNotifier {
   String get getEmail {
     return _profileData['email'];
   }
+
+  String get getSensorId {
+    return _profileData['sensor'];
+  }
+
+  String get getPhoneProvider {
+    return _profileData['phone_provider'];
+  }
 }

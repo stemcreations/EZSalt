@@ -47,7 +47,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final deviceIdTextController = TextEditingController();
   double containerHeight;
   String selectedPhoneCarrier;
-  bool enterEditMode = false;
   bool editAddress = false;
   bool deliveryAvailable = false;
   bool deliveryEnabled = false;
@@ -110,6 +109,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    deviceIdTextController.text = Provider.of<ProfileData>(context).getSensorId;
     return _isAsyncCall
         ? Scaffold(
             body: Center(
@@ -132,23 +132,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   Navigator.pop(context);
                 },
               ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: GestureDetector(
-                    child: Icon(Icons.edit),
-                    onTap: () {
-                      setState(() {
-                        if (enterEditMode) {
-                          enterEditMode = false;
-                        } else {
-                          enterEditMode = true;
-                        }
-                      });
-                    },
-                  ),
-                )
-              ],
             ),
             backgroundColor: backgroundColor,
             body: SingleChildScrollView(
@@ -248,6 +231,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () {
                         _scaffoldKey.currentState.showBottomSheet(
                           (context) => CustomBottomSheet(
+                            initialValue: profileData['first_name'] +
+                                ' ' +
+                                profileData['last_name'],
                             context: context,
                             label: 'Update first and last name',
                             inputType: TextInputType.text,
@@ -276,7 +262,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         );
                         //changeNameDialog(context);
                       },
-                      enterEditMode: enterEditMode,
                       cardData: profileData['first_name'] +
                           ' ' +
                           profileData['last_name'],
@@ -311,7 +296,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ));
                               //changeAddressDialog(context);
                             },
-                            enterEditMode: enterEditMode,
                             icon: Icons.location_on,
                             firstLine: profileData['street_address'],
                             secondLine: profileData['city'] +
@@ -325,6 +309,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () {
                         _scaffoldKey.currentState.showBottomSheet(
                           (context) => CustomBottomSheet(
+                            initialValue: profileData['email'],
                             context: context,
                             label: 'Update E-Mail Address',
                             inputType: TextInputType.emailAddress,
@@ -348,7 +333,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         );
                         //changeEmailDialog(context);
                       },
-                      enterEditMode: enterEditMode,
                       cardData: profileData['email'],
                       icon: Icons.email,
                     ), //Email Address Card
@@ -357,6 +341,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         _sheetController =
                             _scaffoldKey.currentState.showBottomSheet(
                           (context) => CustomPhoneBottomSheet(
+                            initialValue: profileData['phone'],
                             context: context,
                             label: 'Update Phone Number',
                             inputType: TextInputType.number,
@@ -389,7 +374,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           backgroundColor: Colors.transparent,
                         );
                       },
-                      enterEditMode: enterEditMode,
                       icon: Icons.phone,
                       firstLine: profileData['phone'],
                       secondLine: checkIfPhoneProviderIsValid()
@@ -401,6 +385,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () {
                         _scaffoldKey.currentState.showBottomSheet(
                           (context) => CustomBottomSheet(
+                            initialValue: tankDepthToInt().toString(),
                             context: context,
                             label: 'Update Tank Depth',
                             inputType: TextInputType.number,
@@ -427,7 +412,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         );
                         //changeTankDepthDialog(context);
                       },
-                      enterEditMode: enterEditMode,
                       cardData:
                           'Tank Depth: ' + tankDepthToInt().toString() + 'in',
                       icon: Icons.delete_outline,
@@ -463,7 +447,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         );
                         //changeSensorDialog(context);
                       },
-                      enterEditMode: enterEditMode,
                       cardData: profileData['sensor'],
                       icon: Icons.developer_board,
                     ), // Device ID Card
@@ -471,6 +454,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () {
                         _scaffoldKey.currentState.showBottomSheet(
                           (context) => CustomBottomSheet(
+                            initialValue: sendPercent['low'].toString(),
                             context: context,
                             label:
                                 'Change when you receive low salt notifications.',
@@ -494,7 +478,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         );
                         //changeTankNotificationDepthDialog(context);
                       },
-                      enterEditMode: enterEditMode,
                       cardData: 'Tank depth notification = ' +
                           sendPercent['low'].toString() +
                           '%',

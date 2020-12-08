@@ -139,191 +139,160 @@ class ReusableOutlineButton extends StatelessWidget {
 // ============= CUSTOM CARD VIEWS ==============//
 
 class TwoLineCustomCard extends StatelessWidget {
-  TwoLineCustomCard(
-      {this.firstLine,
-      this.secondLine,
-      this.icon,
-      this.enterEditMode,
-      this.onTap});
+  TwoLineCustomCard({this.firstLine, this.secondLine, this.icon, this.onTap});
 
   final String firstLine;
   final String secondLine;
   final IconData icon;
-  final bool enterEditMode;
   final Function onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 20.0, top: 35, bottom: 35, right: 10),
-                    child: Icon(
-                      icon,
-                      color: primaryThemeColor,
-                      size: 28,
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, top: 35, bottom: 35, right: 10),
+                      child: Icon(
+                        icon,
+                        color: primaryThemeColor,
+                        size: 28,
+                      ),
                     ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            height: 40,
-                            child: VerticalDivider(
-                              color: Colors.black,
-                              thickness: .6,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              height: 40,
+                              child: VerticalDivider(
+                                color: Colors.black,
+                                thickness: .6,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: SizedBox(
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10.0),
+                              child: SizedBox(
+                                  height: 20,
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.6,
+                                  child: AutoSizeText(
+                                    firstLine,
+                                    style: TextStyle(
+                                      color: profileScreenTextColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    minFontSize: 10,
+                                  )),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              height: 40,
+                              child: VerticalDivider(
+                                color: Colors.black,
+                                thickness: .6,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10.0),
+                              child: SizedBox(
                                 height: 20,
                                 width: MediaQuery.of(context).size.width / 1.6,
                                 child: AutoSizeText(
-                                  firstLine,
+                                  secondLine,
                                   style: TextStyle(
                                     color: profileScreenTextColor,
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   minFontSize: 10,
-                                )),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            height: 40,
-                            child: VerticalDivider(
-                              color: Colors.black,
-                              thickness: .6,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: SizedBox(
-                              height: 20,
-                              width: MediaQuery.of(context).size.width / 1.6,
-                              child: AutoSizeText(
-                                secondLine,
-                                style: TextStyle(
-                                  color: profileScreenTextColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
                                 ),
-                                minFontSize: 10,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Flexible(
-                child: Visibility(
-                  child: GestureDetector(
-                    onTap: onTap,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 15.0, left: 5),
-                      child: Icon(
-                        Icons.edit,
-                        color: Colors.grey.shade600,
-                      ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                  visible: enterEditMode,
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class CustomProfileCard extends StatelessWidget {
-  CustomProfileCard(
-      {@required this.cardData, this.icon, this.enterEditMode, this.onTap});
+  CustomProfileCard({@required this.cardData, this.icon, this.onTap});
 
   final String cardData;
   final IconData icon;
-  final bool enterEditMode;
   final Function onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 20.0, top: 20, bottom: 20, right: 10),
-                    child: Icon(
-                      icon,
-                      color: primaryThemeColor,
-                      size: 28,
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, top: 20, bottom: 20, right: 10),
+                      child: Icon(
+                        icon,
+                        color: primaryThemeColor,
+                        size: 28,
+                      ),
                     ),
-                  ),
-                  Container(
-                    height: 50,
-                    child: VerticalDivider(
-                      color: Colors.black,
-                      thickness: .6,
+                    Container(
+                      height: 50,
+                      child: VerticalDivider(
+                        color: Colors.black,
+                        thickness: .6,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: SizedBox(
-                      height: 20,
-                      width: MediaQuery.of(context).size.width / 1.6,
-                      child: AutoSizeText(
-                        cardData,
-                        style: TextStyle(
-                          color: profileScreenTextColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: SizedBox(
+                        height: 20,
+                        width: MediaQuery.of(context).size.width / 1.6,
+                        child: AutoSizeText(
+                          cardData,
+                          style: TextStyle(
+                            color: profileScreenTextColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Flexible(
-            child: Visibility(
-              child: GestureDetector(
-                onTap: onTap,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 15.0),
-                  child: Icon(
-                    Icons.edit,
-                    color: Colors.grey.shade600,
-                  ),
+                  ],
                 ),
-              ),
-              visible: enterEditMode,
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -339,7 +308,9 @@ class CustomBottomSheet extends StatelessWidget {
       @required this.hintText,
       @required this.onPressed,
       @required this.onChanged,
-      @required this.onCancelPressed});
+      @required this.onCancelPressed,
+      this.controller,
+      this.initialValue});
   final String label;
   final BuildContext context;
   final TextInputType inputType;
@@ -347,6 +318,8 @@ class CustomBottomSheet extends StatelessWidget {
   final Function onPressed;
   final Function onChanged;
   final Function onCancelPressed;
+  final TextEditingController controller;
+  final String initialValue;
 
   @override
   Widget build(BuildContext context) {
@@ -381,6 +354,8 @@ class CustomBottomSheet extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: CustomTextField(
+                  initialValue: initialValue,
+                  controller: controller,
                   hintTextColor: profileScreenTextColor,
                   keyboardType: inputType,
                   text: hintText,
@@ -428,7 +403,9 @@ class CustomPhoneBottomSheet extends StatelessWidget {
       @required this.onPressed,
       @required this.onChanged,
       @required this.onCancelPressed,
-      @required this.picker});
+      @required this.picker,
+      this.controller,
+      this.initialValue});
   final String label;
   final BuildContext context;
   final TextInputType inputType;
@@ -437,6 +414,8 @@ class CustomPhoneBottomSheet extends StatelessWidget {
   final Function onChanged;
   final Function onCancelPressed;
   final Widget picker;
+  final TextEditingController controller;
+  final String initialValue;
 
   @override
   Widget build(BuildContext context) {
@@ -475,6 +454,8 @@ class CustomPhoneBottomSheet extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: CustomTextField(
+                  initialValue: initialValue,
+                  controller: controller,
                   hintTextColor: profileScreenTextColor,
                   keyboardType: inputType,
                   text: hintText,
@@ -523,7 +504,8 @@ class CustomBottomSheetWithCamera extends StatelessWidget {
       @required this.onChanged,
       @required this.onCancelPressed,
       @required this.onTap,
-      this.controller});
+      this.controller,
+      this.initialValue});
   final String label;
   final BuildContext context;
   final TextInputType inputType;
@@ -533,6 +515,7 @@ class CustomBottomSheetWithCamera extends StatelessWidget {
   final Function onCancelPressed;
   final Function onTap;
   final TextEditingController controller;
+  final String initialValue;
 
   @override
   Widget build(BuildContext context) {
@@ -567,6 +550,7 @@ class CustomBottomSheetWithCamera extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomTextField(
+                        initialValue: initialValue,
                         hintTextColor: profileScreenTextColor,
                         controller: controller,
                         keyboardType: inputType,
