@@ -183,6 +183,9 @@ class AuthService extends ChangeNotifier {
         password: password,
       );
       print('user authenticated');
+      if (await setAccountsRequiredParameters() == false) {
+        return 'new user created';
+      }
       return 'user authenticated';
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -195,7 +198,6 @@ class AuthService extends ChangeNotifier {
     } catch (e) {
       return e.toString();
     }
-    await setAccountsRequiredParameters();
     if (currentUser != null) {
       print('user authenticated');
       return 'user authenticated';

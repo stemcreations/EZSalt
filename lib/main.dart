@@ -31,11 +31,19 @@ Future<bool> checkLoggedInState() async {
   if (authState == 'logged in') {
     //Check to see if their profile was setup when they logged in the
     // first time and if not send them to the profile setup page.
-    Map profile = await AuthService().getProfile();
-    if (profile['first_name'] == null) {
-      AuthService().signOut();
-      return false;
+    try {
+      Map profile = await AuthService().getProfile();
+      if (profile == null) {
+        AuthService().signOut();
+        return false;
+      } else if (profile['first_name'] == null) {
+        AuthService().signOut();
+        return false;
+      }
+    } on FirebaseException catch (e) {
+      print(e.code);
     }
+
     return true;
   } else {
     return false;

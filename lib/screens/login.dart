@@ -71,7 +71,8 @@ class _LoginPageState extends State<LoginPage> {
     });
     if (email != null && password != null && password != '' && email != '') {
       result = await AuthService().signInWithEmailAndPassword(email, password);
-      if (result == 'user authenticated') {
+      Map profile = await AuthService().getProfile();
+      if (result == 'user authenticated' && profile['first_name'] != null) {
         setState(() {
           _isAsyncCall = false;
           Navigator.pushReplacementNamed(context, '/home');
@@ -86,6 +87,12 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           _isAsyncCall = false;
         });
+      } else if (result == 'new user created' || profile == null) {
+        Navigator.pushReplacementNamed(context, '/deviceSetup');
+        _isAsyncCall = false;
+      } else if (profile['first_name'] == null) {
+        Navigator.pushReplacementNamed(context, '/deviceSetup');
+        _isAsyncCall = false;
       } else {
         showSnackBar(result);
         setState(() {
