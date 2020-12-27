@@ -199,9 +199,13 @@ class _HomeState extends State<Home> {
         centerTitle: true,
         title: SafeArea(
           minimum: EdgeInsets.only(bottom: 5),
-          child: Text(
-            'EZsalt',
-            style: TextStyle(fontFamily: 'EZSalt', fontWeight: FontWeight.w900),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 5.0),
+            child: Text(
+              'EZsalt',
+              style:
+                  TextStyle(fontFamily: 'EZSalt', fontWeight: FontWeight.w900),
+            ),
           ),
         ), //App Bar Text and Text style
       ),
