@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>629048129398-v5q83eu2kmc974j53qmvs1ak0b77ho4u.apps.googleusercontent.com</string>
+	<string>629048129398-i4s3u9obscmgo77ckmnqe6v2l8s41c4u.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.629048129398-v5q83eu2kmc974j53qmvs1ak0b77ho4u</string>
+	<string>com.googleusercontent.apps.629048129398-i4s3u9obscmgo77ckmnqe6v2l8s41c4u</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>629048129398-mh3m20s3o3onte4tt8kfhme29k53j82e.apps.googleusercontent.com</string>
+	<string>629048129398-1ucqaktjg9620hq3qfoi3cafuj81bk6u.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDZfHlBkXhKwVRo8OSf9S5X1ms4yNTFHqU</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.devtechhub.ezSalt</string>
+	<string>com.devtechhub.ezSaltapple</string>
 	<key>PROJECT_ID</key>
 	<string>ezsalt-iot-dev-env</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:629048129398:ios:ffe293c068ecb8c4dcac57</string>
+	<string>1:629048129398:ios:8b075ed6ea8f64cfdcac57</string>
 	<key>DATABASE_URL</key>
 	<string>https://ezsalt-iot-dev-env.firebaseio.com</string>
 </dict>

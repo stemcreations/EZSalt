@@ -200,7 +200,7 @@ class _HomeState extends State<Home> {
         title: SafeArea(
           minimum: EdgeInsets.only(bottom: 5),
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 5.0),
+            padding: const EdgeInsets.only(bottom: 10.0),
             child: Text(
               'EZsalt',
               style:
