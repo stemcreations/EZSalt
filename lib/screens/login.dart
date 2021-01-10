@@ -36,8 +36,14 @@ class _LoginPageState extends State<LoginPage> {
           icon: Icon(FontAwesomeIcons.apple),
           label: Text('Continue with Apple'),
           onPressed: () async {
-            AuthService()
+            String result = await AuthService()
                 .signInWithApple(scopes: [Scope.email, Scope.fullName]);
+            Map profile = await AuthService().getProfile();
+            if (result == 'new user created' || profile['first_name'] == null) {
+              Navigator.pushReplacementNamed(context, '/deviceSetup');
+            } else if (result == 'signInWithApple succeeded') {
+              Navigator.pushReplacementNamed(context, '/home');
+            }
           },
         ),
       );

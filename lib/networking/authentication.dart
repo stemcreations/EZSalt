@@ -23,7 +23,7 @@ class AuthService extends ChangeNotifier {
     ],
   );
 
-  Future<void> signInWithApple({List<Scope> scopes = const []}) async {
+  Future<String> signInWithApple({List<Scope> scopes = const []}) async {
     bool isAvailable = await AppleSignIn.isAvailable();
     if (isAvailable) {
       final result = await AppleSignIn.performRequests(
@@ -47,9 +47,16 @@ class AuthService extends ChangeNotifier {
 
           DocumentSnapshot snapshot =
               await _fireStore.collection('users').doc(currentUser.uid).get();
-          await checkAccountsRequiredParameters();
-          await setAccountsRequiredParameters();
-          return;
+          if (await setAccountsRequiredParameters() == false) {
+            return 'new user created';
+          }
+          if (user != null) {
+            return 'signInWithApple succeeded';
+          } else {
+            return 'not signed in';
+          }
+
+          return 'end switch case';
 
         case AuthorizationStatus.error:
           print(result.error.toString());
