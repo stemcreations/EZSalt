@@ -10,9 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
-//TODO remove automatic cloud firestore automatic field population or set all values to null and when going to profile page check for null values
-//TODO When registering setup profile and store values in a temporary variable that can be used after email and password are submitted before setting up email and password
-
 class AuthService extends ChangeNotifier {
   UserCredential currentUser;
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;

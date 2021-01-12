@@ -183,8 +183,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Provider.of<ProfileData>(context,
                                               listen: false)
                                           .updateDelivery(deliveryAvailable);
-                                      // await AuthService().updateDeliveryEnabled(
-                                      //     deliveryAvailable);
                                       //If address data doesnt exist go to address setup page
                                       if (profileData['city'] == null) {
                                         await Navigator.pushReplacementNamed(
@@ -424,7 +422,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             label: 'Update Device ID',
                             inputType: TextInputType.text,
                             hintText: 'Enter Device ID',
-                            controller: deviceIdTextController,
                             onPressed: () async {
                               await AuthService().updateSensor(deviceID);
                               getProfileData();

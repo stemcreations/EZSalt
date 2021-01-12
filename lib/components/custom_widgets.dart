@@ -495,17 +495,17 @@ class CustomPhoneBottomSheet extends StatelessWidget {
 }
 
 class CustomBottomSheetWithCamera extends StatelessWidget {
-  CustomBottomSheetWithCamera(
-      {@required this.context,
-      @required this.label,
-      @required this.inputType,
-      @required this.hintText,
-      @required this.onPressed,
-      @required this.onChanged,
-      @required this.onCancelPressed,
-      @required this.onTap,
-      this.controller,
-      this.initialValue});
+  CustomBottomSheetWithCamera({
+    @required this.context,
+    @required this.label,
+    @required this.inputType,
+    @required this.hintText,
+    @required this.onPressed,
+    @required this.onChanged,
+    @required this.onCancelPressed,
+    @required this.onTap,
+    this.controller,
+  });
   final String label;
   final BuildContext context;
   final TextInputType inputType;
@@ -515,7 +515,6 @@ class CustomBottomSheetWithCamera extends StatelessWidget {
   final Function onCancelPressed;
   final Function onTap;
   final TextEditingController controller;
-  final String initialValue;
 
   @override
   Widget build(BuildContext context) {
@@ -550,7 +549,6 @@ class CustomBottomSheetWithCamera extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomTextField(
-                        initialValue: initialValue,
                         hintTextColor: profileScreenTextColor,
                         controller: controller,
                         keyboardType: inputType,
