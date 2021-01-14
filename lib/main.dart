@@ -7,6 +7,8 @@ import 'package:ez_salt/screens/address_setup.dart';
 import 'package:ez_salt/screens/device_setup.dart';
 import 'package:ez_salt/screens/licenses.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -14,10 +16,19 @@ import 'package:provider/provider.dart';
 import 'components/profile_data.dart';
 import 'networking/authentication.dart';
 
+//TODO add crashlytics install requirements for IOS in xcode
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
+  if (kDebugMode) {
+    print('in debug mode');
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+  } else {
+    print('in release mode');
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    // Handle Crashlytics enabled status when not in Debug,
+    // e.g. allow your users to opt-in to crash reporting.
+  }
   final bool isLoggedIn = await checkLoggedInState();
 
   final MyApp myApp = MyApp(
