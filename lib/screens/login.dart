@@ -23,36 +23,10 @@ class _LoginPageState extends State<LoginPage> {
   bool _isAsyncCall = false;
   final formKey = GlobalKey<FormState>();
   final snackBar = SnackBar(
-    content: Text('Username Not Found'),
+    content: Text('Email Not Found'),
   );
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  Widget checkPlatform() {
-    if (Platform.isIOS) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 3, top: 10),
-        child: ReusableOutlineButton(
-          size: 230,
-          icon: Icon(FontAwesomeIcons.apple),
-          label: Text('Continue with Apple'),
-          onPressed: () async {
-            String result = await AuthService()
-                .signInWithApple(scopes: [Scope.email, Scope.fullName]);
-            Map profile = await AuthService().getProfile();
-            if (result == 'new user created' || profile['first_name'] == null) {
-              Navigator.pushReplacementNamed(context, '/deviceSetup');
-            } else if (result == 'signInWithApple succeeded') {
-              Navigator.pushReplacementNamed(context, '/home');
-            }
-          },
-        ),
-      );
-    } else {
-      return SizedBox(
-        height: 0,
-      );
-    }
-  }
 
   @override
   void dispose() {
@@ -75,10 +49,18 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _isAsyncCall = true;
     });
+
+    // bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+
     if (email != null && password != null && password != '' && email != '') {
       result = await AuthService().signInWithEmailAndPassword(email, password);
       Map profile = await AuthService().getProfile();
-      if (result == 'user authenticated' && profile['first_name'] != null) {
+      if (profile == null) {
+        showSnackBar(result);
+        setState(() {
+          _isAsyncCall = false;
+        });
+      } else if (result == 'user authenticated' && profile['first_name'] != null) {
         setState(() {
           _isAsyncCall = false;
           Navigator.pushReplacementNamed(context, '/home');
@@ -227,14 +209,14 @@ class _LoginPageState extends State<LoginPage> {
                         height: 30,
                       ),
                       CustomTextField(
-                        //labelText: 'Username',
+                        //labelText: 'Email',
                         keyboardType: TextInputType.emailAddress,
                         onChanged: (text) {
                           setState(() {
                             email = text.trim();
                           });
                         },
-                        text: 'Username',
+                        text: 'Email',
                         icon: Icon(
                           Icons.person,
                           color: primaryThemeColor,
@@ -257,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 30),
+                            padding: const EdgeInsets.only(left: 30, bottom: 30.0),
                             child: MaterialButton(
                               onPressed: () {
                                 resetPasswordDialog(context);
@@ -270,44 +252,30 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                        width: 230,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ReusableOutlineButton(
-                              size: 110,
-                              label: Text(
-                                'Login',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              icon: Icon(
-                                Icons.arrow_forward,
-                                size: 0,
-                              ),
-                              onPressed: () async {
-                                _submit();
-                              },
+
+                      // Login button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ReusableOutlineButton(
+                            size: 110,
+                            label: Text(
+                              'Login',
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            ReusableOutlineButton(
-                              size: 110,
-                              label: Text(
-                                'Register',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              icon: Icon(
-                                Icons.arrow_forward,
-                                size: 0,
-                              ),
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/deviceSetup');
-                              },
+                            icon: Icon(
+                              Icons.arrow_forward,
+                              size: 0,
                             ),
-                          ],
-                        ),
+                            onPressed: () async {
+                              _submit();
+                            },
+                          )
+                        ],
                       ),
+
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -338,56 +306,63 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                       ),
-                      ReusableOutlineButton(
-                        size: 230,
-                        icon: Icon(FontAwesomeIcons.google),
-                        label: Text('Continue with Google'),
-                        onPressed: () async {
-                          String result =
-                              await AuthService().signInWithGoogle();
-                          Map profile = await AuthService().getProfile();
-                          if (result == 'new user created' ||
-                              profile['first_name'] == null) {
-                            Navigator.pushReplacementNamed(
-                                context, '/deviceSetup');
-                          } else if (result == 'signInWithGoogle succeeded') {
-                            Navigator.pushReplacementNamed(context, '/home');
-                          }
-                        },
+
+                      // Create Account Button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+
+                          ReusableOutlineButton(
+                            size: 150,
+                            label: Text(
+                              'Create Account',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            icon: Icon(
+                              Icons.arrow_forward,
+                              size: 0,
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/deviceSetup');
+                            },
+                          )
+
+                        ],
                       ),
-                      checkPlatform(),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 3),
-                        child: ReusableOutlineButton(
-                          label: Text('Buy Sensor'),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text('Open Browser?'),
-                                content: Text(
-                                    'Are you sure you want to leave the app and open a browser window?'),
-                                actions: [
-                                  TextButton(
-                                    child: Text('No'),
-                                    onPressed: () => Navigator.pop(context),
-                                  ),
-                                  TextButton(
-                                      child: Text('Yes'),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        launchInWebViewWithJavaScript(
-                                          'https://www.ezsalt.xyz/',
-                                        );
-                                      }),
-                                ],
-                              ),
-                            );
-                          },
-                          size: 230,
-                          icon: Icon(Icons.developer_board),
-                        ),
-                      ),
+
+
+                      // Padding(
+                      //   padding: const EdgeInsets.only(top: 10, bottom: 3),
+                      //   child: ReusableOutlineButton(
+                      //     label: Text('Buy Sensor'),
+                      //     onPressed: () {
+                      //       showDialog(
+                      //         context: context,
+                      //         builder: (context) => AlertDialog(
+                      //           title: Text('Open Browser?'),
+                      //           content: Text(
+                      //               'Are you sure you want to leave the app and open a browser window?'),
+                      //           actions: [
+                      //             TextButton(
+                      //               child: Text('No'),
+                      //               onPressed: () => Navigator.pop(context),
+                      //             ),
+                      //             TextButton(
+                      //                 child: Text('Yes'),
+                      //                 onPressed: () {
+                      //                   Navigator.pop(context);
+                      //                   launchInWebViewWithJavaScript(
+                      //                     'https://www.ezsalt.xyz/',
+                      //                   );
+                      //                 }),
+                      //           ],
+                      //         ),
+                      //       );
+                      //     },
+                      //     size: 230,
+                      //     icon: Icon(Icons.developer_board),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

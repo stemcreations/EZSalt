@@ -304,33 +304,33 @@ class _ProfilePageState extends State<ProfilePage> {
                           ) // Address Card
                         : SizedBox(),
                     CustomProfileCard(
-                      onTap: () {
-                        _scaffoldKey.currentState.showBottomSheet(
-                          (context) => CustomBottomSheet(
-                            initialValue: profileData['email'],
-                            context: context,
-                            label: 'Update E-Mail Address',
-                            inputType: TextInputType.emailAddress,
-                            hintText: 'Enter E-Mail Address',
-                            onPressed: () async {
-                              await AuthService().updateEmail(emailAddress);
-                              getProfileData();
-                              Navigator.of(context).pop();
-                              showSnackBar('E-Mail Address Updated');
-                            },
-                            onChanged: (value) {
-                              setState(() {
-                                emailAddress = value;
-                              });
-                            },
-                            onCancelPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          backgroundColor: Colors.transparent,
-                        );
-                        //changeEmailDialog(context);
-                      },
+                      // onTap: () {
+                      //   _scaffoldKey.currentState.showBottomSheet(
+                      //     (context) => CustomBottomSheet(
+                      //       initialValue: profileData['email'],
+                      //       context: context,
+                      //       label: 'Update E-Mail Address',
+                      //       inputType: TextInputType.emailAddress,
+                      //       hintText: 'Enter E-Mail Address',
+                      //       onPressed: () async {
+                      //         await AuthService().updateEmail(emailAddress);
+                      //         getProfileData();
+                      //         Navigator.of(context).pop();
+                      //         showSnackBar('E-Mail Address Updated');
+                      //       },
+                      //       onChanged: (value) {
+                      //         setState(() {
+                      //           emailAddress = value;
+                      //         });
+                      //       },
+                      //       onCancelPressed: () {
+                      //         Navigator.pop(context);
+                      //       },
+                      //     ),
+                      //     backgroundColor: Colors.transparent,
+                      //   );
+                      //   //changeEmailDialog(context);
+                      // },
                       cardData: profileData['email'],
                       icon: Icons.email,
                     ), //Email Address Card
@@ -418,6 +418,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () {
                         _scaffoldKey.currentState.showBottomSheet(
                           (context) => CustomBottomSheetWithCamera(
+                            initialValue: profileData['sensor'],
                             context: context,
                             label: 'Update Device ID',
                             inputType: TextInputType.text,
@@ -438,6 +439,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             },
                             onTap: () async {
                               deviceID = await scanBarcodeNormal();
+                              await AuthService().updateSensor(deviceID);
+                              getProfileData();
+                              Navigator.of(context).pop();
+                              showSnackBar('Device Id Updated');
                             },
                           ),
                           backgroundColor: Colors.transparent,

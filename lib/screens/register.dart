@@ -1,6 +1,7 @@
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
+import 'package:ez_salt/screens/home.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -97,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         text: 'Email Address',
                         onChanged: (text) => email = text.trim(),
                         keyboardType: TextInputType.emailAddress,
-                      ), //email / username
+                      ), //email
                       CustomTextField(
                         textCapitalization: TextCapitalization.none,
                         text: 'Password',
@@ -158,8 +159,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                 setState(() {
                                   _isAsyncCall = false;
                                 });
-                                Navigator.pushReplacementNamed(
-                                    context, '/home');
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    '/home',
+                                    (route) => false
+                                );
                               } else {
                                 setState(() {
                                   _isAsyncCall = false;

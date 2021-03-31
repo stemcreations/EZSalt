@@ -39,24 +39,89 @@ class _HomeState extends State<Home> {
   }
 
   //This function pulls the current tank level readings from firebase and refreshes the state
-  Future getTankLevel() async {
-    var doubleTankLevel = await _auth.getTankLevel();
-    if (doubleTankLevel.runtimeType == double) {
-      tankLevel = commonFunctions.doubleToInt(doubleTankLevel);
-    } else if (doubleTankLevel.runtimeType == int) {
-      tankLevel = doubleTankLevel;
-    } else if (doubleTankLevel.runtimeType == String) {
+  // Future getTankLevel() async {
+  //   var doubleTankLevel = await _auth.getTankLevel();
+  //   print(doubleTankLevel);
+  //   if (doubleTankLevel.runtimeType == double) {
+  //     tankLevel = commonFunctions.doubleToInt(doubleTankLevel);
+  //   } else if (doubleTankLevel.runtimeType == int) {
+  //     tankLevel = doubleTankLevel;
+  //   } else if (doubleTankLevel.runtimeType == String) {
+  //     setState(() {
+  //       tankReading = false;
+  //       _isAsyncCall = false;
+  //     });
+  //     return 'tank reading failed';
+  //   }
+  //
+  //   setState(() {
+  //     _isAsyncCall = false;
+  //   });
+  // }
+
+  Future getTankLevel2() async {
+    setState(() {
+      _isAsyncCall = true;
+    });
+    var result = await _auth.refreshTankLevels()
+        .timeout(Duration(seconds: 7),
+          onTimeout: () {
+            setState(() {
+              _isAsyncCall = false;
+              _scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text('Device Not Connected to Wifi'),
+                elevation: 5,
+                behavior: SnackBarBehavior.floating,
+              ));
+            });
+          }
+        );
+
+    print("New Sensor Percentage: " + result.toString());
+
+    if (result.runtimeType == double ||
+        result.runtimeType == int) {
+
+      if (result <= 0) {
+        result = 1;
+      }
+      if (result > 100) {
+        result = 100;
+      }
+
       setState(() {
-        tankReading = false;
+        if (result.runtimeType == double) {
+          tankLevel = commonFunctions.doubleToInt(result);
+        } else {
+          tankLevel = result;
+        }
         _isAsyncCall = false;
       });
-      return 'tank reading failed';
-    }
-    if (tankLevel <= 0) {
-      tankLevel = 1;
-    }
-    if (tankLevel > 100) {
-      tankLevel = 100;
+
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.thumb_up_alt),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Tank Level Refreshed'),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+        elevation: 5,
+      ));
+    } else {
+      setState(() {
+        _isAsyncCall = false;
+      });
     }
     setState(() {
       _isAsyncCall = false;
@@ -71,7 +136,7 @@ class _HomeState extends State<Home> {
       });
       Navigator.pushReplacementNamed(context, '/login');
     } else {
-      await getTankLevel();
+      await getTankLevel2();
     }
   }
 
@@ -188,6 +253,9 @@ class _HomeState extends State<Home> {
         ),
       ],
     );
+
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       key: _scaffoldKey,
       drawer: Drawer(
@@ -200,7 +268,7 @@ class _HomeState extends State<Home> {
         title: SafeArea(
           minimum: EdgeInsets.only(bottom: 5),
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 10.0),
+            padding: const EdgeInsets.only(bottom: 40.0),
             child: Text(
               'EZsalt',
               style:
@@ -215,10 +283,11 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.only(bottom: 10.0, left: 30, right: 30),
-                child: Row(
+              // Padding(
+              //   padding:
+              //       const EdgeInsets.only(bottom: 10.0, left: 30, right: 30),
+              //   child:
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Stack(
@@ -229,7 +298,10 @@ class _HomeState extends State<Home> {
                             : Container(),
                         ConstrainedBox(
                           constraints:
-                              BoxConstraints(maxHeight: 280, maxWidth: 280),
+                              BoxConstraints(
+                                  maxHeight: screenWidth * 0.8,
+                                  maxWidth: screenWidth  * 0.8
+                              ),
                           child: CircularStepProgressIndicator(
                             startingAngle: math.pi * 5 / 4,
                             arcSize: math.pi * 3 / 2,
@@ -239,8 +311,8 @@ class _HomeState extends State<Home> {
                             selectedColor: Colors.blue,
                             unselectedColor: Colors.grey[300],
                             padding: 0,
-                            width: 300,
-                            height: 300,
+                            width: screenWidth  * 0.7,
+                            height: screenWidth * 0.7,
                             selectedStepSize: 25,
                             roundedCap: (_, __) => true,
                             child: Center(
@@ -260,7 +332,7 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ],
-                ),
+                // ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 40, right: 40, bottom: 30),
@@ -327,59 +399,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     onPressed: () async {
-                      setState(() {
-                        _isAsyncCall = true;
-                      });
-                      var result = await _auth
-                          .refreshTankLevels()
-                          .timeout(Duration(seconds: 7), onTimeout: () {
-                        setState(() {
-                          _isAsyncCall = false;
-                          _scaffoldKey.currentState.showSnackBar(SnackBar(
-                            content: Text('Tank Reading Failed'),
-                            elevation: 5,
-                            behavior: SnackBarBehavior.floating,
-                          ));
-                        });
-                      });
-                      if (result.runtimeType == double ||
-                          result.runtimeType == int) {
-                        setState(() {
-                          if (result.runtimeType == double) {
-                            tankLevel = commonFunctions.doubleToInt(result);
-                          } else {
-                            tankLevel = result;
-                          }
-                          _isAsyncCall = false;
-                        });
-                        _scaffoldKey.currentState.showSnackBar(SnackBar(
-                          content: Row(
-                            children: [
-                              Icon(Icons.thumb_up_alt),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('Tank Level Refreshed'),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                            ],
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                          elevation: 5,
-                        ));
-                      } else {
-                        setState(() {
-                          _isAsyncCall = false;
-                        });
-                      }
-                      setState(() {
-                        _isAsyncCall = false;
-                      });
+                      getTankLevel2();
                     },
                     size: 230),
               )

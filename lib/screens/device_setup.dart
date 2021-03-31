@@ -4,6 +4,7 @@ import 'package:ez_salt/components/common_functions.dart';
 import 'package:ez_salt/components/custom_widgets.dart';
 import 'package:ez_salt/constants.dart';
 import 'package:ez_salt/networking/authentication.dart';
+import 'package:ez_salt/screens/register.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -99,11 +100,22 @@ class _DeviceSetupState extends State<DeviceSetup> {
     setState(() {
       containerHeight = 150;
     });
+    int initialCarrierIndex = 3; // 'T-Moblie'
+
+    // It runs once with an empty map for some reason on Profile Setup page Load
+    if (phoneProviders.length == 0) {
+      return Text("Loading ...");
+    }
+
+    String initialCarrier = phoneProviders.keys.elementAt(initialCarrierIndex);
+    double itemExtent = 32.0;
+
     List<Widget> pickerList = [];
     List<String> phoneCarrierList = [];
 
+    selectedPhoneCarrier = phoneProviders[initialCarrier];
+
     for (final name in phoneProviders.keys) {
-      selectedPhoneCarrier = phoneProviders['AT&T'];
       String phoneCarrier = name;
       phoneCarrierList.add(name);
       var pickerItem = Text(phoneCarrier);
@@ -113,7 +125,8 @@ class _DeviceSetupState extends State<DeviceSetup> {
         onSelectedItemChanged: (int value) {
           selectedPhoneCarrier = phoneProviders[phoneCarrierList[value]];
         },
-        itemExtent: 32.0,
+        scrollController: FixedExtentScrollController(initialItem: initialCarrierIndex),
+        itemExtent: itemExtent,
         children: pickerList);
   }
 
@@ -190,70 +203,16 @@ class _DeviceSetupState extends State<DeviceSetup> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 30),
-                child: Text(
-                  'EZsalt',
-                  style: TextStyle(
-                    fontFamily: 'EZSalt',
-                    color: primaryThemeColor,
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Enable Salt Delivery:',
-                    style: TextStyle(
-                      color: primaryThemeColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Switch(
-                    value: deliveryEnabled,
-                    onChanged: (bool value) {
-                      if (deliveryEnabled == false) {
-                        _scaffoldKey.currentState.showBottomSheet(
-                          (context) => CustomBottomSheet(
-                            context: context,
-                            label: 'See if delivery is available in your area?',
-                            hintText: 'Zip Code',
-                            inputType: TextInputType.number,
-                            onChanged: (value) {
-                              zipCode = value;
-                            },
-                            onPressed: () async {
-                              deliveryAvailable = await AuthService()
-                                  .checkDeliveryZipCodes(int.parse(zipCode));
-                              if (deliveryAvailable == false) {
-                                commonFunctions.showCustomSnackBar(
-                                  context,
-                                  _scaffoldKey,
-                                  'Delivery Not Available',
-                                );
-                              }
-                              setState(() {
-                                deliveryEnabled = deliveryAvailable;
-                              });
-                              Navigator.pop(context);
-                            },
-                            onCancelPressed: () => Navigator.pop(context),
-                          ),
-                        );
-                        setState(() {
-                          deliveryEnabled = deliveryAvailable;
-                        });
-                      } else {
-                        setState(() {
-                          deliveryAvailable = value;
-                          deliveryEnabled = value;
-                        });
-                      }
-                    },
-                  ),
-                ],
+                padding: const EdgeInsets.symmetric(vertical: 15), //30
+                // child: Text(
+                //   'EZsalt',
+                //   style: TextStyle(
+                //     fontFamily: 'EZSalt',
+                //     color: primaryThemeColor,
+                //     fontSize: 30.0,
+                //     fontWeight: FontWeight.w900,
+                //   ),
+                // ),
               ),
               CustomTextField(
                 text: 'First Name',
@@ -314,7 +273,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                           onChanged: (text) => deviceID = text)),
                   GestureDetector(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 17, right: 35),
+                      padding: const EdgeInsets.only(bottom:25, right: 35),
                       child: Row(
                         children: [
                           Text(
@@ -344,6 +303,60 @@ class _DeviceSetupState extends State<DeviceSetup> {
                   )
                 ],
               ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Text(
+              //       'Enable Salt Delivery:',
+              //       style: TextStyle(
+              //         color: primaryThemeColor,
+              //         fontSize: 16,
+              //       ),
+              //     ),
+              //     Switch(
+              //       value: deliveryEnabled,
+              //       onChanged: (bool value) {
+              //         if (deliveryEnabled == false) {
+              //           _scaffoldKey.currentState.showBottomSheet(
+              //                 (context) => CustomBottomSheet(
+              //               context: context,
+              //               label: 'See if delivery is available in your area?',
+              //               hintText: 'Zip Code',
+              //               inputType: TextInputType.number,
+              //               onChanged: (value) {
+              //                 zipCode = value;
+              //               },
+              //               onPressed: () async {
+              //                 deliveryAvailable = await AuthService()
+              //                     .checkDeliveryZipCodes(int.parse(zipCode));
+              //                 if (deliveryAvailable == false) {
+              //                   commonFunctions.showCustomSnackBar(
+              //                     context,
+              //                     _scaffoldKey,
+              //                     'Delivery Not Available',
+              //                   );
+              //                 }
+              //                 setState(() {
+              //                   deliveryEnabled = deliveryAvailable;
+              //                 });
+              //                 Navigator.pop(context);
+              //               },
+              //               onCancelPressed: () => Navigator.pop(context),
+              //             ),
+              //           );
+              //           setState(() {
+              //             deliveryEnabled = deliveryAvailable;
+              //           });
+              //         } else {
+              //           setState(() {
+              //             deliveryAvailable = value;
+              //             deliveryEnabled = value;
+              //           });
+              //         }
+              //       },
+              //     ),
+              //   ],
+              // ),
               Container(
                 height: containerHeight,
                 alignment: Alignment.center,
@@ -444,7 +457,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                     size: 0,
                   ),
                   label: Text(
-                    'Submit',
+                    'Next',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),

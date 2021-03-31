@@ -22,8 +22,14 @@ class ProfileData extends ChangeNotifier {
     'temp_percent': 10
   };
 
+
   Future<Map> getProfileData() async {
-    _profileData = await _auth.getProfile();
+    Map tempProfile = await _auth.getProfile();
+
+    if (tempProfile != null) {
+      _profileData = tempProfile;
+    }
+
     notifyListeners();
     return _profileData;
   }

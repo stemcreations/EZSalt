@@ -230,6 +230,9 @@ class AuthService extends ChangeNotifier {
   //Gets the current users profile data in dictionary/Map form
   Future<Map> getProfile() async {
     Map profileData;
+    if (auth.currentUser == null) {
+      return null;
+    }
     if (auth.currentUser.uid != null) {
       final DocumentSnapshot currentUserDatabaseProfile =
           await _fireStore.collection('users').doc(auth.currentUser.uid).get();

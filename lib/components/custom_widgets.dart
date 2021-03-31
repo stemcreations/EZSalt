@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:ez_salt/constants.dart';
+import 'package:ez_salt/networking/authentication.dart';
+import 'package:ez_salt/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // =============== TEXT FIELDS BELOW =============== //
@@ -484,8 +486,8 @@ class CustomPhoneBottomSheet extends StatelessWidget {
                       label: Text('Submit'),
                       onPressed: onPressed,
                       size: 100),
-                ],
-              )
+                    ],
+                  )
             ],
           ),
         ),
@@ -505,6 +507,7 @@ class CustomBottomSheetWithCamera extends StatelessWidget {
     @required this.onCancelPressed,
     @required this.onTap,
     this.controller,
+    this.initialValue
   });
   final String label;
   final BuildContext context;
@@ -515,6 +518,7 @@ class CustomBottomSheetWithCamera extends StatelessWidget {
   final Function onCancelPressed;
   final Function onTap;
   final TextEditingController controller;
+  final String initialValue;
 
   @override
   Widget build(BuildContext context) {
@@ -549,6 +553,7 @@ class CustomBottomSheetWithCamera extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomTextField(
+                        initialValue: initialValue,
                         hintTextColor: profileScreenTextColor,
                         controller: controller,
                         keyboardType: inputType,
