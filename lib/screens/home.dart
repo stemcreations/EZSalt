@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:mdi/mdi.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -101,7 +102,7 @@ class _HomeState extends State<Home> {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Row(
           children: [
-            Icon(Icons.thumb_up_alt),
+            Icon(Icons.thumb_up_alt, color: Colors.white),
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -342,49 +343,7 @@ class _HomeState extends State<Home> {
                   thickness: 1.5,
                 )),
               ),
-              model.getDeliveryEnabled //deliveryEnabled
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 15.0, bottom: 10),
-                      child: ReusableOutlineButton(
-                        label: Text(
-                          'Schedule Delivery',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text('Open Browser?'),
-                              content: Text(
-                                  'Are you sure you want to leave the app and open a browser window?'),
-                              actions: [
-                                TextButton(
-                                  child: Text('No'),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
-                                TextButton(
-                                  child: Text('Yes'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    launchInWebViewWithJavaScript(
-                                      'https://square.site/book/RF2BTQNX9JXWK/ezsalt',
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        size: 230,
-                        icon: Icon(
-                          Icons.developer_board,
-                          size: 0,
-                        ),
-                      ),
-                    )
-                  : SizedBox(),
+
               Padding(
                 padding: const EdgeInsets.only(top: 15.0),
                 child: ReusableOutlineButton(
@@ -402,14 +361,82 @@ class _HomeState extends State<Home> {
                       getTankLevel2();
                     },
                     size: 230),
+              ),
+              model.getDeliveryEnabled //deliveryEnabled
+                  ? Padding(
+                padding: const EdgeInsets.only(top: 15.0, bottom: 10),
+                child: TextButton.icon(
+                  icon: Icon(Mdi.truckDelivery),
+                  label: Text(
+                    'Schedule Delivery',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () {
+                    showDialog(context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Open Browser?'),
+                        content: Text('Are you sure you want to leave the app'
+                                ' and open a browser window?'),
+                        actions: [
+                          TextButton(
+                            child: Text('No'),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          TextButton(
+                            child: Text('Yes'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                              launchInWebViewWithJavaScript(
+                                'https://square.site/book/RF2BTQNX9JXWK/ezsalt',
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               )
+                  : SizedBox(),
+              // Padding(
+              //   padding: const EdgeInsets.only(top: 32.0),
+              //   child: TextButton.icon(
+              //     onPressed: () {
+              //       // launch(
+              //       //   Uri(
+              //       //       scheme:'mailto',
+              //       //       path: 'support@ezsalt.xyz',
+              //       //       queryParameters: {
+              //       //         'subject': 'Report+Issue',
+              //       //         'body': 'hi'
+              //       //       }
+              //       //   ).toString(),
+              //       //
+              //       // );
+              //       _launchURL();
+              //     },
+              //     icon: Icon(Mdi.email),
+              //     label: Text("Report an Issue")
+              //   ),
+              // ),
             ],
           ),
         ),
       ),
     );
   }
-
+  void _launchURL() async {
+    final Uri params = Uri(
+      scheme: 'mailto',
+      path: 'my.mail@example.com',
+    );
+    String  url = params.toString();
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      print( 'Could not launch $url');
+    }
+  }
   Future<void> launchInWebViewWithJavaScript(String url) async {
     if (await canLaunch(url)) {
       await launch(

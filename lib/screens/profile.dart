@@ -54,6 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String tankDepth;
   String zipCode;
   String tankDepthPercent;
+  bool switchVisible = false;
 
   bool checkIfPhoneProviderIsValid() {
     if (phoneProvidersReversed.containsKey(profileData['phone_provider'])) {
@@ -81,9 +82,23 @@ class _ProfilePageState extends State<ProfilePage> {
     profileData = await AuthService().getProfile();
     sendPercent = profileData['send_percent'];
     deliveryEnabled = profileData['delivery_enabled'];
+
+    var zip = profileData['zipcode'];
+    zipcodeChangeSwitch(zip);
     setState(() {
       _isAsyncCall = false;
     });
+  }
+
+  Future<bool> zipcodeChangeSwitch(zip) async {
+    if (zip != null && zip != "") {
+      zip = (zip.runtimeType == int) ? zip : int.parse(zip);
+      switchVisible = await AuthService()
+          .checkDeliveryZipCodes(zip);
+    } else {
+      switchVisible = false;
+    }
+    return switchVisible;
   }
 
   void getPlatform() {
@@ -106,6 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
     dropDownBuilder();
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -151,80 +167,107 @@ class _ProfilePageState extends State<ProfilePage> {
                             fontWeight: FontWeight.w900),
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Enable Salt Delivery:',
-                          style: TextStyle(
-                            color: primaryThemeColor,
-                            fontSize: 16,
+                    Visibility(
+                    visible: switchVisible,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Enable Salt Delivery:',
+                            style: TextStyle(
+                              color: primaryThemeColor,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                        Switch(
-                          value: deliveryEnabled,
-                          onChanged: (bool value) {
-                            if (deliveryEnabled == false) {
-                              _scaffoldKey.currentState.showBottomSheet(
-                                (context) => CustomBottomSheet(
-                                  context: context,
-                                  label:
-                                      'See if delivery is available in your area?',
-                                  hintText: 'Zip Code',
-                                  inputType: TextInputType.number,
-                                  onChanged: (value) {
-                                    zipCode = value;
-                                  },
-                                  onPressed: () async {
-                                    deliveryAvailable = await AuthService()
-                                        .checkDeliveryZipCodes(
-                                            int.parse(zipCode));
-                                    if (deliveryAvailable == true) {
-                                      Provider.of<ProfileData>(context,
-                                              listen: false)
-                                          .updateDelivery(deliveryAvailable);
-                                      //If address data doesnt exist go to address setup page
-                                      if (profileData['city'] == null) {
-                                        await Navigator.pushReplacementNamed(
-                                            context, '/addressSetup');
-                                        //if address exists turn on delivery
-                                      } else {
-                                        deliveryEnabled = deliveryAvailable;
-                                        Navigator.pop(context);
-                                      }
-                                      //if delivery isnt available update the delivery parameter in the user profile
-                                    } else {
-                                      await AuthService().updateDeliveryEnabled(
-                                          deliveryAvailable);
-                                      commonFunctions.showCustomSnackBar(
-                                          context,
-                                          _scaffoldKey,
-                                          'Delivery Not Available');
-                                      //showSnackBar('Delivery Not Available');
-                                    }
-                                    setState(() {
-                                      deliveryEnabled = deliveryAvailable;
-                                    });
-                                    if (deliveryAvailable == false) {
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                  onCancelPressed: () => Navigator.pop(context),
-                                ),
-                                backgroundColor: Colors.transparent,
-                              );
-                            } else {
-                              Provider.of<ProfileData>(context, listen: false)
-                                  .updateDelivery(value);
-                              //AuthService().updateDeliveryEnabled(value);
-                              setState(() {
-                                deliveryEnabled = value;
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ), // Delivery enabled toggle switch
+                          Switch(
+                            value: deliveryEnabled,
+                            onChanged: (bool value) async {
+                              if (deliveryEnabled == false) {
+                                if (profileData['zipcode'] != null) {
+                                  bool isDeliveryAvailable = await AuthService()
+                                    .checkDeliveryZipCodes(profileData['zipcode']);
+                                  Provider.of<ProfileData>(context, listen: false)
+                                      .updateDelivery(isDeliveryAvailable);
+                                  //If address data doesnt exist go to address setup page
+                                  if (profileData['city'] == null) {
+                                    await Navigator
+                                        .pushReplacementNamed(
+                                        context, '/addressSetup');
+                                    //if address exists turn on delivery
+                                  } else {
+                                    deliveryEnabled =
+                                        isDeliveryAvailable;
+                                  }
+                                } else {
+                                  _scaffoldKey.currentState.showBottomSheet(
+                                        (context) =>
+                                        CustomBottomSheet(
+                                          context: context,
+                                          label:
+                                          'See if delivery is available in your area?',
+                                          hintText: 'Zip Code',
+                                          inputType: TextInputType.number,
+                                          onChanged: (value) {
+                                            zipCode = value;
+                                          },
+                                          onPressed: () async {
+                                            deliveryAvailable =
+                                            await AuthService()
+                                                .checkDeliveryZipCodes(
+                                                int.parse(zipCode));
+                                            if (deliveryAvailable == true) {
+                                              Provider.of<ProfileData>(context,
+                                                  listen: false)
+                                                  .updateDelivery(
+                                                  deliveryAvailable);
+                                              //If address data doesnt exist go to address setup page
+                                              if (profileData['city'] == null) {
+                                                await Navigator
+                                                    .pushReplacementNamed(
+                                                    context, '/addressSetup');
+                                                //if address exists turn on delivery
+                                              } else {
+                                                deliveryEnabled =
+                                                    deliveryAvailable;
+                                                Navigator.pop(context);
+                                              }
+                                              //if delivery isnt available update the delivery parameter in the user profile
+                                            } else {
+                                              await AuthService()
+                                                  .updateDeliveryEnabled(
+                                                  deliveryAvailable);
+                                              commonFunctions.showCustomSnackBar(
+                                                  context,
+                                                  _scaffoldKey,
+                                                  'Delivery Not Available');
+                                              //showSnackBar('Delivery Not Available');
+                                            }
+                                            setState(() {
+                                              deliveryEnabled = deliveryAvailable;
+                                            });
+                                            if (deliveryAvailable == false) {
+                                              Navigator.pop(context);
+                                            }
+                                          },
+                                          onCancelPressed: () =>
+                                              Navigator.pop(context),
+                                        ),
+                                    backgroundColor: Colors.transparent,
+                                  );
+                                }
+                              } else {
+                                Provider.of<ProfileData>(context, listen: false)
+                                    .updateDelivery(value);
+                                //AuthService().updateDeliveryEnabled(value);
+                                setState(() {
+                                  deliveryEnabled = value;
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),// Delivery enabled toggle switch
                     CustomProfileCard(
                       onTap: () {
                         _scaffoldKey.currentState.showBottomSheet(
@@ -295,42 +338,18 @@ class _ProfilePageState extends State<ProfilePage> {
                               //changeAddressDialog(context);
                             },
                             icon: Icons.location_on,
-                            firstLine: profileData['street_address'],
-                            secondLine: profileData['city'] +
+                            firstLine: (profileData['street_address'] ?? ""),
+                            secondLine: (profileData['city'] ?? "") +
                                 ' ' +
-                                profileData['state'] +
+                                (profileData['state'] ?? "")+
                                 ', ' +
-                                profileData['zipcode'].toString(),
+                                (profileData['zipcode'] ?? "").toString(),
                           ) // Address Card
                         : SizedBox(),
                     CustomProfileCard(
-                      // onTap: () {
-                      //   _scaffoldKey.currentState.showBottomSheet(
-                      //     (context) => CustomBottomSheet(
-                      //       initialValue: profileData['email'],
-                      //       context: context,
-                      //       label: 'Update E-Mail Address',
-                      //       inputType: TextInputType.emailAddress,
-                      //       hintText: 'Enter E-Mail Address',
-                      //       onPressed: () async {
-                      //         await AuthService().updateEmail(emailAddress);
-                      //         getProfileData();
-                      //         Navigator.of(context).pop();
-                      //         showSnackBar('E-Mail Address Updated');
-                      //       },
-                      //       onChanged: (value) {
-                      //         setState(() {
-                      //           emailAddress = value;
-                      //         });
-                      //       },
-                      //       onCancelPressed: () {
-                      //         Navigator.pop(context);
-                      //       },
-                      //     ),
-                      //     backgroundColor: Colors.transparent,
-                      //   );
-                      //   //changeEmailDialog(context);
-                      // },
+                      onTap: () {
+                        showSnackBar("Updating Email is not allowed");
+                      },
                       cardData: profileData['email'],
                       icon: Icons.email,
                     ), //Email Address Card
@@ -379,6 +398,52 @@ class _ProfilePageState extends State<ProfilePage> {
                               profileData['phone_provider']]
                           : unknownPhoneProvider['unknown'],
                     ),
+                    CustomProfileCard(
+                      onTap: () {
+                        _scaffoldKey.currentState.showBottomSheet(
+                              (context) => CustomBottomSheet(
+                            initialValue: profileData['zipcode'].toString(),
+                            context: context,
+                            label: 'Update Zipcode',
+                            inputType: TextInputType.number,
+                            onPressed: () async {
+                              await AuthService()
+                                  .updateAddress(null, null, null,
+                                  int.parse(zipCode));
+                              bool switchVisible = await zipcodeChangeSwitch(zipCode);
+
+                              print("switchVisible: $switchVisible");
+                              print("delivery: ${profileData['delivery_enabled']}");
+                              print(deliveryEnabled);
+
+                              if (!switchVisible && deliveryEnabled) {
+                                showSnackBar("Zipcode Updated, Salt Delivery Turned Off (Zipcode Out of Range)");
+                                await AuthService().updateDeliveryEnabled(false);
+                              } else {
+                                showSnackBar('Zipcode Updated');
+                              }
+
+                              // Leave this below snackbar
+                              getProfileData();
+                              Navigator.of(context).pop();
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                zipCode = value;
+                              });
+                            },
+                            onCancelPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          backgroundColor: Colors.transparent,
+                        );
+                        //changeTankDepthDialog(context);
+                      },
+                      cardData:
+                      'Zipcode: ' + profileData['zipcode'].toString(),
+                      icon: Icons.add_location,
+                    ), // Tank
                     CustomProfileCard(
                       onTap: () {
                         _scaffoldKey.currentState.showBottomSheet(

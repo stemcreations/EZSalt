@@ -262,12 +262,22 @@ class AuthService extends ChangeNotifier {
 
   Future updateAddress(
       String address, String city, String state, int zipCode) async {
-    await _fireStore.collection('users').doc(auth.currentUser.uid).update({
-      'street_address': address,
-      'city': city,
-      'state': state,
-      'zipcode': zipCode,
-    });
+
+    Map<String, dynamic> data = Map();
+    if (address != null) {
+      data['street_address'] = address;
+    }
+    if (city != null) {
+      data['city'] = city;
+    }
+    if (state != null) {
+      data['state'] = state;
+    }
+    if (zipCode != null) {
+      data['zipcode'] = zipCode;
+    }
+
+    await _fireStore.collection('users').doc(auth.currentUser.uid).update(data);
     await getProfile();
   }
 

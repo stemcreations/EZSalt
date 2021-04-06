@@ -83,25 +83,33 @@ class MyApp extends StatelessWidget with PortraitModeMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return ChangeNotifierProvider(
-      create: (BuildContext context) => ProfileData(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.focusedChild.unfocus();
+        }
+      },
+      child: ChangeNotifierProvider(
+        create: (BuildContext context) => ProfileData(),
+        child:MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          initialRoute: initialRoute,
+          routes: {
+            '/login': (context) => LoginPage(),
+            '/home': (context) => Home(),
+            '/register': (context) => RegisterPage(),
+            '/profile': (context) => ProfilePage(),
+            '/deviceSetup': (context) => DeviceSetup(),
+            '/licenses': (context) => Licenses(),
+            '/about': (context) => About(),
+            '/addressSetup': (context) => AddressSetup(),
+          },
         ),
-        initialRoute: initialRoute,
-        routes: {
-          '/login': (context) => LoginPage(),
-          '/home': (context) => Home(),
-          '/register': (context) => RegisterPage(),
-          '/profile': (context) => ProfilePage(),
-          '/deviceSetup': (context) => DeviceSetup(),
-          '/licenses': (context) => Licenses(),
-          '/about': (context) => About(),
-          '/addressSetup': (context) => AddressSetup(),
-        },
       ),
     );
   }

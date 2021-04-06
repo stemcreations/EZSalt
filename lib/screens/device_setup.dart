@@ -162,7 +162,9 @@ class _DeviceSetupState extends State<DeviceSetup> {
         deviceID != null &&
         lastName != null &&
         phoneNumber != null &&
-        selectedPhoneCarrier != null) {
+        selectedPhoneCarrier != null &&
+        zipCode != null
+    ) {
       return true;
     } else {
       return false;
@@ -214,47 +216,28 @@ class _DeviceSetupState extends State<DeviceSetup> {
                 //   ),
                 // ),
               ),
-              CustomTextField(
-                text: 'First Name',
-                onChanged: (text) => firstName = text.trim(),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      text: 'First Name',
+                      rightPadding: 8.0,
+                      onChanged: (text) => firstName = text.trim(),
+                    ),
+                  ),
+                  Expanded(
+                    child: CustomTextField(
+                      text: 'Last Name',
+                      leftPadding: 8.0,
+                      onChanged: (text) => lastName = text.trim(),
+                    ),
+                  ),
+                ],
               ),
               CustomTextField(
-                text: 'Last Name',
-                onChanged: (text) => lastName = text.trim(),
-              ),
-              CustomTextField(
-                text: 'Phone Number',
-                onChanged: (text) => phoneNumber = text.trim(),
-                keyboardType: TextInputType.phone,
-              ),
-              Visibility(
-                visible: deliveryAvailable,
-                child: CustomTextField(
-                  text: 'Street Address',
-                  onChanged: (text) => address = text.trim(),
-                ),
-              ),
-              Visibility(
-                visible: deliveryAvailable,
-                child: CustomTextField(
-                  text: 'City',
-                  onChanged: (text) => city = text,
-                ),
-              ),
-              Visibility(
-                visible: deliveryAvailable,
-                child: CustomTextField(
-                  text: 'State',
-                  onChanged: (text) => state = text,
-                ),
-              ),
-              Visibility(
-                visible: deliveryAvailable,
-                child: CustomTextField(
-                  text: 'Zip Code',
-                  keyboardType: TextInputType.number,
-                  onChanged: (number) => zipCode = number,
-                ),
+                text: 'Zip Code',
+                keyboardType: TextInputType.number,
+                onChanged: (number) => zipCode = number,
               ),
               CustomTextField(
                 text: 'Tank Depth in.',
@@ -266,7 +249,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                 children: [
                   Expanded(
                       child: CustomTextField(
-                          horizontalPadding: 5,
+                          rightPadding: 5,
                           text: 'Device ID',
                           controller: deviceIdTextController,
                           maxLength: 13,
@@ -357,11 +340,17 @@ class _DeviceSetupState extends State<DeviceSetup> {
               //     ),
               //   ],
               // ),
+              CustomTextField(
+                text: 'Phone Number',
+                onChanged: (text) => phoneNumber = text.trim(),
+                keyboardType: TextInputType.phone,
+              ),
               Container(
                 height: containerHeight,
                 alignment: Alignment.center,
                 child: Platform.isIOS ? getIosPicker() : dropDownBuilder(),
               ),
+              Text("Provide your Phone Carrier to get Automatic Texts"),
               //tank depth
               Padding(
                 padding: const EdgeInsets.only(top: 15.0, bottom: 30),
@@ -374,7 +363,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                           null,
                           null,
                           null,
-                          null,
+                          int.parse(zipCode),
                           tankDepthToInt(tankDepth),
                           firstName,
                           lastName,
@@ -394,7 +383,7 @@ class _DeviceSetupState extends State<DeviceSetup> {
                               null,
                               null,
                               null,
-                              null,
+                              int.parse(zipCode),
                               tankDepthToInt(tankDepth),
                               firstName,
                               lastName,

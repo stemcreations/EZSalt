@@ -19,14 +19,16 @@ class CustomTextField extends StatelessWidget {
     this.labelText,
     this.controller,
     this.initialValue,
-    this.horizontalPadding = 35,
+    this.leftPadding = 35,
+    this.rightPadding = 35,
     this.autoFocus = false,
     this.textCapitalization = TextCapitalization.words,
     this.hintTextColor = Colors.blue,
   });
 
   final Color hintTextColor;
-  final double horizontalPadding;
+  final double leftPadding;
+  final double rightPadding;
   final String initialValue;
   final String text;
   final Icon icon;
@@ -43,7 +45,7 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-          left: 35, right: horizontalPadding, top: 5, bottom: 5),
+          left: leftPadding, right: rightPadding, top: 5, bottom: 5),
       child: TextFormField(
         textCapitalization: textCapitalization,
         autofocus: autoFocus,
@@ -59,18 +61,10 @@ class CustomTextField extends StatelessWidget {
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: TextStyle(color: primaryThemeColor),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: focusedBorderColor),
-          ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: primaryThemeColor),
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: primaryThemeColor),
-          ),
+          border: UnderlineInputBorder(),
           hintText: text,
           hintStyle: TextStyle(
             color: hintTextColor,
@@ -553,6 +547,7 @@ class CustomBottomSheetWithCamera extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomTextField(
+                        rightPadding: 16,
                         initialValue: initialValue,
                         hintTextColor: profileScreenTextColor,
                         controller: controller,
@@ -562,7 +557,7 @@ class CustomBottomSheetWithCamera extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 15, right: 15),
+                      padding: const EdgeInsets.only(top: 15),
                       child: BarcodeScanIcon(onTap: onTap),
                     )
                   ],

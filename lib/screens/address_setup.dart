@@ -12,7 +12,7 @@ class AddressSetup extends StatefulWidget {
 class _AddressSetupState extends State<AddressSetup> {
   String address;
   String city;
-  String zipCode;
+  // String zipCode;
   String state;
   Map profileData = {};
 
@@ -28,6 +28,7 @@ class _AddressSetupState extends State<AddressSetup> {
 
   @override
   Widget build(BuildContext context) {
+    print(state);
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -63,11 +64,11 @@ class _AddressSetupState extends State<AddressSetup> {
                 text: 'State',
                 onChanged: (text) => state = text,
               ),
-              CustomTextField(
-                text: 'Zip Code',
-                keyboardType: TextInputType.number,
-                onChanged: (number) => zipCode = number,
-              ),
+              // CustomTextField(
+              //   text: 'Zip Code',
+              //   keyboardType: TextInputType.number,
+              //   onChanged: (number) => zipCode = number,
+              // ),
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
                 child: Row(
@@ -99,7 +100,7 @@ class _AddressSetupState extends State<AddressSetup> {
                       size: 100,
                       onPressed: () async {
                         await AuthService().updateAddress(
-                            address, city, state, int.parse(zipCode));
+                            address, city, state, null); //int.parse(zipCode));
                         Navigator.pushReplacementNamed(context, '/profile');
                       },
                       label: Text('Submit'),
