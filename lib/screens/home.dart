@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
-// import 'package:mdi/mdi.dart';
+import 'package:mdi/mdi.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -366,8 +366,7 @@ class _HomeState extends State<Home> {
                   ? Padding(
                 padding: const EdgeInsets.only(top: 15.0, bottom: 10),
                 child: TextButton.icon(
-                  icon: Icon(Icons.person),
-                  // icon: Icon(Mdi.truckDelivery),
+                  icon: Icon(Mdi.truckDelivery),
                   label: Text(
                     'Schedule Delivery',
                     style: TextStyle(fontWeight: FontWeight.bold),
