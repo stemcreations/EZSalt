@@ -454,13 +454,18 @@ class AuthService extends ChangeNotifier {
     if (await checkAuthenticationState() == 'logged in') {
       Map profileData = await getProfile();
       String sensorId = profileData['sensor'];
-      String url =
-          'https://us-central1-ezsalt-iot-dev-env.cloudfunctions.net/api/refresh/?uid=$uid&sid=$sensorId';
       try {
         var response =
-            await http.get(url).timeout(Duration(seconds: 7), onTimeout: () {
+            await http.get(
+              Uri.https(
+                  'us-central1-ezsalt-iot-dev-env.cloudfunctions.net',
+                  'api/refresh', {
+                  "uid": uid, "sid": sensorId
+              }),
+            ).timeout(Duration(seconds: 7), onTimeout: () {
           return null;
         });
+        print(response.body);
         if (response != null) {
           Map<String, dynamic> decodedData = jsonDecode(response.body);
           if (decodedData['status'] == 'success') {

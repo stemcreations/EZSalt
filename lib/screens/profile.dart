@@ -550,6 +550,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           '%',
                       icon: Icons.delete_outline,
                     ), // Notification Depth Card
+
+                    SizedBox(height: 75.0)
                   ],
                 ),
               ),
